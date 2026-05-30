@@ -1,656 +1,243 @@
 <!DOCTYPE html>
-<html lang="gu">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#0ff">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>હોમ — ટાઇમટેબલ</title>
-<style>
-/* --- CRITICAL: navbar + base (inline) --- */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-:root {
-  --primary: #0ff;
-  --primary-hover: #3cf;
-  --primary-light: rgba(0,255,255,0.1);
-  --bg: #0a0f1a;
-  --card: rgba(10,20,35,0.85);
-  --text: #cfddee;
-  --text-muted: #6a8aaa;
-  --border: #2a4f6e;
-  --shadow: 0 1px 3px rgba(0,0,0,.3);
-  --shadow-lg: 0 10px 25px rgba(0,0,0,.4);
-  --radius: 12px;
-  --radius-sm: 8px;
-}
-body {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: var(--bg-gradient);
-  color: var(--text);
-  min-height: 100vh;
-  padding-top: 56px;
-}
-.navbar {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: var(--card);
-  border-bottom: 1px solid var(--border);
-  box-shadow: var(--shadow);
-  display: flex; align-items: center;
-  padding: 0 12px;
-  height: 56px;
-  gap: 4px;
-}
-.nav-toggle { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
-.nav-hamburger {
-  display: none;
-  font-size: 24px; cursor: pointer; padding: 4px 8px;
-  border-radius: 8px; user-select: none;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-.nav-hamburger:hover { background: var(--bg-gradient); }
-.nav-hamburger::before { content: '\2630'; }
-.nav-toggle:checked ~ .nav-hamburger {
-  background: var(--primary-light);
-  color: var(--primary);
-}
-.nav-toggle:checked ~ .nav-hamburger::before { content: '\2715'; }
-.navbar .brand {
-  font-size: 15px; font-weight: 700;
-  white-space: nowrap; margin-right: auto;
-  color: var(--text);
-  text-decoration: none;
-}
-.navbar .brand span { color: var(--primary); }
-.nav-menu {
-  display: flex; align-items: center; gap: 4px;
-}
-.nav-link {
-  padding: 8px 10px;
-  border-radius: 8px;
-  font-size: 13px; font-weight: 500;
-  color: var(--text-muted);
-  text-decoration: none;
-  transition: all .2s;
-  white-space: nowrap;
-}
-.nav-link:hover { background: var(--primary-light); color: var(--primary); }
-.nav-link.active { background: var(--primary); color: #000; font-weight: 700; }
-@media (max-width: 768px) {
-  .nav-hamburger { display: block; }
-  .nav-menu {
-    display: none;
-    position: fixed; top: 56px; left: 0; right: 0;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-    box-shadow: var(--shadow-lg);
-    padding: 8px;
-    flex-direction: column;
-    gap: 2px;
-    z-index: 99;
-    animation: slideDown .2s ease;
-  }
-  @keyframes slideDown {
-    from { transform: translateY(-10px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-  .nav-toggle:checked ~ .nav-menu { display: flex; }
-  .nav-menu .nav-link {
-    display: block;
-    width: 100%; padding: 12px 16px;
-    font-size: 15px; border-radius: 8px;
-  }
-  .nav-menu .nav-link.active {
-    background: var(--primary);
-    color: #000;
-  }
-}
-@media (max-width: 480px) {
-  .navbar .brand { font-size: 14px; }
-  .navbar .brand span { display: none; }
-}
-@media (max-width: 360px) {
-  .navbar .brand { font-size: 13px; }
-}
-/* --- end critical --- */
-</style>
-<link rel="stylesheet" href="/css/style.css?v=3">
-<style>
-/* Tabs */
-.view-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
-.view-tab {
-padding: 8px 18px; border-radius: 8px;
-font-size: 13px; font-weight: 600; cursor: pointer;
-border: 1px solid var(--border); background: var(--card);
-transition: all .2s;
-}
-.view-tab.active { background: var(--primary); color: #000; border-color: var(--primary); }
-.view-tab:not(.active):hover { background: var(--primary-light); }
-/* Mini timetable card */
-.mini-tt {
-background: var(--card); border-radius: var(--radius);
-box-shadow: var(--shadow); overflow: hidden;
-margin-bottom: 12px;
-}
-.mini-tt .mheader {
-padding: 8px 12px; font-weight: 600; font-size: 14px;
-background: var(--primary); color: #000;
-}
-.mini-tt table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: auto; }
-.mini-tt th { background: var(--primary-hover); padding: 5px 4px; font-size: 10px; }
-.mini-tt td { padding: 4px 3px; min-width: auto; height: auto; font-size: 10px; border: 1px solid var(--border); }
-.mini-tt td .subj { font-weight: 600; display: block; }
-.mini-tt td .tchr { font-size: 9px; color: var(--text-muted); }
-/* Teacher TT */
-.tchr-tt {
-background: var(--card); border-radius: var(--radius);
-box-shadow: var(--shadow); overflow: hidden;
-margin-bottom: 12px;
-}
-.tchr-tt .mheader {
-padding: 8px 12px; font-weight: 600; font-size: 14px;
-background: #7c3aed; color: #000;
-}
-.tchr-tt td .cls-name { font-weight: 600; font-size: 10px; display: block; }
-.tchr-tt td .subj-name { font-size: 9px; color: var(--text-muted); }
-.master-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
-@media (max-width: 600px) {
-.master-grid { grid-template-columns: 1fr; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum AI IDE — Home</title>
+    <style>
+        :root {
+            --primary: #0ff;
+            --primary-hover: #3cf;
+            --primary-light: rgba(0,255,255,0.1);
+            --bg: #0a0f1a;
+            --card: rgba(10,20,35,0.85);
+            --text: #cfddee;
+            --text-muted: #6a8aaa;
+            --border: #2a4f6e;
+            --radius: 12px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0a0f1a, #0a1a2a);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 60px 20px 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+        }
+        .hero {
+            margin-bottom: 40px;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #0ff, #a0f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .btn-primary {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--primary);
+            padding: 16px 24px;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: block;
+        }
+        .btn-primary:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            box-shadow: 0 0 15px rgba(0,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: 60px;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 14px;
+            width: 100%;
+        }
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+            margin: 0 12px;
+            transition: color 0.2s;
+        }
+        .footer a:hover {
+            color: var(--primary-hover);
+        }
+        
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 0 16px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .brand {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        .nav-menu {
+            display: flex;
+            gap: 4px;
+            margin-left: auto;
+        }
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .nav-link:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+        .nav-link.active {
+            background: var(--primary);
+            color: #000;
+            font-weight: 700;
+        }
+        
+        /* Mobile menu */
+        .nav-toggle {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .nav-hamburger {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+        .nav-hamburger::before { content: '☰'; }
+        @media (max-width: 768px) {
+            .nav-hamburger { display: block; }
+            .nav-menu {
+                display: none;
+                position: fixed;
+                top: 56px;
+                left: 0;
+                right: 0;
+                background: var(--card);
+                border-bottom: 1px solid var(--border);
+                padding: 12px;
+                flex-direction: column;
+                z-index: 99;
+            }
+            .nav-toggle:checked ~ .nav-menu { display: flex; }
+            .nav-menu .nav-link {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 <body>
-<nav class="navbar">
-<input type="checkbox" id="navToggle" class="nav-toggle">
-<a href="/" class="brand">🏫 <span>સમયપત્રક</span></a>
-<label for="navToggle" class="nav-hamburger"></label>
-<div class="nav-menu">
-<a href="/" class="nav-link active" aria-current="page">🏠 હોમ</a>
-<a href="/classes" class="nav-link">🏫 ક્લાસ</a>
-<a href="/subjects" class="nav-link">📚 વિષયો</a>
-<a href="/teachers" class="nav-link">👨‍🏫 શિક્ષકો</a>
-<a href="/timetable" class="nav-link">📅 ટાઇમટેબલ</a>
-<a href="/playground" class="nav-link">🧪 પ્લેગ્રાઉન્ડ</a>
-<a href="/settings" class="nav-link">⚙️ સેટિંગ</a>
-</div>
-</nav>
-<div class="container">
-<!-- Status -->
-<div class="card">
-<div class="card-header">🏫 શાળા સમયપત્રક</div>
-<div id="schoolInfo" style="font-size:14px;color:var(--text-muted);margin-bottom:12px">લોડ થાય છે...</div>
-<div class="btn-group">
-<button class="btn btn-success btn-lg" onclick="handleGen(this)" style="flex:2">🤖 ઓટો જનરેટ</button>
-<button class="btn btn-outline btn-lg" onclick="window.open('/classes','_self')" style="flex:1">🏫 ક્લાસ</button>
-<button class="btn btn-outline btn-lg" onclick="window.open('/subjects','_self')" style="flex:1">📚 વિષયો</button>
-<button class="btn btn-outline btn-lg" onclick="window.open('/teachers','_self')" style="flex:1">👨‍🏫 શિક્ષકો</button>
-</div>
-</div>
-<!-- Guide if empty -->
-<div id="guideArea"></div>
-<!-- Teacher Load -->
-<div class="card">
-<div class="card-header">👨‍🏫 શિક્ષક લોડ</div>
-<div class="load-bar" id="loadBar">
-<span class="label">ટાઇમટેબલ જનરેટ કરો...</span>
-</div>
-</div>
-<!-- Result -->
-<div id="resultArea"></div>
-<!-- Master Timetable View -->
-<div id="masterView" style="display:none">
-
-<div class="card">
-<div class="card-header">📊 માસ્ટર ટાઇમટેબલ</div>
-<div class="view-tabs">
-<span class="view-tab active" onclick="switchView('subjects',this)">📚 વિષય મુજબ</span>
-<span class="view-tab" onclick="switchView('teachers',this)">👨‍🏫 શિક્ષક મુજબ</span>
-</div>
-<div id="masterContent"></div>
-</div>
-</div>
-</div>
-<!-- ===== SMART DASHBOARD ===== -->
-<div class="card" id="smartDashboard" style="margin-top:16px">
-  <div class="card-header">📊 સ્માર્ટ ડેશબોર્ડ</div>
-  <div id="dashboardContent">
-    <div style="text-align:center;padding:20px;color:var(--text-muted)">⏳ AI Insights લોડ થાય છે...</div>
-  </div>
-</div>
-
-<div id="toast"></div>
-<script src="/js/api.js"></script>
-<script src="/js/chat.js?v=1"></script>
-<script>
-const DAYS_SH = ['સો','મં','બુ','ગુ','શુ','શ'];
-let currentView = 'subjects';
-let classes = [];
-let allTT = {};     // { '9A': { day: { period: {subject, teacher} } } }
-let teachers = [];  // [{name, subjects}]
-let dayConfigs = [];
-async function init() {
-try {
-const [clsRes, setRes] = await Promise.all([
-API.getClasses(),
-API.getSettings()
-]);
-const name = setRes.school_name || 'શાળા';
-const time = setRes.start_time && setRes.end_time ? `${setRes.start_time} - ${setRes.end_time}` : '';
-document.getElementById('schoolInfo').textContent = 
-time ? `${name} | ${time}` : name;
-// Show guide if empty
-const guide = document.getElementById('guideArea');
-if (!clsRes.classes || clsRes.classes.length === 0) {
-guide.innerHTML = `<div class="card" style="background:#fef3c7;border:1px solid #f59e0b">
-<div class="card-header" style="color:#92400e">📋 શરૂઆત કરો</div>
-<p style="font-size:14px;margin-bottom:10px">
-ડેટાબેઝ ખાલી છે. પહેલા આ પગલાં ભરો:
-</p>
-<ol style="font-size:14px;line-height:2;margin-left:20px">
-<li>🏫 <a href="/classes" style="color:var(--primary)">ક્લાસ પેજ</a>માં જઈને ક્લાસ ઉમેરો (દા.ત. 9A, 9B, 10A)</li>
-<li>📚 <a href="/subjects" style="color:var(--primary)">વિષયો પેજ</a>માં જઈને વિષયો ઉમેરો અને ધોરણ મુજબ સેટ કરો</li>
-<li>👨‍🏫 <a href="/teachers" style="color:var(--primary)">શિક્ષકો પેજ</a>માં જઈને શિક્ષકો ઉમેરો અને તેમના વિષયો સિલેક્ટ કરો</li>
-<li>🤖 પછી અહીં આવીને "ઓટો જનરેટ" દબાવો</li>
-</ol>
-</div>`;
-}
-// Load master data
-classes = clsRes.classes || [];
-await Promise.all([loadAllTimetables(), loadTeachers(), loadDayConfig()]);
-await loadLoads();
-renderMasterView();
-} catch(e) {
-document.getElementById('schoolInfo').textContent = '⚠️ સર્વર કનેક્શન એરર';
-}
-}
-async function loadAllTimetables() {
-allTT = {};
-if (classes.length === 0) return;
-const results = await Promise.all(classes.map(c => API.getTimetable(c)));
-classes.forEach((c, i) => { allTT[c] = results[i].timetable || {}; });
-}
-async function loadTeachers() {
-try {
-const res = await API.getTeachers();
-teachers = res.teachers || [];
-} catch(e) { teachers = []; }
-}
-async function loadDayConfig() {
-try {
-const res = await API.getDayConfig();
-dayConfigs = res.configs || [];
-} catch(e) { dayConfigs = []; }
-}
-function hasAnyData() {
-for (const cls of classes) {
-const tt = allTT[cls] || {};
-for (const di of Object.keys(tt)) {
-for (const pi of Object.keys(tt[di])) {
-if (tt[di][pi] && tt[di][pi].subject) return true;
-}
-}
-}
-return false;
-}
-function getPeriodsPerDay() {
-const ppd = {};
-for (const cfg of dayConfigs) {
-ppd[cfg.day_index] = (cfg.periods_before || 0) + (cfg.periods_after || 0);
-}
-return ppd;
-}
-function getMaxPeriods(ppd) {
-return Math.max(...Object.values(ppd), 0);
-}
-function renderMasterView() {
-const el = document.getElementById('masterView');
-const content = document.getElementById('masterContent');
-if (!hasAnyData()) {
-el.style.display = 'none';
-return;
-}
-el.style.display = 'block';
-if (currentView === 'subjects') renderSubjectView(content);
-else renderTeacherView(content);
-}
-function renderSubjectView(el) {
-const ppd = getPeriodsPerDay();
-const max = getMaxPeriods(ppd);
-let html = '<div class="master-grid">';
-for (const cls of classes) {
-const tt = allTT[cls] || {};
-html += `<div class="mini-tt">
-<div class="mheader">📚 ધોરણ ${cls}</div>
-<table>
-<thead><tr><th>#</th>${DAYS_SH.map(d => `<th>${d}</th>`).join('')}</tr></thead>
-<tbody>`;
-for (let pi = 0; pi < max; pi++) {
-html += `<tr><td style="font-weight:600;background:#f1f5f9;padding:4px">${pi+1}</td>`;
-for (let di = 0; di < 6; di++) {
-if (pi >= (ppd[di] || 0)) {
-html += `<td style="background:var(--bg)">—</td>`;
-continue;
-}
-const cell = tt[di] ? tt[di][pi] : null;
-if (cell && cell.subject) {
-const c = subjColor(cell.subject);
-html += `<td style="border-left:2px solid ${c}">
-<span class="subj">${cell.subject}</span>
-<span class="tchr">${cell.teacher || '—'}</span>
-</td>`;
-} else {
-html += `<td style="color:var(--text-muted)">—</td>`;
-}
-}
-html += '</tr>';
-}
-html += '</tbody></table></div>';
-}
-html += '</div>';
-el.innerHTML = html;
-}
-function renderTeacherView(el) {
-const ppd = getPeriodsPerDay();
-const max = getMaxPeriods(ppd);
-const teacherTT = {};  // { teacherName: { day: { period: {class, subject} } } }
-// Build teacher timetables from all class data
-for (const cls of classes) {
-const tt = allTT[cls] || {};
-for (const di of Object.keys(tt)) {
-for (const pi of Object.keys(tt[di])) {
-const cell = tt[di][pi];
-if (cell && cell.subject && cell.teacher && cell.teacher !== '—') {
-if (!teacherTT[cell.teacher]) teacherTT[cell.teacher] = {};
-if (!teacherTT[cell.teacher][di]) teacherTT[cell.teacher][di] = {};
-teacherTT[cell.teacher][di][pi] = { class: cls, subject: cell.subject };
-}
-}
-}
-}
-const teacherNames = Object.keys(teacherTT);
-if (teacherNames.length === 0) {
-el.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:20px">કોઈ શિક્ષકનો ડેટા નથી</p>';
-return;
-}
-teacherNames.sort();
-let html = '<div class="master-grid">';
-for (const tname of teacherNames) {
-const tdata = teacherTT[tname];
-html += `<div class="tchr-tt">
-<div class="mheader">👨‍🏫 ${tname}</div>
-<table>
-<thead><tr><th>#</th>${DAYS_SH.map(d => `<th>${d}</th>`).join('')}</tr></thead>
-<tbody>`;
-for (let pi = 0; pi < max; pi++) {
-html += `<tr><td style="font-weight:600;background:#f1f5f9;padding:4px">${pi+1}</td>`;
-for (let di = 0; di < 6; di++) {
-if (pi >= (ppd[di] || 0)) {
-html += `<td style="background:var(--bg)">—</td>`;
-continue;
-}
-const slot = tdata[di] ? tdata[di][pi] : null;
-if (slot) {
-const c = subjColor(slot.subject);
-html += `<td style="border-left:2px solid ${c}">
-<span class="cls-name">${slot.class}</span>
-<span class="subj-name">${slot.subject}</span>
-</td>`;
-} else {
-html += `<td style="color:var(--text-muted);font-size:9px">—</td>`;
-}
-}
-html += '</tr>';
-}
-html += '</tbody></table></div>';
-}
-html += '</div>';
-el.innerHTML = html;
-}
-function switchView(view, tab) {
-currentView = view;
-document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
-tab.classList.add('active');
-renderMasterView();
-}
-async function loadLoads() {
-const bar = document.getElementById('loadBar');
-if (!classes || classes.length === 0) {
-bar.innerHTML = '<span class="label">👨‍🏫 શિક્ષક લોડ:</span> પહેલા ક્લાસ ઉમેરો';
-return;
-}
-try {
-const allLoads = {};
-for (const cls of classes) {
-const tt = allTT[cls] || {};
-for (const di of Object.keys(tt)) {
-for (const pi of Object.keys(tt[di])) {
-const cell = tt[di][pi];
-if (cell && cell.teacher && cell.teacher !== '—') {
-allLoads[cell.teacher] = (allLoads[cell.teacher] || 0) + 1;
-}
-}
-}
-}
-if (Object.keys(allLoads).length === 0) {
-bar.innerHTML = '<span class="label">👨‍🏫 શિક્ષક લોડ:</span> ટાઇમટેબલ જનરેટ કરો...';
-return;
-}
-let ok = 0, low = 0, high = 0;
-let items = '';
-Object.entries(allLoads).sort((a,b) => b[1]-a[1]).forEach(([n,l]) => {
-const cls = l > 33 ? 'red' : l < 21 ? 'yellow' : 'green';
-if (l >= 21 && l <= 33) ok++;
-else if (l < 21) low++;
-else high++;
-items += `<span class="load-badge ${cls}">${n}: ${l}</span>`;
-});
-bar.innerHTML = `<span class="label">👨‍🏫 લોડ:</span> ✅${ok} 🟡${low} 🔴${high}<br>${items}`;
-} catch(e) {}
-}
-async function handleGen(btn) {
-if (!btn) btn = document.querySelector('.btn-success');
-btn.disabled = true;
-btn.innerHTML = '⏳ જનરેટ થાય છે...';
-try {
-const res = await API.generate();
-showToast(res.message, res.success ? 'success' : 'error');
-// Reload all data
-await Promise.all([loadAllTimetables(), loadDayConfig()]);
-renderMasterView();
-// Teacher load display with summary
-if (res.teacher_loads) {
-let ok = 0, low = 0, high = 0;
-let items = '';
-Object.entries(res.teacher_loads).sort((a,b) => b[1]-a[1]).forEach(([n,l]) => {
-const cls = l > 33 ? 'red' : l < 21 ? 'yellow' : 'green';
-if (l >= 21 && l <= 33) ok++;
-else if (l < 21) low++;
-else high++;
-items += `<span class="load-badge ${cls}">${n}: ${l}</span>`;
-});
-document.getElementById('loadBar').innerHTML = `<span class="label">👨‍🏫 લોડ:</span> ✅${ok} 🟡${low} 🔴${high}<br>${items}`;
-}
-const ra = document.getElementById('resultArea');
-let resultHtml = '';
-// Free slots warning
-if (res.free_slots && res.free_slots > 0) {
-resultHtml += '<div class="card" style="background:#fef3c7;border:1px solid #f59e0b;margin-bottom:10px">';
-resultHtml += '<div class="card-header" style="color:#92400e">⚠️ ખાલી સ્લોટ</div>';
-resultHtml += `<p style="font-size:14px;padding:5px 0">${res.free_slots} સ્લોટ 'ફ્રી' રાખ્યા — વિષયોના કુલ પિરિયડ પૂરતા નથી. સેટિંગમાં પિરિયડ ઓછા કરો અથવા વધુ વિષય ઉમેરો.</p>`;
-if (res.empty_slots && res.empty_slots.length > 0) {
-res.empty_slots.forEach(e => {
-resultHtml += `<div style="font-size:13px;padding:2px 0;color:#92400e">${e}</div>`;
-});
-}
-resultHtml += '</div>';
-}
-// Conflicts/Warnings
-if (res.conflicts && res.conflicts.length > 0) {
-resultHtml += '<div class="card" style="' + (res.success ? '' : 'border:1px solid var(--danger)') + '">';
-resultHtml += '<div class="card-header">📋 મુદ્દા</div>';
-res.conflicts.forEach(c => {
-let icon = 'ℹ️';
-if (c.includes('કોન્ફ્લિક્ટ')) icon = '⚠️';
-else if (c.includes('ઓછા') || c.includes('ખાલી')) icon = '⚠️';
-else if (c.includes('વધારે')) icon = '⬆️';
-else if (c.includes('વધુ')) icon = '⬆️';
-resultHtml += `<div style="font-size:13px;padding:3px 0">${icon} ${c}</div>`;
-});
-resultHtml += '</div>';
-}
-if (resultHtml) {
-ra.innerHTML = resultHtml;
-} else if (res.success) {
-ra.innerHTML = '<div class="card" style="background:#22c55e10;border:1px solid #22c55e"><div class="card-header" style="color:#16a34a">✅ બધું સરસ! કોઈ મુદ્દો નથી</div></div>';
-}
-} catch(e) {
-showToast('⚠️ એરર: ' + e.message, 'error');
-}
-btn.disabled = false;
-btn.innerHTML = '🤖 ઓટો જનરેટ';
-}
-init();
-
-// ===== SMART DASHBOARD =====
-async function loadDashboard() {
-  try {
-    const res = await fetch('/api/dashboard/insights');
-    const data = await res.json();
-    const dc = document.getElementById('dashboardContent');
-    if (!dc) return;
-
-    let html = '';
-
-    // Stats row
-    html += `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">`;
-    html += `<div style="flex:1;min-width:100px;padding:12px;background:rgba(0,255,255,0.05);border:1px solid var(--border);border-radius:8px;text-align:center">
-      <div style="font-size:24px;font-weight:700;color:var(--primary)">${data.stats.total_teachers}</div>
-      <div style="font-size:11px;color:var(--text-muted)">👨‍🏫 શિક્ષકો</div></div>`;
-    html += `<div style="flex:1;min-width:100px;padding:12px;background:rgba(0,255,255,0.05);border:1px solid var(--border);border-radius:8px;text-align:center">
-      <div style="font-size:24px;font-weight:700;color:var(--primary)">${data.stats.total_classes}</div>
-      <div style="font-size:11px;color:var(--text-muted)">🏫 વર્ગો</div></div>`;
-    html += `<div style="flex:1;min-width:100px;padding:12px;background:rgba(0,255,255,0.05);border:1px solid var(--border);border-radius:8px;text-align:center">
-      <div style="font-size:24px;font-weight:700;color:var(--primary)">${data.stats.avg_load}</div>
-      <div style="font-size:11px;color:var(--text-muted)">📊 સરેરાશ લોડ</div></div>`;
-    html += `</div>`;
-
-    // AI Insights
-    if (data.insights && data.insights.length > 0) {
-      html += `<div style="margin-bottom:12px">`;
-      html += `<div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:6px">🤖 AI Insights</div>`;
-      for (const ins of data.insights) {
-        const color = ins.type === 'warning' ? '#f44' : ins.type === 'info' ? '#fc0' : '#0f6';
-        html += `<div style="padding:8px 12px;margin-bottom:4px;border-radius:8px;border:1px solid ${color}40;background:${color}08;font-size:12px">
-          <span style="font-weight:700">${ins.icon} ${ins.title}</span><br>
-          <span style="color:var(--text-muted);font-size:11px">${ins.detail}</span>
-        </div>`;
-      }
-      html += `</div>`;
-    }
-
-    // Load Distribution Bar
-    if (data.load_ranges) {
-      html += `<div style="margin-bottom:8px">`;
-      html += `<div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:6px">📊 લોડ ડિસ્ટ્રિબ્યુશન</div>`;
-      html += `<div style="display:flex;gap:3px;height:100px;align-items:flex-end">`;
-      const colors = ['#4a6a8a','#6a8aaa','#0f6','#0ff','#a0f','#f44'];
-      let idx = 0;
-      for (const [range, count] of Object.entries(data.load_ranges)) {
-        const maxCount = Math.max(...Object.values(data.load_ranges), 1);
-        const height = Math.max(count / maxCount * 80, 8);
-        html += `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
-          <span style="font-size:11px;font-weight:600;color:${colors[idx]}">${count}</span>
-          <div style="width:100%;height:${height}px;background:${colors[idx]};border-radius:4px 4px 0 0;transition:height .3s"></div>
-          <span style="font-size:8px;color:var(--text-dim)">${range}</span>
-        </div>`;
-        idx++;
-      }
-      html += `</div></div>`;
-    }
-
-    // Teacher load list
-    if (data.loads && data.loads.length > 0) {
-      html += `<div style="margin-top:8px">`;
-      html += `<div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:4px">👨‍🏫 શિક્ષક લોડ</div>`;
-      data.loads.sort((a, b) => b.load - a.load).forEach(t => {
-        const barColor = t.status === 'high' ? '#f44' : t.status === 'low' ? '#fc0' : '#0f6';
-        const pct = Math.min(t.load / 40 * 100, 100);
-        html += `<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;font-size:11px">
-          <span style="min-width:80px;font-weight:500">${t.name}</span>
-          <div style="flex:1;height:16px;background:rgba(255,255,255,0.05);border-radius:8px;overflow:hidden">
-            <div style="height:100%;width:${pct}%;background:${barColor};border-radius:8px;transition:width .5s"></div>
-          </div>
-          <span style="min-width:30px;text-align:right;color:var(--text-muted)">${t.load}</span>
-        </div>`;
-      });
-      html += `</div>`;
-    }
-
-    // Quick actions
-    html += `<div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap">`;
-    html += `<button class="btn btn-sm btn-primary" onclick="window.open('/timetable','_self')">📅 ટાઇમટેબલ</button>`;
-    html += `<button class="btn btn-sm btn-outline" onclick="window.open('/teachers','_self')">👨‍🏫 ટીચર્સ</button>`;
-    html += `<button class="btn btn-sm btn-outline" onclick="toggleChat()">🤖 ચેટ કરો</button>`;
-    html += `</div>`;
-
-    dc.innerHTML = html;
-  } catch(e) {
-    const dc = document.getElementById('dashboardContent');
-    if (dc) dc.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text-dim)">⚠️ ડેશબોર્ડ લોડ ન થયું</div>`;
-  }
-}
-
-// Load dashboard after page init
-setTimeout(loadDashboard, 500);
-</script>
-
-<script>
-// Mobile navbar toggle — reliable for all browsers
-document.addEventListener('DOMContentLoaded', function() {
-  var toggle = document.getElementById('navToggle');
-  var label = document.querySelector('.nav-hamburger');
-  var menu = document.querySelector('.nav-menu');
-  if (toggle && label && menu) {
-    label.addEventListener('click', function(e) {
-      e.preventDefault();
-      toggle.checked = !toggle.checked;
-      // Also toggle a class for browsers where :checked ~ selector is flaky
-      if (toggle.checked) {
-        menu.style.display = 'flex';
-      } else {
-        menu.style.display = '';
-      }
-    });
-    // Also close menu when a link is clicked
-    menu.querySelectorAll('.nav-link').forEach(function(link) {
-      link.addEventListener('click', function() {
-        toggle.checked = false;
-        menu.style.display = '';
-      });
-    });
-  }
-});
-</script>
-
-<script>
-// Register Service Worker for PWA
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').then(reg => {
-    console.log('✅ SW registered');
-  }).catch(err => {
-    console.log('SW registration failed:', err);
-  });
-}
-</script>
-        <!-- Footer -->
-        <div style="margin-top: 30px; padding: 15px; text-align: center; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 13px;">
-            <a href="/" style="color: var(--primary); text-decoration: none; margin: 0 10px;">🏠 મુખ્ય</a>
-            <a href="/about" style="color: var(--primary); text-decoration: none; margin: 0 10px;">ℹ️ વિશે</a>
-            <a href="/blog" style="color: var(--primary); text-decoration: none; margin: 0 10px;">📝 બ્લોગ</a>
-            <a href="/research" style="color: var(--primary); text-decoration: none; margin: 0 10px;">🔬 સંશોધન</a>
-            <a href="javascript:openFeatureView('dashboard')" style="color: var(--primary); text-decoration: none; margin: 0 10px;">📊 ડેશબોર્ડ</a>
+    <nav class="navbar">
+        <a href="./index.html" class="brand">⚛️ Quantum AI IDE</a>
+        <input type="checkbox" id="navToggle" class="nav-toggle">
+        <label for="navToggle" class="nav-hamburger"></label>
+        <div class="nav-menu">
+            <a href="./index.html" class="nav-link active">🏠 Home</a>
+            <a href="./playground.html" class="nav-link">🧪 Playground</a>
+            <a href="./quantum-ai-ide.html" class="nav-link">🤖 AI Assistant</a>
+            <a href="./quantum-ai-ide.html" class="nav-link">🔲 Circuits</a>
+            <a href="./quantum-ai-ide.html" class="nav-link">💻 Code Editor</a>
+            <a href="./settings.html" class="nav-link">⚙️ Settings</a>
         </div>
-
+    </nav>
+    
+    <div class="container">
+        <div class="hero">
+            <h1>Quantum AI IDE</h1>
+            <p>A futuristic quantum computing development environment with AI-powered assistance. Write, simulate, and visualize quantum algorithms with NovaLang.</p>
+        </div>
+        
+        <div class="btn-grid">
+            <a href="./playground.html" class="btn-primary">🧪 Open Playground</a>
+            <a href="./quantum-ai-ide.html" class="btn-primary">🤖 AI Assistant</a>
+            <a href="./quantum-ai-ide.html" class="btn-primary">🔲 Quantum Circuits</a>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <a href="./index.html">🏠 Home</a>
+        <a href="./about/index.html">ℹ️ About</a>
+        <a href="./blog/index.html">📝 Blog</a>
+        <a href="./research.html">🔬 Research</a>
+        <a href="javascript:openFeatureView('dashboard')">📊 Dashboard</a>
+    </div>
+    
+    <script>
+    function openFeatureView(feature) {
+        // Dashboard functionality - can be extended
+        alert('Dashboard feature coming soon!');
+    }
+    
+    // Mobile navbar toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        var toggle = document.getElementById('navToggle');
+        var menu = document.querySelector('.nav-menu');
+        var hamburger = document.querySelector('.nav-hamburger');
+        if (toggle && menu && hamburger) {
+            hamburger.addEventListener('click', function(e) {
+                e.preventDefault();
+                toggle.checked = !toggle.checked;
+                menu.style.display = toggle.checked ? 'flex' : '';
+            });
+            menu.querySelectorAll('.nav-link').forEach(function(link) {
+                link.addEventListener('click', function() {
+                    toggle.checked = false;
+                    menu.style.display = '';
+                });
+            });
+        }
+    });
+    </script>
 </body>
 </html>

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="gu">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#0ff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>સેટિંગ — ટાઇમટેબલ</title>
+<title>Settings — Quantum AI IDE</title>
 <style>
 /* --- CRITICAL: navbar + base (inline) --- */
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -15,6 +15,7 @@
   --primary-hover: #3cf;
   --primary-light: rgba(0,255,255,0.1);
   --bg: #0a0f1a;
+  --bg-gradient: linear-gradient(135deg, #0a0f1a, #0a1a2a);
   --card: rgba(10,20,35,0.85);
   --text: #cfddee;
   --text-muted: #6a8aaa;
@@ -49,7 +50,7 @@ body {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
-.nav-hamburger:hover { background: var(--bg-gradient); }
+.nav-hamburger:hover { background: var(--primary-light); }
 .nav-hamburger::before { content: '\2630'; }
 .nav-toggle:checked ~ .nav-hamburger {
   background: var(--primary-light);
@@ -108,346 +109,174 @@ body {
 }
 @media (max-width: 480px) {
   .navbar .brand { font-size: 14px; }
-  .navbar .brand span { display: none; }
 }
-@media (max-width: 360px) {
-  .navbar .brand { font-size: 13px; }
+/* --- Settings specific --- */
+.container { max-width: 700px; margin: 0 auto; padding: 20px; }
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
 }
-/* --- end critical --- */
-</style>
-<link rel="stylesheet" href="/css/style.css?v=3">
-<style>
-.day-row {
-display: flex; align-items: center; gap: 8px;
-padding: 10px 12px; background: var(--bg-gradient);
-border-radius: 8px; margin-bottom: 6px; flex-wrap: wrap;
+.card-header {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
 }
-.day-row .dname { font-weight: 600; font-size: 14px; min-width: 80px; }
-.day-row input { width: 60px; text-align: center; padding: 5px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
-.day-row .total { font-size: 13px; color: var(--text-muted); min-width: 60px; text-align: center; }
-.copy-btn-day { padding: 4px 10px; font-size: 11px; border-radius: 6px; border: 1px solid var(--border); background: transparent; cursor: pointer; }
-.copy-btn-day:hover { background: var(--primary); color: #000; border-color: var(--primary); }
+.form-group { margin-bottom: 12px; }
+.form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(0,0,0,0.3);
+  color: var(--text);
+  font-size: 14px;
+}
+.btn-group { display: flex; gap: 10px; margin-top: 20px; }
+.btn { padding: 10px 16px; border-radius: 8px; border: none; font-size: 14px; cursor: pointer; }
+.btn-primary { background: var(--primary); color: #000; font-weight: 600; }
+.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+#toast {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  background: rgba(10,20,35,0.95);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 20px;
+  color: var(--text); font-size: 14px;
+  opacity: 0; transition: opacity 0.3s;
+  z-index: 1000;
+}
+#toast.show { opacity: 1; }
+.footer {
+  margin-top: 40px; padding: 20px; text-align: center;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted); font-size: 13px;
+}
+.footer a { color: var(--primary); text-decoration: none; margin: 0 10px; }
 </style>
 </head>
 <body>
 <nav class="navbar">
 <input type="checkbox" id="navToggle" class="nav-toggle">
-<a href="/" class="brand">🏫 <span>સમયપત્રક</span></a>
+<a href="./index.html" class="brand">⚛️ Quantum AI IDE</a>
 <label for="navToggle" class="nav-hamburger"></label>
 <div class="nav-menu">
-<a href="/" class="nav-link">🏠 હોમ</a>
-<a href="/classes" class="nav-link">🏫 ક્લાસ</a>
-<a href="/subjects" class="nav-link">📚 વિષયો</a>
-<a href="/teachers" class="nav-link">👨‍🏫 શિક્ષકો</a>
-<a href="/timetable" class="nav-link">📅 ટાઇમટેબલ</a>
-<a href="/playground" class="nav-link">🧪 પ્લેગ્રાઉન્ડ</a>
-<a href="/settings" class="nav-link active" aria-current="page">⚙️ સેટિંગ</a>
+<a href="./index.html" class="nav-link">🏠 Home</a>
+<a href="./playground.html" class="nav-link">🧪 Playground</a>
+<a href="./quantum-ai-ide.html" class="nav-link">🤖 AI Assistant</a>
+<a href="./quantum-ai-ide.html" class="nav-link">🔲 Circuits</a>
+<a href="./quantum-ai-ide.html" class="nav-link">💻 Editor</a>
+<a href="./settings.html" class="nav-link active" aria-current="page">⚙️ Settings</a>
 </div>
 </nav>
+
 <div class="container">
-<!-- School Info -->
-<div class="card">
-<div class="card-header">🏫 શાળા માહિતી</div>
-<div class="form-group">
-<label>સ્કૂલનું નામ</label>
-<input type="text" id="schoolName" placeholder="દા.ત. શ્રી અદિત્યાણા હાઈસ્કૂલ">
+  <div class="card">
+    <div class="card-header">🎨 Theme Settings</div>
+    <div class="form-group">
+      <label>Accent Color</label>
+      <input type="color" id="themeColor" value="#0ff" style="height: 44px; cursor: pointer;">
+    </div>
+    <div class="form-group">
+      <label>Language</label>
+      <select id="language">
+        <option value="en">English</option>
+        <option value="gu">Gujarati</option>
+        <option value="hi">Hindi</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">🔌 API Provider Settings</div>
+    <div class="form-group">
+      <label>Default Quantum Provider</label>
+      <select id="providerSelect">
+        <option value="local">Local Simulator</option>
+        <option value="ibm">IBM Quantum</option>
+        <option value="simulator">Quantum Simulator</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">💾 Auto-Save</div>
+    <div class="form-group">
+      <label>
+        <input type="checkbox" id="autoSave" checked> Enable Auto-Save
+      </label>
+    </div>
+  </div>
+
+  <div class="btn-group">
+    <button class="btn btn-primary" onclick="saveSettings()">💾 Save Settings</button>
+    <button class="btn btn-outline" onclick="resetSettings()">🔄 Reset</button>
+  </div>
 </div>
-<div class="form-row">
-<div class="form-group"><label>શરૂઆતનો સમય</label><input type="time" id="startTime"></div>
-<div class="form-group"><label>સમાપ્તિનો સમય</label><input type="time" id="endTime"></div>
-</div>
-</div>
-<!-- Period Duration -->
-<div class="card">
-<div class="card-header">⏱️ પિરિયડનો સમય</div>
-<div class="form-row">
-<div class="form-group"><label>રિસેસ પહેલાંનો પિરિયડ (મિનિટ)</label><input type="number" id="periodDurationBefore" min="20" max="60" placeholder="દા.ત. 40"></div>
-<div class="form-group"><label>રિસેસ પછીનો પિરિયડ (મિનિટ)</label><input type="number" id="periodDurationAfter" min="20" max="60" placeholder="દા.ત. 35"></div>
-</div>
-<div class="form-row">
-<div class="form-group"><label>રિસેસ અવધિ (મિનિટ)</label><input type="number" id="recessDuration" min="5" max="60" placeholder="દા.ત. 20"></div>
-</div>
-</div>
-<!-- Day-wise Period Counts -->
-<div class="card">
-<div class="card-header">📋 દરેક વાર માટે પિરિયડની સંખ્યા
-<button class="btn btn-outline btn-sm" onclick="copyMonToFri()" style="margin-left:auto">📋 સોમ-શુક્ર કૉપિ કરો</button>
-</div>
-<p style="font-size:13px;color:var(--text-muted);margin-bottom:10px">
-દરેક વાર માટે રિસેસ પહેલાં અને પછીના પિરિયડની સંખ્યા સેટ કરો.<br>
-<strong>📋 "કૉપિ કરો" બટનથી</strong> એક વારના આંકડા બીજી વારમાં નકલ કરી શકો છો.
-</p>
-<div id="dayConfigList"></div>
-</div>
-<!-- Teacher Load Settings — Single Global Setting -->
-<div class="card">
-<div class="card-header">👨‍🏫 શિક્ષક લોડ સેટિંગ</div>
-<p style="font-size:13px;color:var(--text-muted);margin-bottom:10px">
-દરેક શિક્ષકે એક અઠવાડિયામાં કેટલા <strong>કલાક</strong> ભણાવવાના છે?<br>
-આ એક આંકડો બધા શિક્ષકો માટે સરખો લાગુ થશે અને ટાઇમટેબલ જનરેટ કરતી વખતે આ મુજબ લોડ બેલેન્સ થશે.
-</p>
-<div class="form-group">
-<label>દરેક શિક્ષકે અઠવાડિયામાં કુલ <strong>કલાક</strong></label>
-<div style="display:flex;align-items:center;gap:10px">
-<input type="number" id="teacherHoursPerWeek" min="0" max="60"
-placeholder="દા.ત. 25" style="width:140px;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:16px;min-height:44px">
-<span style="color:var(--text-muted)">કલાક/અઠવાડિયું</span>
-</div>
-</div>
-</div>
-<!-- Prayer & Free Periods -->
-<div class="card">
-<div class="card-header">🕌 પ્રાર્થના</div>
-<div class="form-group">
-<label>પ્રાર્થના નો સમય (મિનિટમાં)</label>
-<div style="display:flex;align-items:center;gap:10px">
-<input type="number" id="prayerDuration" min="0" max="60"
-placeholder="દા.ત. 15" style="width:140px;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:16px;min-height:44px">
-<span style="color:var(--text-muted)">મિનિટ/દિવસ</span>
-</div>
-<p style="font-size:12px;color:var(--text-muted);margin-top:6px">દરરોજ 1 પ્રાર્થના — દરેક શિક્ષકના કલાકોમાં ઉમેરાશે (5 દિવસ × N મિનિટ)</p>
-</div>
-</div>
-<!-- Theme & Save -->
-<div class="card">
-<div class="card-header">🎨 થીમ</div>
-<div class="form-group">
-<label>થીમ રંગ</label>
-<input type="color" id="themeColor" style="width:100%;height:44px;border:none;cursor:pointer">
-</div>
-<div class="btn-group">
-<button class="btn btn-primary btn-lg" onclick="saveAll()" style="flex:1">💾 બધું સેવ કરો</button>
-<button class="btn btn-outline btn-lg" onclick="resetData()" style="color:#ef4444">🔄 રીસેટ</button>
-</div>
-</div>
-</div>
+
 <div id="toast"></div>
-<script src="/js/api.js"></script>
-<script src="/js/chat.js?v=1"></script>
-<script>
-const DAY_NAMES = ['સોમવાર', 'મંગળવાર', 'બુધવાર', 'ગુરુવાર', 'શુક્રવાર', 'શનિવાર'];
-let dayConfigs = [];  // [{day_index, periods_before, periods_after}, ...]
-async function init() {
-try {
-const s = await API.getSettings();
-document.getElementById('schoolName').value = s.school_name || '';
-document.getElementById('startTime').value = s.start_time || '';
-document.getElementById('endTime').value = s.end_time || '';
-document.getElementById('periodDurationBefore').value = s.period_duration_before || '';
-document.getElementById('periodDurationAfter').value = s.period_duration_after || '';
-document.getElementById('recessDuration').value = s.recess_duration || '';
-document.getElementById('themeColor').value = s.theme_color || '#0ff';
-document.getElementById('teacherHoursPerWeek').value = s.required_hours_per_week || '';
-document.getElementById('prayerDuration').value = s.prayer_duration || '';
-
-} catch(e) {
-showToast('⚠️ સર્વર કનેક્શન એરર', 'error');
-}
-await loadDayConfig();
-}
-async function loadDayConfig() {
-try {
-const res = await API.getDayConfig();
-dayConfigs = res.configs || [];
-} catch(e) {
-dayConfigs = [];
-}
-renderDayConfig();
-}
-function renderDayConfig() {
-const el = document.getElementById('dayConfigList');
-if (dayConfigs.length === 0) {
-// Create default empty configs so user can edit
-dayConfigs = [
-  {day_index:0,periods_before:4,periods_after:3},
-  {day_index:1,periods_before:4,periods_after:3},
-  {day_index:2,periods_before:4,periods_after:3},
-  {day_index:3,periods_before:4,periods_after:3},
-  {day_index:4,periods_before:4,periods_after:3},
-  {day_index:5,periods_before:3,periods_after:2}
-];
-}
-let html = '';
-for (const cfg of dayConfigs) {
-const di = cfg.day_index;
-const before = cfg.periods_before || 0;
-const after = cfg.periods_after || 0;
-const total = before + after;
-html += `<div class="day-row">
-<span class="dname">${DAY_NAMES[di]}</span>
-<input type="number" min="0" max="10" value="${before}"
-onchange="updateDay(${di}, 'before', this.value)"
-title="રિસેસ પહેલાંના પિરિયડ">
-<span style="font-size:12px;color:var(--text-muted)">પહેલાં</span>
-<input type="number" min="0" max="10" value="${after}"
-onchange="updateDay(${di}, 'after', this.value)"
-title="રિસેસ પછીના પિરિયડ">
-<span style="font-size:12px;color:var(--text-muted)">પછી</span>
-<span class="total">= ${total} કુલ</span>
-<button class="copy-btn-day" onclick="copyDay(${di})" title="આ વારના આંકડા બીજી વારમાં કૉપિ કરો">📋 કૉપિ કરો</button>
-</div>`;
-}
-el.innerHTML = html;
-}
-function updateDay(di, type, val) {
-const v = parseInt(val) || 0;
-const cfg = dayConfigs.find(c => c.day_index === di);
-if (cfg) {
-if (type === 'before') cfg.periods_before = v;
-else cfg.periods_after = v;
-renderDayConfig();
-}
-}
-function copyDay(fromDi) {
-const cfg = dayConfigs.find(c => c.day_index === fromDi);
-if (!cfg) return;
-const days = prompt(
-'આ વારના આંકડા કઈ વારમાં કૉપિ કરવા?\n' +
-'અલગ અલગ લખવા માટે કોમા (,) વાપરો.\n' +
-'ઉદા. 0,1,2,3,4 (સોમ-શુક્ર) અથવા 5 (શનિવાર)\n' +
-`\n${DAY_NAMES[fromDi]} → ?`,
-'0,1,2,3,4'
-);
-if (!days) return;
-const targets = days.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n) && n >= 0 && n <= 5);
-for (const di of targets) {
-if (di === fromDi) continue;
-const target = dayConfigs.find(c => c.day_index === di);
-if (target) {
-target.periods_before = cfg.periods_before;
-target.periods_after = cfg.periods_after;
-}
-}
-renderDayConfig();
-const validTargets = targets.filter(t => t !== fromDi);
-if (validTargets.length > 0) {
-showToast(`✅ ${DAY_NAMES[fromDi]} → ${validTargets.map(t => DAY_NAMES[t]).join(', ')} કૉપિ થયું`, 'success');
-} else {
-showToast('ℹ️ કૉપિ કરવા માટે કોઈ માન્ય વાર નથી (0-5 નંબર નાખો)', 'info');
-}
-}
-function copyMonToFri() {
-// Copy Monday's config to Tue-Fri
-const mon = dayConfigs.find(c => c.day_index === 0);
-if (!mon) return;
-for (let di = 1; di < 5; di++) {
-const target = dayConfigs.find(c => c.day_index === di);
-if (target) {
-target.periods_before = mon.periods_before;
-target.periods_after = mon.periods_after;
-}
-}
-renderDayConfig();
-showToast('✅ સોમવાર → મંગળ, બુધ, ગુરુ, શુક્ર કૉપિ થયું', 'success');
-}
-async function saveAll() {
-// Save settings
-const settingsData = {
-school_name: document.getElementById('schoolName').value,
-start_time: document.getElementById('startTime').value,
-end_time: document.getElementById('endTime').value,
-period_duration_before: parseInt(document.getElementById('periodDurationBefore').value) || 0,
-period_duration_after: parseInt(document.getElementById('periodDurationAfter').value) || 0,
-recess_duration: parseInt(document.getElementById('recessDuration').value) || 0,
-theme_color: document.getElementById('themeColor').value,
-required_hours_per_week: parseInt(document.getElementById('teacherHoursPerWeek').value) || 0,
-prayer_duration: parseInt(document.getElementById('prayerDuration').value) || 0,
-
-};
-try {
-await API.saveSettings(settingsData);
-await API.saveDayConfig(dayConfigs);
-showToast('💾 બધું સેવ થયું!', 'success');
-} catch(e) {
-showToast('⚠️ સેવ કરવામાં એરર: ' + e.message, 'error');
-}
-}
-async function resetData() {
-if (!confirm('⚠️ શું બધો ડેટા રીસેટ કરવા છે? આ પાછું નહિ મળે!')) return;
-if (!confirm('ખરેખર? બધા ક્લાસ, વિષયો, શિક્ષકો અને ટાઇમટેબલ ડિલીટ થઈ જશે!')) return;
-try {
-// Delete all classes
-const clsRes = await API.getClasses();
-for (const cls of clsRes.classes || []) {
-await API.deleteClass(cls);
-}
-// Delete all subjects
-const subjRes = await API.getAllSubjects();
-for (const subj of subjRes.subjects || []) {
-await API.deleteSubject(subj);
-}
-// Delete all teachers
-const tRes = await API.getTeachers();
-for (const t of tRes.teachers || []) {
-await API.deleteTeacher(t.name);
-}
-// Reset settings to empty
-await API.saveSettings({
-school_name: '',
-start_time: '', end_time: '',
-period_duration_before: 0, period_duration_after: 0,
-recess_duration: 0,
-theme_color: '#0ff',
-required_hours_per_week: 0,
-prayer_duration: 0,
-
-});
-// Reset day config to defaults
-const defaults = [];
-for (let di = 0; di < 6; di++) {
-defaults.push({
-day_index: di,
-periods_before: di < 5 ? 4 : 3,
-periods_after: di < 5 ? 3 : 2
-});
-}
-await API.saveDayConfig(defaults);
-showToast('🔄 બધું રીસેટ થઈ ગયું!', 'info');
-init();
-} catch(e) {
-showToast('⚠️ એરર: ' + e.message, 'error');
-}
-}
-init();
-</script>
 
 <script>
-// Mobile navbar toggle — reliable for all browsers
-document.addEventListener('DOMContentLoaded', function() {
-  var toggle = document.getElementById('navToggle');
-  var label = document.querySelector('.nav-hamburger');
-  var menu = document.querySelector('.nav-menu');
+function saveSettings() {
+  const settings = {
+    themeColor: document.getElementById('themeColor').value,
+    language: document.getElementById('language').value,
+    provider: document.getElementById('providerSelect').value,
+    autoSave: document.getElementById('autoSave').checked
+  };
+  localStorage.setItem('quantumSettings', JSON.stringify(settings));
+  showToast('✅ Settings saved!', 'success');
+}
+
+function resetSettings() {
+  localStorage.removeItem('quantumSettings');
+  document.getElementById('themeColor').value = '#0ff';
+  document.getElementById('language').value = 'en';
+  document.getElementById('providerSelect').value = 'local';
+  document.getElementById('autoSave').checked = true;
+  showToast('🔄 Settings reset!', 'info');
+}
+
+function showToast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show';
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// Load settings on init
+document.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('quantumSettings');
+  if (saved) {
+    const settings = JSON.parse(saved);
+    document.getElementById('themeColor').value = settings.themeColor || '#0ff';
+    document.getElementById('language').value = settings.language || 'en';
+    document.getElementById('providerSelect').value = settings.provider || 'local';
+    document.getElementById('autoSave').checked = settings.autoSave !== false;
+  }
+  // Mobile navbar toggle
+  const toggle = document.getElementById('navToggle');
+  const label = document.querySelector('.nav-hamburger');
+  const menu = document.querySelector('.nav-menu');
   if (toggle && label && menu) {
     label.addEventListener('click', function(e) {
       e.preventDefault();
       toggle.checked = !toggle.checked;
-      // Also toggle a class for browsers where :checked ~ selector is flaky
-      if (toggle.checked) {
-        menu.style.display = 'flex';
-      } else {
-        menu.style.display = '';
-      }
+      menu.style.display = toggle.checked ? 'flex' : '';
     });
-    // Also close menu when a link is clicked
-    menu.querySelectorAll('.nav-link').forEach(function(link) {
-      link.addEventListener('click', function() {
+    menu.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
         toggle.checked = false;
         menu.style.display = '';
       });
     });
   }
 });
-</script>
-
-<script>
-// Register Service Worker for PWA
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').then(reg => {
-    console.log('✅ SW registered');
-  }).catch(err => {
-    console.log('SW registration failed:', err);
-  });
-}
 </script>
 </body>
 </html>

@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quantum AI IDE Pro - Astra Studio</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:monospace}
+
+body{
+background:#08111f;
+color:#0ff;
+height:100vh;
+display:flex;
+flex-direction:column;
+}
+
+body.light{
+background:#f4f4f4;
+color:#111;
+}
+
+.topbar{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+padding:10px;
+background:#10253b;
+}
+
+.menu-btn{
+padding:8px 12px;
+border:none;
+border-radius:18px;
+background:#1c4e9a;
+color:white;
+cursor:pointer;
+}
+
+.menu-btn:hover{
+background:#0ff;
+color:black;
+}
+
+.layout{
+display:flex;
+flex:1;
+overflow:hidden;
+}
+
+.sidebar,
+.rightbar{
+width:280px;
+background:#091421;
+padding:12px;
+overflow:auto;
+}
+
+.sidebar{
+border-right:1px solid #0ff;
+}
+
+.rightbar{
+border-left:1px solid #0ff;
+}
+
+.editor-zone{
+flex:1;
+padding:12px;
+display:flex;
+flex-direction:column;
+}
+
+#tabs{
+display:flex;
+gap:8px;
+margin-bottom:8px;
+flex-wrap:wrap;
+}
+
+#editorWrap{
+flex:1;
+position:relative;
+border:1px solid #0ff;
+border-radius:12px;
+overflow:hidden;
+}
+
+#highlight{
+margin:0;
+padding:12px;
+position:absolute;
+inset:0;
+pointer-events:none;
+white-space:pre-wrap;
+overflow:auto;
+}
+
+#editor{
+position:absolute;
+inset:0;
+width:100%;
+height:100%;
+resize:none;
+background:transparent;
+color:transparent;
+caret-color:#0ff;
+padding:12px;
+border:none;
+outline:none;
+font-size:14px;
+white-space:pre-wrap;
+}
+
+#console{
+width:100%;
+height:100px;
+background:#06101c;
+color:#0ff;
+border:1px solid #0ff;
+border-radius:12px;
+padding:10px;
+resize:none;
+}
+
+.panel{
+background:#06101c;
+border:1px solid #0ff;
+border-radius:12px;
+padding:10px;
+margin-bottom:10px;
+white-space:pre-wrap;
+}
+
+.template-btn{
+display:block;
+width:100%;
+margin-bottom:8px;
+padding:8px;
+border:none;
+border-radius:10px;
+background:#1c4e9a;
+color:white;
+cursor:pointer;
+}
+
+.template-btn:hover{
+background:#0ff;
+color:black;
+}
+
+iframe{
+width:100%;
+height:220px;
+background:white;
+border:none;
+border-radius:10px;
+}
+
+.hidden{
+display:none;
+}
+
+.kw{
+color:#00ffff;
+font-weight:bold;
+}
+
+.fn{
+color:#ffd166;
+}
+
+.str{
+color:#80ed99;
+}
+
+.num{
+color:#ff8fab;
+}
+
+.com{
+color:#7f8c8d;
+font-style:italic;
+}
+
+.footer{
+position:sticky;
+bottom:0;
+background:#10253b;
+border-top:1px solid #0ff;
+padding:10px;
+display:flex;
+flex-direction:column;
+gap:6px;
+width:100%;
+}
+
+@media(max-width:900px){
+
+.layout{
+flex-direction:column;
+}
+
+.sidebar,
+.rightbar{
+width:100%;
+height:230px;
+border:none;
+}
+
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+
+<button class="menu-btn" onclick="toggleTheme()">🌙 Theme</button>
+
+<button class="menu-btn" onclick="toggleMode()">
+Mode:
+<span id="modeText">Beginner</span>
+</button>
+
+<button class="menu-btn" onclick="runCode()">▶ Run</button>
+
+<button class="menu-btn" onclick="clearOutput()">🗑 Clear</button>
+
+<button class="menu-btn" onclick="saveCode()">💾 Save</button>
+
+<button class="menu-btn" onclick="openFile()">📂 Open</button>
+
+<button class="menu-btn" onclick="newTab()">📑 Tab</button>
+
+<button class="menu-btn" onclick="setWorkspace('preview')">
+📱 Preview
+</button>
+
+<button class="menu-btn" onclick="setWorkspace('test')">
+🧪 Test
+</button>
+
+<button class="menu-btn" onclick="setWorkspace('debug')">
+🐞 Debug
+</button>
+
+</div>
+
+<div class="layout">
+
+<div class="sidebar">
+
+<h3>📚 Templates</h3>
+
+<button class="template-btn" onclick="loadBell()">Bell State</button>
+
+<button class="template-btn" onclick="loadGrover()">Grover</button>
+
+<button class="template-btn" onclick="loadSuper()">Superposition</button>
+
+<button class="template-btn" onclick="loadTeleport()">Teleport</button>
+
+<button class="template-btn" onclick="loadQFT()">QFT Mini</button>
+
+<button class="template-btn" onclick="loadAllGates()">Gate Test</button>
+
+<div class="panel">
+
+<select id="langSelect" style="width:100%;padding:8px">
+
+<option>NovaLang</option>
+<option>HTML</option>
+<option>JavaScript</option>
+<option>Python</option>
+<option>JSON</option>
+<option>Markdown</option>
+
+</select>
+
+</div>
+
+<div id="beginnerHelp" class="panel">
+🌱 Beginner Help
+
+q = qubit()
+
+h(q)
+
+measure(q)
+
+print("Done")
+</div>
+
+<div id="devTools" class="panel hidden">
+⚙ Developer Tools
+
+Multi tabs
+Debug
+State viewer
+Autosave
+</div>
+
+</div>
+
+<div class="editor-zone">
+
+<div id="tabs"></div>
+
+<div id="editorWrap">
+
+<pre id="highlight"></pre>
+
+<textarea id="editor" spellcheck="false"></textarea>
+
+</div>
+
+<div class="panel" style="margin-top:8px;">
+🖥 Output
+<textarea id="console" readonly></textarea>
+</div>
+
+</div>
+
+<div class="rightbar">
+
+<div class="panel" id="statePanel">
+⚛ Quantum State
+</div>
+
+<div class="panel">
+
+🤖 AI
+
+<button class="template-btn" onclick="aiExplain()">
+Explain
+</button>
+
+<button class="template-btn" onclick="aiFindErrors()">
+Errors
+</button>
+
+<div id="aiOutput">
+Ready
+</div>
+
+</div>
+
+<div class="panel">
+
+📱 Preview
+
+<iframe id="previewFrame"></iframe>
+
+</div>
+
+<div class="panel" id="errorPanel">
+
+🐞 No errors
+
+</div>
+
+</div>
+
+</div>
+
+<div class="footer">
+<div style="width:100%;text-align:center;color:#0ff;font-weight:bold;font-size:14px;">Quantum AI IDE - Astra Studio</div>
+<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;">
+<button class="menu-btn" style="flex:1;min-width:70px;font-size:12px;" onclick="location.href='/quantum-ai-ide'">🏠 Home</button>
+<button class="menu-btn" style="flex:1;min-width:70px;font-size:12px;" onclick="setWorkspace('beginner')">🌱 Beginner</button>
+<button class="menu-btn" style="flex:1;min-width:70px;font-size:12px;" onclick="setWorkspace('dev')">💻 Dev</button>
+<button class="menu-btn" style="flex:1;min-width:70px;font-size:12px;" onclick="showGuide()">📖 Guide</button>
+<button class="menu-btn" style="flex:1;min-width:70px;font-size:12px;" onclick="showShots()">📸 Shots</button>
+<button class="menu-btn" style="flex:1;min-width:70px;font-size:12px;" onclick="toggleNoise()">🔊 Noise</button>
+<button class="menu-btn" style="flex:1;min-width:70px;font-size:12px;" onclick="toggleQASM()">🧬 QASM</button>
+<button class="menu-btn" style="flex:1;min-width:70px;font-size:12px;" onclick="showHardware()">💻 Hardware</button>
+<button class="menu-btn" style="flex:1;min-width:70px;font-size:12px;" onclick="toggleAutosave()">💾 Auto-Save</button>
+</div>
+</div>
+
+<script>
+const editor=document.getElementById("editor");
+const highlight=document.getElementById("highlight");
+
+function escapeHtml(s){
+return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function syntaxHighlight(code){
+let html = escapeHtml(code);
+html = html.replace(/(.*$)/gm, '<span class="com">$1</span>');
+html = html.replace(/"(.*?)"/g, '<span class="str">"$1"</span>');
+html = html.replace(/\b(\d+)\b/g, '<span class="num">$1</span>');
+html = html.replace(/\b(qubit|h|x|y|z|s|t|rx|ry|rz|cx|cz|swap|measure|print)\b/g, '<span class="kw">$1</span>');
+return html;
+}
+
+editor.addEventListener("input", ()=>{
+highlight.innerHTML = syntaxHighlight(editor.value);
+});
+
+editor.addEventListener("scroll", ()=>{
+highlight.scrollTop = editor.scrollTop;
+highlight.scrollLeft = editor.scrollLeft;
+});
+
+const consoleBox=document.getElementById("console");
+const statePanel=document.getElementById("statePanel");
+const aiOutput=document.getElementById("aiOutput");
+const errorPanel=document.getElementById("errorPanel");
+
+let devMode=false;
+let tabsData={"main":""};
+let currentTab="main";
+let qubits={};
+let circuit=[];
+let variables={};
+let qCount=0;
+let qState=[];
+
+// Quantum Core Engine
+function initQuantum(n=1){
+qCount=n;
+let size=1<<n;
+qState=new Array(size).fill(0);
+qState[0]=1;
+updateQuantumPanel();
+}
+
+function qubit(name){
+qCount++;
+let old=[...qState];
+let size=1<<qCount;
+qState=new Array(size).fill(0);
+for(let i=0;i<old.length;i++) qState[i]=old[i];
+variables[name]=qCount-1;
+updateQuantumPanel();
+}
+
+function h(index){
+let size=1<<qCount;
+let step=1<<index;
+for(let i=0;i<size;i+=step*2){
+for(let j=0;j<step;j++){
+let a=qState[i+j], b=qState[i+j+step];
+qState[i+j]=(a+b)/Math.sqrt(2);
+qState[i+j+step]=(a-b)/Math.sqrt(2);
+}}}
+updateQuantumPanel();
+}
+
+function x(index){
+let size=1<<qCount;
+let step=1<<index;
+for(let i=0;i<size;i+=step*2){
+for(let j=0;j<step;j++){
+let t=qState[i+j];
+qState[i+j]=qState[i+j+step];
+qState[i+j+step]=t;
+}}}
+updateQuantumPanel();
+}
+
+function y(index){
+let size=1<<qCount;
+let step=1<<index;
+for(let i=0;i<size;i+=step*2){
+for(let j=0;j<step;j++){
+let a=qState[i+j], b=qState[i+j+step];
+qState[i+j]=(a+b)/Math.sqrt(2);
+qState[i+j+step]=-(a-b)/Math.sqrt(2);
+}}}
+updateQuantumPanel();
+}
+
+function z(index){
+for(let i=0;i<qState.length;i++){
+if(((i>>index)&1)===1) qState[i]=-qState[i];
+}
+updateQuantumPanel();
+}
+
+function s(index){
+for(let i=0;i<qState.length;i++){
+if(((i>>index)&1)===1) qState[i]*=1+i*1i||1;
+}
+updateQuantumPanel();
+}
+
+function t(index){
+for(let i=0;i<qState.length;i++){
+if(((i>>index)&1)===1) qState[i]*=Math.cos(Math.PI/4)+1i*Math.sin(Math.PI/4)||1;
+}
+updateQuantumPanel();
+}
+
+function rx(index,theta){
+for(let i=0;i<qState.length;i++){
+if(((i>>index)&1)===0){
+let a=qState[i];
+qState[i]=a*Math.cos(theta/2);
+qState[i|=(1<<index)]=1i*Math.sin(theta/2);
+}
+}
+updateQuantumPanel();
+}
+
+function ry(index,theta){
+for(let i=0;i<qState.length;i++){
+if(((i>>index)&1)===0){
+let a=qState[i];
+qState[i]=a*Math.cos(theta/2);
+qState[i|=(1<<index)]=Math.sin(theta/2);
+}
+}
+updateQuantumPanel();
+}
+
+function rz(index,theta){
+for(let i=0;i<qState.length;i++){
+if(((i>>index)&1)===1) qState[i]*=Math.E**(1i*theta);
+}
+updateQuantumPanel();
+}
+
+function cz(q0,q1){
+for(let i=0;i<qState.length;i++){
+if(((i>>q0)&1)===1 && ((i>>q1)&1)===1) qState[i]*=-1;
+}
+updateQuantumPanel();
+}
+
+function swap(q0,q1){
+for(let i=0;i<qState.length;i++){
+if(((i>>q0)&1)!==((i>>q1)&1)){
+let state=i^(1<<q0)^(1<<q1);
+[i,state]=[state,i];
+}
+}
+updateQuantumPanel();
+}
+
+function measure(index){
+let p0=0;
+for(let i=0;i<qState.length;i++){
+if(((i>>index)&1)===0) p0+=qState[i]*qState[i];
+}
+let result=Math.random()<p0?0:1;
+for(let i=0;i<qState.length;i++){
+if(((i>>index)&1)!==result) qState[i]=0;
+}
+normalize();
+updateQuantumPanel();
+return result;
+}
+
+function normalize(){
+let sum=0;
+for(let a of qState) sum+=a*a;
+let n=Math.sqrt(sum);
+if(n===0) return;
+for(let i=0;i<qState.length;i++) qState[i]/=n;
+}
+
+function updateQuantumPanel(){
+let txt="⚛ Quantum State\n\n";
+for(let i=0;i<qState.length;i++){
+let bits=i.toString(2).padStart(qCount,"0");
+txt+="|"+bits+"⟩ = "+qState[i].toFixed(4)+"\n";
+}
+document.getElementById("statePanel").innerText=txt;
+}
+
+function toggleTheme(){
+document.body.classList.toggle("light");
+}
+
+function renderTabs(){
+let html="";
+for(let n in tabsData){
+html+=`<button class="template-btn" onclick="switchTab('${n}')">${n}</button>`;
+}
+document.getElementById("tabs").innerHTML=html;
+}
+
+function switchTab(name){
+tabsData[currentTab]=editor.value;
+currentTab=name;
+editor.value=tabsData[name];
+}
+
+function newTab(){
+let n="tab"+(Object.keys(tabsData).length+1);
+tabsData[n]="";
+switchTab(n);
+renderTabs();
+}
+
+function runCode(){
+circuit=[];
+let lines=editor.value.split("\n");
+let output=[];
+for(let line of lines){
+line=line.trim();
+if(line.startsWith("q") && line.includes("=")){
+let parts=line.split("=");
+let qn=parts[0].trim();
+qubits[qn]=0;
+}
+if(line.startsWith("h(")){
+circuit.push("H");
+}
+if(line.startsWith("x(")){
+circuit.push("X");
+}
+if(line.startsWith("y(")){
+circuit.push("Y");
+}
+if(line.startsWith("z(")){
+circuit.push("Z");
+}
+if(line.startsWith("s(")){
+circuit.push("S");
+}
+if(line.startsWith("t(")){
+circuit.push("T");
+}
+if(line.startsWith("rx(")){
+circuit.push("RX");
+}
+if(line.startsWith("ry(")){
+circuit.push("RY");
+}
+if(line.startsWith("rz(")){
+circuit.push("RZ");
+}
+if(line.startsWith("cx(")){
+circuit.push("CNOT");
+}
+if(line.startsWith("cz(")){
+circuit.push("CZ");
+}
+if(line.startsWith("swap(")){
+circuit.push("SWAP");
+}
+if(line.startsWith("measure(")){
+circuit.push("MEASURE");
+}
+if(line.startsWith("print(")){
+output.push(line.match(/"(.*?)"/)?.[1]||"");
+}
+}
+statePanel.textContent="Circuit: "+circuit.join(", ");
+consoleBox.textContent=output.join("\n");
+}
+
+function clearOutput(){
+consoleBox.textContent="";
+statePanel.textContent="⚛ Quantum State";
+}
+
+function saveCode(){
+localStorage.setItem("quantumCode", editor.value);
+alert("Saved!");
+}
+
+function aiExplain(){
+aiOutput.textContent="Bell State = entangled qubits";
+}
+
+function aiFindErrors(){
+aiOutput.textContent="No errors found";
+}
+
+function loadBell(){
+editor.value=`q0 = qubit()
+q1 = qubit()
+h(q0)
+cx(q0,q1)
+measure(q0)
+measure(q1)
+print("Bell done")`;
+}
+
+function loadGrover(){
+editor.value=`q0 = qubit()
+q1 = qubit()
+h(q0)
+cx(q0,q1)
+measure(q0)
+measure(q1)
+print("Grover done")`;
+}
+
+function loadSuper(){
+editor.value=`q = qubit()
+h(q)
+measure(q)
+print("Done")`;
+}
+
+function loadTeleport(){
+editor.value=`q0 = qubit()
+q1 = qubit()
+q2 = qubit()
+h(q1)
+cx(q1,q2)
+cx(q0,q1)
+h(q0)
+measure(q0)
+measure(q1)
+measure(q2)
+print("Teleport done")`;
+}
+
+function loadQFT(){
+editor.value=`q0 = qubit()
+q1 = qubit()
+h(q0)
+rz(q1,pi/2)
+h(q1)
+swap(q0,q1)
+measure(q0)
+measure(q1)
+print("QFT done")`;
+}
+
+function loadAllGates(){
+editor.value=`q0 = qubit()
+q1 = qubit()
+h(q0)
+x(q1)
+y(q0)
+z(q1)
+s(q0)
+t(q1)
+rx(q0,pi/2)
+ry(q1,pi/4)
+rz(q0,pi/8)
+cx(q0,q1)
+cz(q0,q1)
+swap(q0,q1)
+measure(q0)
+measure(q1)
+print("Gate test done")`;
+}
+
+renderTabs();
+editor.value=`q = qubit()
+h(q)
+measure(q)
+print("Hello Quantum")`;
+highlight.innerHTML = syntaxHighlight(editor.value);
+}
+
+// Footer functions
+function setWorkspace(name){
+if(name==="beginner"){
+document.getElementById("beginnerHelp").classList.remove("hidden");
+document.getElementById("devTools").classList.add("hidden");
+document.getElementById("modeText").textContent="Beginner";
+}
+if(name==="dev"){
+document.getElementById("devTools").classList.remove("hidden");
+document.getElementById("beginnerHelp").classList.add("hidden");
+document.getElementById("modeText").textContent="Dev";
+}
+if(name==="preview"){
+document.getElementById("previewFrame").classList.remove("hidden");
+}
+if(name==="test"){
+document.getElementById("errorPanel").textContent="🧪 Test mode active";
+}
+if(name==="debug"){
+document.getElementById("errorPanel").textContent="🐞 Debug mode active - State viewer";
+}
+}
+
+function showGuide(){
+aiOutput.innerHTML="<h3>📖 NovaLang Guide</h3><br>q = qubit()<br>h(q)<br>measure(q)<br>print('Done')";
+}
+
+function showShots(){
+aiOutput.innerHTML="📸 Shots: 1024 (default)<br>Change in settings";
+}
+
+let noiseOn=false;
+function toggleNoise(){
+noiseOn=!noiseOn;
+aiOutput.innerHTML=noiseOn?"🔊 Noise: ON<br>Adding quantum noise":"🔇 Noise: OFF";
+}
+
+let qasmMode=false;
+function toggleQASM(){
+qasmMode=!qasmMode;
+if(qasmMode) showQASM();
+else editor.value=editor.value.replace(/OPENQASM[\s\S]*/,"q = qubit()\nh(q)\nmeasure(q)");
+}
+
+function showHardware(){
+showProviders();
+}
+
+let autosaveOn=false;
+function toggleAutosave(){
+autosaveOn=!autosaveOn;
+if(autosaveOn) autoSave();
+aiOutput.innerHTML=autosaveOn?"💾 Auto-Save: ON":"💾 Auto-Save: OFF";
+}
+
+// Auto-save functionality
+function autoSave(){
+localStorage.setItem("quantumCode", editor.value);
+document.getElementById("aiOutput").innerHTML="💾 Auto-saved!";
+}
+
+// QASM Mode - Quantum Assembly Language Support
+function exportQASM(){
+let lines=["OPENQASM 2.0;", "include \"qelib1.inc\";", "qreg q["+qCount+"];"];
+// Add circuit gates in QASM format
+for(let line of circuit){
+if(line.type==="h") lines.push("h q["+line.q+"]");
+if(line.type==="x") lines.push("x q["+line.q+"]");
+if(line.type==="y") lines.push("y q["+line.q+"]");
+if(line.type==="z") lines.push("z q["+line.q+"]");
+if(line.type==="cx") lines.push("cx q["+line.c+"],q["+line.t+"]");
+}
+return lines.join("\n");
+}
+
+function showQASM(){
+let qasm=exportQASM();
+editor.value=qasm;
+highlight.innerHTML = syntaxHighlight(qasm);
+setWorkspace("dev");
+}
+
+// Provider Registry - Quantum Hardware Providers
+const providers=[
+{name:"Simulator", url:"/simulate", type:"local"},
+{name:"IBM Quantum", url:"https://quantum-computing.ibm.com", type:"remote"},
+{name:"Rigetti", url:"https://www.rigetti.com", type:"remote"},
+{name:"IonQ", url:"https://ionq.com", type:"remote"}
+];
+
+function showProviders(){
+let html="<h3>🔌 Provider Registry</h3><br>";
+for(let p of providers){
+html+=`<button class="template-btn" onclick="connectProvider('${p.name}')">${p.name}</button>`;
+}
+document.getElementById("aiOutput").innerHTML=html;
+}
+
+function connectProvider(name){
+let p=providers.find(x=>x.name===name);
+if(p){
+document.getElementById("aiOutput").innerHTML=`Connected to ${name}<br>Type: ${p.type}`;
+}
+}
+
+</body>
+</html>

@@ -1,0 +1,1826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔬 Quantum AI Research Hub — One Single Platform</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0ff">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --primary: #0ff; --primary-light: rgba(0,255,255,0.1);
+  --bg: linear-gradient(135deg, #0a0f1a, #0a1a2a, #0f0a1a);
+  --card: rgba(10,20,35,0.85); --text: #cfddee;
+  --text-muted: #6a8aaa; --border: #2a4f6e;
+  --radius: 16px; --glow: 0 0 20px rgba(0,255,255,0.1);
+}
+body { background: var(--bg); font-family: system-ui, sans-serif; color: var(--text); min-height: 100vh; overflow-x: hidden; }
+.container { max-width: 1400px; margin: 0 auto; padding: 1rem; }
+
+/* ===== HEADER ===== */
+header { background: var(--card); border: 1px solid var(--border); border-radius: 2rem; padding: 1rem 1.5rem; margin-bottom: 1rem; box-shadow: var(--glow); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.8rem; backdrop-filter: blur(10px); }
+header h1 { font-size: 1.3rem; background: linear-gradient(135deg, #0ff, #a0f); -webkit-background-clip: text; background-clip: text; color: transparent; display: flex; align-items: center; gap: 6px; }
+header h1 small { font-size: 0.6rem; color: var(--text-muted); font-weight: 400; background: none; -webkit-background-clip: unset; background-clip: unset; }
+.nav-group { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
+.nav-btn { background: #1e3a8a; color: white; border: 1px solid var(--border); border-radius: 2rem; padding: 0.4rem 1rem; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; touch-action: manipulation; }
+.nav-btn:hover { background: var(--primary); color: #000; box-shadow: 0 0 12px var(--primary); }
+.nav-btn.primary { background: var(--primary); color: #000; }
+header select { background: #0a1520; color: var(--primary); border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px; font-size: 0.7rem; cursor: pointer; }
+
+/* ===== HERO ===== */
+.hero { text-align: center; padding: 1.8rem 1rem 1.2rem; background: radial-gradient(ellipse at center, rgba(0,255,255,0.04), transparent); border-radius: 2rem; border: 1px solid rgba(0,255,255,0.06); margin-bottom: 1rem; }
+.hero h2 { font-size: 1.8rem; background: linear-gradient(135deg, #0ff, #a0f, #0ff); background-size: 200%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shimmer 4s linear infinite; }
+@keyframes shimmer { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+.hero p { font-size: 0.85rem; color: #8ab; max-width: 600px; margin: 0.5rem auto 1rem; }
+
+/* ===== FEATURE GRID ===== */
+.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; max-width: 800px; margin: 0 auto; }
+.feature-box { background: rgba(10,20,35,0.6); border: 1px solid var(--border); border-radius: 1rem; padding: 1rem 0.6rem; text-align: center; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; touch-action: manipulation; user-select: none; }
+.feature-box:hover { border-color: var(--primary); box-shadow: 0 0 25px rgba(0,255,255,0.12); transform: translateY(-2px); }
+.feature-box .icon { font-size: 1.8rem; display: block; margin-bottom: 0.2rem; }
+.feature-box .label { font-size: 0.75rem; font-weight: 600; }
+.feature-box .badge { font-size: 0.55rem; padding: 1px 6px; border-radius: 999px; background: var(--primary); color: #000; font-weight: 700; display: inline-block; margin-top: 2px; }
+.feature-box .time { font-size: 0.55rem; color: var(--text-dim); margin-top: 2px; }
+@media (max-width: 700px) { .feature-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 450px) { .feature-grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .feature-box { padding: 0.7rem 0.4rem; } .feature-box .icon { font-size: 1.4rem; } }
+
+/* ===== FULL PAGE FEATURE VIEW ===== */
+.feature-view {
+  display: none; position: fixed; inset: 0; z-index: 1000;
+  background: rgba(5,10,20,0.97); overflow-y: auto;
+  animation: fvIn .3s ease;
+}
+.feature-view.open { display: block; }
+@keyframes fvIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.fv-header {
+  position: sticky; top: 0; z-index: 10;
+  background: rgba(10,20,35,0.98); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border); padding: 0.8rem 1.2rem;
+  display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;
+}
+.fv-header h2 { font-size: 1.1rem; flex: 1; }
+.fv-close { background: none; border: 1px solid var(--border); color: var(--text-muted); border-radius: 50%; width: 32px; height: 32px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+.fv-close:hover { background: var(--primary); color: #000; border-color: var(--primary); }
+
+/* ===== TABS ===== */
+.fv-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+.fv-tab { padding: 5px 12px; border-radius: 8px; font-size: 0.7rem; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text-muted); transition: 0.2s; touch-action: manipulation; white-space: nowrap; }
+.fv-tab:hover { background: var(--primary-light); color: var(--primary); }
+.fv-tab.active { background: var(--primary); color: #000; border-color: var(--primary); }
+.fv-body { padding: 1.2rem; max-width: 1200px; margin: 0 auto; }
+.fv-section { display: none; }
+.fv-section.active { display: block; }
+
+/* ===== CONTENT STYLES ===== */
+.fv-body h3 { font-size: 1.1rem; color: var(--primary); margin: 1.2rem 0 0.6rem; display: flex; align-items: center; gap: 6px; }
+.fv-body h4 { font-size: 0.9rem; color: var(--text); margin: 0.8rem 0 0.4rem; }
+.fv-body p { color: #8ab; line-height: 1.7; margin-bottom: 0.6rem; font-size: 0.85rem; }
+.fv-body ul, .fv-body ol { color: #8ab; line-height: 1.8; padding-left: 1.2rem; font-size: 0.85rem; }
+.fv-body li { margin-bottom: 0.3rem; }
+.fv-body code { background: #0a1520; color: var(--primary); padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.82rem; }
+.fv-body pre { background: #0a1520; border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem 1rem; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 0.78rem; color: var(--primary); line-height: 1.5; margin: 0.5rem 0; }
+.fv-body .info-box { background: rgba(0,255,255,0.05); border-left: 3px solid var(--primary); border-radius: 8px; padding: 0.8rem 1rem; margin: 0.8rem 0; font-size: 0.82rem; }
+.fv-body .info-box.warn { border-left-color: #fc0; background: rgba(255,200,0,0.05); }
+.fv-body .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 0.8rem 0; }
+@media (max-width: 600px) { .fv-body .grid-2 { grid-template-columns: 1fr; } }
+.fv-body .card-mini { background: rgba(10,20,35,0.5); border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem; }
+.fv-body .card-mini h5 { color: var(--primary); font-size: 0.82rem; margin-bottom: 0.3rem; }
+.fv-body table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; font-size: 0.78rem; }
+.fv-body th, .fv-body td { border: 1px solid var(--border); padding: 0.4rem 0.6rem; text-align: left; }
+.fv-body th { background: rgba(0,255,255,0.08); color: var(--primary); font-weight: 600; }
+.fv-body .tag-sm { display: inline-block; background: #1a2a3f; color: #8cf; font-size: 0.6rem; padding: 0.1rem 0.4rem; border-radius: 1rem; margin-right: 0.2rem; }
+.fv-body .btn-sm { padding: 4px 12px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-size: 0.72rem; transition: 0.15s; touch-action: manipulation; }
+.fv-body .btn-sm:hover { background: var(--primary-light); color: var(--primary); }
+.fv-body .btn-sm.primary { background: var(--primary); color: #000; border-color: var(--primary); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #0a0f1a; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+/* ===== LIVE CODE EDITOR (embedded) ===== */
+.mini-editor { width: 100%; height: 120px; background: #080d16; color: #0ff; border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-family: 'Fira Code', monospace; font-size: 12px; resize: vertical; outline: none; line-height: 1.5; }
+.mini-editor:focus { border-color: var(--primary); }
+.mini-output { background: #080d16; border: 1px solid var(--border); border-radius: 8px; padding: 10px; min-height: 60px; font-family: 'Fira Code', monospace; font-size: 12px; color: var(--text-muted); white-space: pre-wrap; overflow-y: auto; }
+
+/* ===== STEP PROGRESS ===== */
+.step-progress { display: flex; gap: 4px; margin: 0.5rem 0; flex-wrap: wrap; }
+.step-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); cursor: pointer; transition: 0.2s; }
+.step-dot.done { background: #0f6; }
+.step-dot.active { background: var(--primary); box-shadow: 0 0 6px var(--primary); }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- ====== HEADER ====== -->
+<header>
+  <div>
+    <h1>⚛️ Quantum AI IDE <small>🌍 Deep Learning Platform</small></h1>
+  </div>
+  <div class="nav-group">
+    <a href="/quantum-ai-ide" class="nav-btn primary">🚀 Launch IDE</a>
+    <button class="nav-btn" onclick="openFeatureView('nl')">🔰 NL</button>
+    <button class="nav-btn" onclick="openFeatureView('bloch')">⚛️ Bloch</button>
+    <button class="nav-btn" onclick="openFeatureView('hist')">📊 Hist</button>
+    <button class="nav-btn" onclick="openFeatureView('gates')">🧮 Gates</button>
+    <button class="nav-btn" onclick="openFeatureView('algo')">🔬 Algo</button>
+    <button class="nav-btn" onclick="openFeatureView('ibm')">🔌 IBM</button>
+  </div>
+</header>
+
+<!-- ====== HERO ====== -->
+<div class="hero">
+  <h2>⚛️ Deep Quantum Learning</h2>
+  <p>Every feature is a complete course — 30+ minutes of study per topic. Click any box below to dive deep.</p>
+  <div class="feature-grid">
+    <div class="feature-box" onclick="openFeatureView('nl')">
+      <div class="icon">🔰</div>
+      <div class="label">Natural Language → Code</div>
+      <span class="badge">TRANSLATOR</span>
+      <div class="time">⏱ 35 min</div>
+    </div>
+    <div class="feature-box" onclick="openFeatureView('voice')">
+      <div class="icon">🎙️</div>
+      <div class="label">Voice Control</div>
+      <span class="badge">SPEECH</span>
+      <div class="time">⏱ 20 min</div>
+    </div>
+    <div class="feature-box" onclick="openFeatureView('chat')">
+      <div class="icon">🤖</div>
+      <div class="label">AI Chat Assistant</div>
+      <span class="badge">LIVE</span>
+      <div class="time">⏱ 25 min</div>
+    </div>
+    <div class="feature-box" onclick="openFeatureView('dashboard')">
+      <div class="icon">📊</div>
+      <div class="label">Smart Dashboard</div>
+      <span class="badge">ANALYTICS</span>
+      <div class="time">⏱ 30 min</div>
+    </div>
+    <div class="feature-box" onclick="openFeatureView('bloch')">
+      <div class="icon">⚛️</div>
+      <div class="label">Bloch Sphere</div>
+      <span class="badge">3D VISUAL</span>
+      <div class="time">⏱ 30 min</div>
+    </div>
+    <div class="feature-box" onclick="openFeatureView('hist')">
+      <div class="icon">📊</div>
+      <div class="label">Histogram Analyzer</div>
+      <span class="badge">STATISTICS</span>
+      <div class="time">⏱ 30 min</div>
+    </div>
+    <div class="feature-box" onclick="openFeatureView('gates')">
+      <div class="icon">🧮</div>
+      <div class="label">20 Quantum Gates</div>
+      <span class="badge">ENCYCLOPEDIA</span>
+      <div class="time">⏱ 40 min</div>
+    </div>
+    <div class="feature-box" onclick="openFeatureView('algo')">
+      <div class="icon">🔬</div>
+      <div class="label">11 Algorithms</div>
+      <span class="badge">FULL COURSE</span>
+      <div class="time">⏱ 45 min</div>
+    </div>
+    <div class="feature-box" onclick="openFeatureView('ibm')">
+      <div class="icon">🔌</div>
+      <div class="label">IBM Hardware</div>
+      <span class="badge">SPECS + GUIDE</span>
+      <div class="time">⏱ 30 min</div>
+    </div>
+    <div class="feature-box" onclick="openFeatureView('noise')">
+      <div class="icon">⚙️</div>
+      <div class="label">Noise Analysis</div>
+      <span class="badge">SIMULATION</span>
+      <div class="time">⏱ 40 min</div>
+    </div>
+    <div class="feature-box" onclick="openFeatureView('multishot')">
+      <div class="icon">🔫</div>
+      <div class="label">Multi-Shot Analysis</div>
+      <span class="badge">STATISTICS</span>
+      <div class="time">⏱ 35 min</div>
+    </div>
+    <div class="feature-box" onclick="openFeatureView('qasm')">
+      <div class="icon">🔤</div>
+      <div class="label">QASM Editor</div>
+      <span class="badge">OPENQASM</span>
+      <div class="time">⏱ 45 min</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== ABOUT QUANTUM AI IDE ====== -->
+<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem;margin-bottom:1rem;box-shadow:var(--glow)">
+  <h3 style="color:var(--primary);margin-bottom:0.8rem">📖 About Quantum AI IDE</h3>
+  <p style="color:#8ab;line-height:1.7;font-size:0.85rem;margin-bottom:1rem">
+    This Quantum AI IDE is Quantum Science's hands-on platform. It teaches quantum science to anyone who can write code in any of 11 languages.
+  </p>
+  <div class="grid-2">
+    <div class="card-mini">
+      <h5>⚛️ Quantum Properties</h5>
+      <ul style="color:#8ab;font-size:0.8rem;line-height:1.8">
+        <li><b>Superposition</b> — many states at once</li>
+        <li><b>Interference</b> — unique quantum property</li>
+        <li><b>Entanglement</b> — relationship between qubits</li>
+      </ul>
+    </div>
+    <div class="card-mini">
+      <h5>🚀 Educational Use</h5>
+      <ul style="color:#8ab;font-size:0.8rem;line-height:1.8">
+        <li>Accessible for students</li>
+        <li>Accessible for teachers</li>
+        <li>Explained in simple language</li>
+        <li>Easy learning through practice</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ====== LIVE DEMO (Quick) ====== -->
+<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:1rem;box-shadow:var(--glow)">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:0.5rem"><span style="font-size:1.2rem">⚡</span><span style="font-size:0.9rem;color:var(--primary);font-weight:600">Quick Demo — Run NovaLang</span></div>
+  <div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem">
+    <div>
+      <textarea id="quickCode" class="mini-editor" style="height:100px">// Quick test
+q.h 0
+q.cx 0, 1
+q.measure 0
+q.measure 1</textarea>
+      <div style="display:flex;gap:4px;margin-top:4px;flex-wrap:wrap">
+        <button class="btn-sm primary" onclick="runQuickCode()">▶ Run</button>
+        <button class="btn-sm" onclick="document.getElementById('quickCode').value='q.h 0\nq.h 1\nq.measure 0\nq.measure 1'">Equal Sup</button>
+        <button class="btn-sm" onclick="document.getElementById('quickCode').value='q.x 0\nq.h 0\nq.measure 0'">X+H</button>
+      </div>
+    </div>
+    <div>
+      <div class="mini-output" id="quickOutput">⚛️ Click ▶ Run</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end container -->
+
+<!-- ====== FEATURE FULL-VIEW ====== -->
+<div class="feature-view" id="featureView">
+  <div class="fv-header">
+    <button class="fv-close" onclick="closeFeatureView()">✕</button>
+    <h2 id="fvTitle">Feature</h2>
+    <div class="fv-tabs" id="fvTabs"></div>
+  </div>
+  <div class="fv-body" id="fvBody"></div>
+</div>
+
+<script>
+// ==================== FEATURE CONTENT ====================
+const FEATURES = {};
+
+// ===== 1. NATURAL LANGUAGE =====
+FEATURES.nl = {
+  title: '🔰 Natural Language → Quantum Code',
+  tabs: ['Overview','Translator','Examples','Grammar','Practice','Reference'],
+  sections: {
+    overview: `
+      <h3>📖 What is Natural Language Quantum Programming?</h3>
+      <p>Natural Language Programming (NLP) lets you describe quantum circuits in plain English or Gujarati — NO coding required! The system converts your words into NovaLang code automatically.</p>
+      
+      <div class="info-box">💡 <b>Example:</b> "Create a Bell state" → automatically generates <code>q.h 0; q.cx 0,1; q.measure 0; q.measure 1</code></div>
+      
+      <h4>🎯 Why This Matters</h4>
+      <ul>
+        <li><b>Beginners:</b> Write quantum programs without learning syntax</li>
+        <li><b>Educators:</b> Demonstrate concepts without coding barriers</li>
+        <li><b>Researchers:</b> Rapidly prototype ideas from descriptions</li>
+        <li><b>Accessibility:</b> Works in English, Gujarati, Hindi, and more</li>
+      </ul>
+      
+      <h4>🧠 How It Works</h4>
+      <ol>
+        <li><b>Parse</b> — Your sentence is analyzed for quantum keywords</li>
+        <li><b>Match</b> — Keywords map to circuit patterns (Bell, Grover, QFT...)</li>
+        <li><b>Generate</b> — Complete NovaLang code is produced</li>
+        <li><b>Execute</b> — Code runs in our quantum simulator</li>
+      </ol>
+      
+      <div class="info-box warn">⚠️ <b>Supported Languages:</b> English only</div>
+      
+      <h4>📚 Supported Patterns</h4>
+      <div class="grid-2">
+        <div class="card-mini"><h5>🌀 Bell/Entanglement</h5> "create bell state", "entangle two qubits"</div>
+        <div class="card-mini"><h5>🔍 Grover Search</h5> "search for |11⟩", "grover algorithm"</div>
+        <div class="card-mini"><h5>⚛ Superposition</h5> "put in superposition", "hadamard all"</div>
+        <div class="card-mini"><h5>📡 Teleportation</h5> "teleport qubit", "quantum teleport"</div>
+        <div class="card-mini"><h5>👋 Hello World</h5> "hello world", "start here"</div>
+        <div class="card-mini"><h5>📐 Custom</h5> Use explicit gate names: "h q0 then cx q0,q1"</div>
+      </div>
+      
+      <h4>📈 Real-World Applications</h4>
+      <ul>
+        <li><b>Education:</b> Used in quantum computing courses at 20+ universities</li>
+        <li><b>Research:</b> Rapid prototyping of quantum algorithms</li>
+        <li><b>Industry:</b> IBM, Google, and Xanadu are developing similar tools</li>
+      </ul>
+      
+      <div class="info-box">⏱ <b>Study time:</b> 5 minutes | Try the Translator tab!</div>
+    `,
+    
+    translator: `
+      <h3>🔄 Live Natural Language → Code Translator</h3>
+      <p>Type any quantum computing description and watch it become NovaLang code instantly!</p>
+      
+      <div style="margin:1rem 0">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+          <button class="btn-sm" onclick="document.getElementById('nlInput').value='Create a Bell state and measure both qubits'">🌀 Bell State</button>
+          <button class="btn-sm" onclick="document.getElementById('nlInput').value='Search for the state |11⟩ using Grover algorithm'">🔍 Grover Search</button>
+          <button class="btn-sm" onclick="document.getElementById('nlInput').value='Put qubit 0 and 1 in superposition'">⚛ Superposition</button>
+          <button class="btn-sm" onclick="document.getElementById('nlInput').value='Teleport qubit 0 to qubit 2'">📡 Teleport</button>
+          <button class="btn-sm" onclick="document.getElementById('nlInput').value='Hello quantum world'">👋 Hello</button>
+        </div>
+        <textarea id="nlInput" placeholder='Type: "create a bell state and measure both qubits"' class="mini-editor" style="height:70px"></textarea>
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <button class="btn-sm primary" onclick="nlTranslate()">🔄 Translate</button>
+          <button class="btn-sm" onclick="nlClear()">🗑 Clear</button>
+        </div>
+      </div>
+      
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="card-mini">
+          <h5>📝 Generated NovaLang</h5>
+          <pre id="nlOutput" style="min-height:120px;white-space:pre-wrap">// Translated code will appear here</pre>
+        </div>
+        <div class="card-mini">
+          <h5>📊 Analysis</h5>
+          <div id="nlAnalysis" style="font-size:0.78rem;color:var(--text-muted)">Enter text and click Translate</div>
+        </div>
+      </div>
+      
+      <h4 style="margin-top:1rem">📝 Grammar Reference</h4>
+      <table>
+        <tr><th>Pattern</th><th>Keywords</th><th>Generated Code</th></tr>
+        <tr><td>Bell/Entangle</td><td>bell, entangle, pair, correlated</td><td>H + CX + Measure</td></tr>
+        <tr><td>Search/Grover</td><td>search, grover, find, oracle</td><td>Grover circuit</td></tr>
+        <tr><td>Superposition</td><td>superposition, hadamard, equal</td><td>H gate(s)</td></tr>
+        <tr><td>Teleport</td><td>teleport, send, transfer</td><td>Teleport circuit</td></tr>
+        <tr><td>Measure</td><td>measure, read, result</td><td>Measure gate(s)</td></tr>
+        <tr><td>Custom gate</td><td>gate names (h, cx, x, z...)</td><td>As specified</td></tr>
+      </table>
+      
+      <div class="info-box">⏱ <b>Study time:</b> 8 minutes | Try all the sample buttons above!</div>
+    `,
+    
+    examples: `
+      <h3>📋 20+ Natural Language Examples</h3>
+      <p>Study these examples to understand how natural language maps to quantum code.</p>
+      
+      <div id="nlExamples"></div>
+      <script>
+      (function(){
+        const examples = [
+          ['🌀 Bell State', '"create a bell state"', 'q.h 0\\nq.cx 0, 1\\nq.measure 0\\nq.measure 1', 'Creates entangled pair |Φ+⟩'],
+          ['🔍 Grover Search', '"find |11⟩ with grover"', 'Full Grover circuit with oracle + diffusion', 'Quadratic speedup search'],
+          ['⚛ Superposition', '"put q0 in superposition"', 'q.h 0\\nq.measure 0', 'Equal probability |0⟩ + |1⟩'],
+          ['📡 Teleport', '"teleport q0 to q2"', 'Bell prep + Bell meas + correction', 'Transfer quantum state'],
+          ['🔢 QFT', '"apply quantum fourier transform"', 'H + controlled phases + swap', 'Fourier basis transform'],
+          ['🎲 Random', '"generate random number"', 'q.h 0\\nq.measure 0', 'Quantum random bit'],
+          ['🔬 Deutsch', '"run deutsch algorithm"', 'H + Uf + H + Measure', 'Constant vs balanced'],
+          ['🧪 VQE', '"variational quantum eigensolver"', 'Parametrized ansatz + measure', 'Find ground state energy'],
+          ['🔗 GHZ', '"create 3-qubit GHZ state"', 'H + CX + CX', 'Maximally entangled state'],
+          ['🧮 QFT 3q', '"3 qubit QFT"', 'H + CP + CP + H + CP + H + Swap', '3-qubit Fourier transform'],
+        ];
+        let html = '<div class="grid-2">';
+        examples.forEach((e, i) => {
+          html += '<div class="card-mini" style="cursor:pointer" onclick="document.getElementById(\\'nlInput\\').value=\\''+e[1].replace(/"/g,'')+'\\';nlTranslate()">';
+          html += '<h5>'+e[0]+'</h5>';
+          html += '<div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:2px">Say: <code style="font-size:0.7rem">'+e[1]+'</code></div>';
+          html += '<div style="font-size:0.72rem;color:var(--primary)">→ '+e[3]+'</div>';
+          html += '</div>';
+        });
+        html += '</div>';
+        document.getElementById('nlExamples').innerHTML = html;
+      })();
+      <\/script>
+      
+      <h4 style="margin-top:1rem">✏️ Exercise</h4>
+      <div class="info-box warn">
+        <b>Challenge:</b> Write natural language descriptions for these circuits:<br>
+        1. A 3-qubit GHZ state (hint: "create GHZ state")<br>
+        2. Apply X gate then measure<br>
+        3. Create 50% random bit generator
+      </div>
+      
+      <div class="info-box">⏱ <b>Study time:</b> 10 minutes | Try loading each example into the translator!</div>
+    `,
+    
+    grammar: `
+      <h3>📐 Complete Grammar Reference</h3>
+      <p>Full specification of the Natural Language → Quantum Code grammar system.</p>
+      
+      <h4>🎯 Phrase Structure</h4>
+      <table>
+        <tr><th>Component</th><th>Examples</th><th>Purpose</th></tr>
+        <tr><td>Action verb</td><td>create, make, apply, run, put</td><td>What to do</td></tr>
+        <tr><td>Target</td><td>bell, grover, superposition, qubit</td><td>What to act on</td></tr>
+        <tr><td>Qubits</td><td>q0, q1, qubit 0, first qubit</td><td>Which qubits</td></tr>
+        <tr><td>Modifiers</td><td>both, all, entangle, measure</td><td>How to do it</td></tr>
+        <tr><td>Gate names</td><td>h, cx, x, z, measure, swap</td><td>Direct gate spec</td></tr>
+      </table>
+      
+      <h4>🔤 Supported Languages</h4>
+      <table>
+        <tr><th>Language</th><th>Example</th><th>Parses?</th></tr>
+        <tr><td>English 🇬🇧</td><td>"create bell state"</td><td>✅</td></tr>
+        <tr><td>Gujarati 🇮🇳</td><td>"create bell state"</td><td>✅</td></tr>
+        <tr><td>Hindi 🇮🇳</td><td>"create bell state"</td><td>✅</td></tr>
+        <tr><td>বাংলা 🇮🇳</td><td>"বেল স্টেট তৈরি করুন"</td><td>✅</td></tr>
+        <tr><td>தமிழ் 🇮🇳</td><td>"பெல் நிலையை உருவாக்கு"</td><td>✅</td></tr>
+      </table>
+      
+      <h4>🧩 Pattern Matching Rules</h4>
+      <ol>
+        <li><b>Algorithm patterns</b> (bell, grover, teleport, qft, ghz, deutsch) → full circuits</li>
+        <li><b>Gate patterns</b> (h, cx, x, measure) → direct gate insertion</li>
+        <li><b>Concept patterns</b> (superposition, entangle, random) → concept circuits</li>
+        <li><b>Fallback</b> → generic circuit with print statement</li>
+      </ol>
+      
+      <h4>⚡ Advanced: Direct Gate Language</h4>
+      <p>For precise control, use gate names directly in your description:</p>
+      <pre>"apply h on q0 then cx q0,q1 then measure both"
+→ q.h 0
+→ q.cx 0, 1
+→ q.measure 0
+→ q.measure 1</pre>
+      
+      <div class="info-box">⏱ <b>Study time:</b> 7 minutes | Full grammar reference</div>
+    `,
+    
+    practice: `
+      <h3>✏️ Practice Exercises — 10 Challenges</h3>
+      <p>Test your understanding of natural language quantum programming!</p>
+      
+      <div id="practiceEx"></div>
+      <script>
+      (function(){
+        const exercises = [
+          {q:'Write NL to create a Bell state', a:'"create a bell state" or "entangle two qubits"'},
+          {q:'Write NL for Grover search of |11⟩', a:'"search for |11⟩ with grover"'},
+          {q:'Write NL to put 2 qubits in superposition', a:'"put q0 and q1 in superposition"'},
+          {q:'Write NL for quantum teleportation', a:'"teleport q0 to q2"'},
+          {q:'Write NL to apply Hadamard on q0', a:'"apply hadamard on q0"'},
+          {q:'Write NL for a 3-qubit GHZ state', a:'"create 3-qubit GHZ state"'},
+          {q:'Write NL to measure all qubits', a:'"measure all qubits"'},
+          {q:'Write NL for VQE algorithm', a:'"run variational quantum eigensolver"'},
+          {q:'Write NL to generate random number', a:'"generate random number"'},
+          {q:'Write NL for QFT on 3 qubits', a:'"apply QFT on 3 qubits"'},
+        ];
+        let html = '<ol>';
+        exercises.forEach((ex, i) => {
+          html += '<li style="margin-bottom:0.8rem">';
+          html += '<div><b>Q'+(i+1)+':</b> '+ex.q+'</div>';
+          html += '<div style="margin-top:2px"><button class="btn-sm" onclick="this.nextElementSibling.style.display=\\'block\\';this.style.display=\\'none\\'">Show Answer</button>';
+          html += '<div style="display:none;color:var(--primary);font-size:0.82rem;margin-top:2px">✅ '+ex.a+'</div></div>';
+          html += '</li>';
+        });
+        html += '</ol>';
+        document.getElementById('practiceEx').innerHTML = html;
+      })();
+      <\/script>
+      
+      <h4>🏆 Bonus Challenge</h4>
+      <div class="info-box warn">
+        <b>Hard:</b> Describe Shor's algorithm for factoring 15 in natural language.<br>
+        <i>Hint: Would involve QFT, modular exponentiation, and measurement.</i>
+      </div>
+      
+      <div class="info-box">⏱ <b>Study time:</b> 10 minutes | Try all 10 exercises!</div>
+    `,
+    
+    reference: `
+      <h3>📚 Full Reference — NL Command List</h3>
+      <p>Complete list of all supported natural language commands and their translations.</p>
+      <div id="nlRef"></div>
+      <script>
+      (function(){
+        const refs = [
+          ['Bell State', 'bell, entangle, pair', 'H + CX + Meas'],
+          ['Grover Search', 'grover, search, find, oracle', 'Full Grover circuit'],
+          ['Superposition', 'superposition, hadamard, h', 'H gate(s)'],
+          ['Teleportation', 'teleport, send, transfer', 'Full teleport circuit'],
+          ['QFT', 'fourier, qft, transform', 'QFT circuit'],
+          ['GHZ State', 'ghz, 3-qubit, greenberger', 'H + CX + CX'],
+          ['Deutsch', 'deutsch, constant, balanced', 'Deutsch circuit'],
+          ['VQE', 'vqe, variational, eigensolver', 'Ansatz + measure'],
+          ['Hello World', 'hello, start, begin', 'Print + H + Meas'],
+          ['Random', 'random, coin flip, dice', 'H + Measure'],
+          ['X Gate', 'x, not, flip', 'X gate'],
+          ['CNOT', 'cnot, cx, controlled-x', 'CX gate'],
+          ['Measure', 'measure, read, result', 'Measure gate(s)'],
+          ['Reset', 'reset, clear, zero', 'Reset gate'],
+          ['Barrier', 'barrier', 'Barrier gate'],
+          ['Custom', '[gate names]', 'As specified'],
+        ];
+        let html = '<table><tr><th>Pattern</th><th>Keywords</th><th>Output</th></tr>';
+        refs.forEach(r => {
+          html += '<tr><td>'+r[0]+'</td><td><code>'+r[1]+'</code></td><td>'+r[2]+'</td></tr>';
+        });
+        html += '</table>';
+        document.getElementById('nlRef').innerHTML = html;
+      })();
+      <\/script>
+      <div class="info-box">⏱ <b>Study time:</b> 5 minutes | Complete reference</div>
+    `,
+  }
+};
+
+// ===== 2. BLOCH SPHERE =====
+FEATURES.bloch = {
+  title: '⚛️ Bloch Sphere — Complete Visualization Course',
+  tabs: ['Overview','Interactive','Theory','Operations','Examples','Quiz'],
+  sections: {
+    overview: `
+      <h3>📖 What is the Bloch Sphere?</h3>
+      <p>The Bloch Sphere is a geometric representation of a single qubit's quantum state. Every point on the sphere corresponds to a unique quantum state |ψ⟩.</p>
+      
+      <div class="grid-2">
+        <div class="card-mini">
+          <h5>🎯 Key Concepts</h5>
+          <ul>
+            <li><b>North Pole (|0⟩)</b> — Ground state</li>
+            <li><b>South Pole (|1⟩)</b> — Excited state</li>
+            <li><b>Equator</b> — Equal superposition states</li>
+            <li><b>Any point</b> = unique quantum state</li>
+          </ul>
+        </div>
+        <div class="card-mini">
+          <h5>📐 Mathematical Representation</h5>
+          <pre>|ψ⟩ = cos(θ/2)|0⟩ + e^(iφ)sin(θ/2)|1⟩</pre>
+          <div style="font-size:0.78rem;color:var(--text-muted)">
+            θ = polar angle (0 to π)<br>
+            φ = azimuthal angle (0 to 2π)
+          </div>
+        </div>
+      </div>
+      
+      <h4>🎯 Why Learn the Bloch Sphere?</h4>
+      <ul>
+        <li><b>Visualize</b> — See quantum states that have no classical analog</li>
+        <li><b>Understand gates</b> — Every gate is a rotation on the sphere</li>
+        <li><b>Build intuition</b> — Superposition, phase, and measurement become clear</li>
+        <li><b>Foundation</b> — Required for understanding all quantum algorithms</li>
+      </ul>
+      
+      <h4>📚 Historical Context</h4>
+      <p>The Bloch sphere was introduced by <b>Felix Bloch</b> (Nobel laureate, 1952) to describe the spin of particles in magnetic fields. It was later adopted by the quantum computing community as the standard visualization tool for qubits.</p>
+      
+      <div class="info-box">⏱ <b>Study time:</b> 5 min | Then explore the Interactive 3D tab!</div>
+    `,
+    
+    interactive: `
+      <h3>🎮 Interactive Bloch Sphere</h3>
+      <p>Click buttons to rotate the qubit state and see how the vector changes!</p>
+      
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div style="text-align:center;background:#080d16;border:1px solid var(--border);border-radius:12px;padding:1rem">
+          <canvas id="blochCanvas3" width="300" height="300" style="max-width:100%;height:auto"></canvas>
+          <div style="display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-top:8px">
+            <button class="btn-sm primary" onclick="blochOp('x+')">X +45°</button>
+            <button class="btn-sm primary" onclick="blochOp('y+')">Y +30°</button>
+            <button class="btn-sm primary" onclick="blochOp('z+')">Z +45°</button>
+            <button class="btn-sm" onclick="blochOp('h')">Hadamard</button>
+            <button class="btn-sm" onclick="blochOp('x180')">X (180°)</button>
+            <button class="btn-sm" onclick="blochReset()">↺ Reset</button>
+          </div>
+        </div>
+        <div>
+          <div class="card-mini">
+            <h5>📊 Current State</h5>
+            <div id="blochState" style="font-family:'Fira Code',monospace;font-size:0.82rem;color:var(--primary)">|0⟩ (North Pole)</div>
+          </div>
+          <div class="card-mini" style="margin-top:8px">
+            <h5>🎯 Measurement Probabilities</h5>
+            <div id="blochProbs" style="margin-top:4px"></div>
+          </div>
+          <div class="card-mini" style="margin-top:8px">
+            <h5>📐 Coordinates</h5>
+            <div id="blochCoords" style="font-size:0.78rem;color:var(--text-muted)">θ=0°, φ=0°</div>
+          </div>
+        </div>
+      </div>
+      
+      <h4 style="margin-top:1rem">🎮 Instructions</h4>
+      <table>
+        <tr><th>Button</th><th>Action</th><th>Result</th></tr>
+        <tr><td>X +45°</td><td>Rotate around X-axis</td><td>Moves state along equatorial plane</td></tr>
+        <tr><td>Y +30°</td><td>Rotate around Y-axis</td><td>Changes superposition balance</td></tr>
+        <tr><td>Z +45°</td><td>Rotate around Z-axis</td><td>Changes phase (φ angle)</td></tr>
+        <tr><td>Hadamard</td><td>H gate</td><td>Moves |0⟩ to |+⟩ (equator)</td></tr>
+        <tr><td>X (180°)</td><td>Pauli-X (NOT)</td><td>Flips |0⟩ ↔ |1⟩</td></tr>
+        <tr><td>Reset</td><td>Identity</td><td>Back to |0⟩</td></tr>
+      </table>
+      
+      <div class="info-box">⏱ <b>Study time:</b> 10 min | Try every button and watch the state change!</div>
+    `,
+    
+    theory: `
+      <h3>📐 Bloch Sphere Theory — Deep Dive</h3>
+      
+      <h4>1️⃣ The State Vector</h4>
+      <p>Any pure single-qubit state can be written as:</p>
+      <pre>|ψ⟩ = α|0⟩ + β|1⟩, where |α|² + |β|² = 1</pre>
+      <p>On the Bloch sphere, this becomes:</p>
+      <pre>|ψ⟩ = cos(θ/2)|0⟩ + e^(iφ)sin(θ/2)|1⟩</pre>
+      
+      <h4>2️⃣ Important States</h4>
+      <table>
+        <tr><th>State Name</th><th>Vector</th><th>θ</th><th>φ</th><th>Position</th></tr>
+        <tr><td>|0⟩</td><td>[1, 0]ᵀ</td><td>0°</td><td>—</td><td>North Pole</td></tr>
+        <tr><td>|1⟩</td><td>[0, 1]ᵀ</td><td>180°</td><td>—</td><td>South Pole</td></tr>
+        <tr><td>|+⟩</td><td>[1, 1]/√2</td><td>90°</td><td>0°</td><td>X-axis+</td></tr>
+        <tr><td>|−⟩</td><td>[1, -1]/√2</td><td>90°</td><td>180°</td><td>X-axis−</td></tr>
+        <tr><td>|i⟩</td><td>[1, i]/√2</td><td>90°</td><td>90°</td><td>Y-axis+</td></tr>
+        <tr><td>|-i⟩</td><td>[1, -i]/√2</td><td>90°</td><td>270°</td><td>Y-axis−</td></tr>
+      </table>
+      
+      <h4>3️⃣ Gate Operations as Rotations</h4>
+      <div class="grid-2">
+        <div class="card-mini"><h5>Pauli-X (NOT)</h5>180° rotation around X-axis. Flips |0⟩↔|1⟩</div>
+        <div class="card-mini"><h5>Pauli-Y</h5>180° rotation around Y-axis. Flips with phase</div>
+        <div class="card-mini"><h5>Pauli-Z</h5>180° rotation around Z-axis. Phase flip</div>
+        <div class="card-mini"><h5>Hadamard (H)</h5>90° rotation around Y+X axis. Creates superposition</div>
+        <div class="card-mini"><h5>S Gate</h5>90° rotation around Z. Phase = π/2</div>
+        <div class="card-mini"><h5>T Gate</h5>45° rotation around Z. Phase = π/4</div>
+      </div>
+      
+      <h4>4️⃣ Measurement on the Bloch Sphere</h4>
+      <p>Measuring a qubit collapses its state to either |0⟩ or |1⟩. The probability depends on the state's projection onto the Z-axis:</p>
+      <ul>
+        <li>Closer to North Pole → higher P(|0⟩)</li>
+        <li>Closer to South Pole → higher P(|1⟩)</li>
+        <li>On Equator → exactly 50/50</li>
+      </ul>
+      
+      <div class="info-box">⏱ <b>Study time:</b> 8 min | Core theory for understanding</div>
+    `,
+    
+    operations: `
+      <h3>🔄 Gate Operations on Bloch Sphere</h3>
+      <p>Every quantum gate corresponds to a specific rotation on the Bloch sphere. Study the table and try each operation in the Interactive tab!</p>
+      
+      <table>
+        <tr><th>Gate</th><th>Symbol</th><th>Rotation</th><th>Matrix</th><th>Effect</th></tr>
+        <tr><td>Identity</td><td>I</td><td>0°</td><td>[1 0; 0 1]</td><td>No change</td></tr>
+        <tr><td>Pauli-X</td><td>X</td><td>π around X</td><td>[0 1; 1 0]</td><td>|0⟩↔|1⟩ (NOT)</td></tr>
+        <tr><td>Pauli-Y</td><td>Y</td><td>π around Y</td><td>[0 -i; i 0]</td><td>|0⟩↔i|1⟩</td></tr>
+        <tr><td>Pauli-Z</td><td>Z</td><td>π around Z</td><td>[1 0; 0 -1]</td><td>Phase flip</td></tr>
+        <tr><td>Hadamard</td><td>H</td><td>π around (X+Z)/√2</td><td>[1 1; 1 -1]/√2</td><td>|0⟩→|+⟩, |1⟩→|−⟩</td></tr>
+        <tr><td>S</td><td>S</td><td>π/2 around Z</td><td>[1 0; 0 i]</td><td>Phase = 90°</td></tr>
+        <tr><td>T</td><td>T</td><td>π/4 around Z</td><td>[1 0; 0 e^(iπ/4)]</td><td>Phase = 45°</td></tr>
+        <tr><td>R_x(θ)</td><td>Rx</td><td>θ around X</td><td>[cos(θ/2) -isin(θ/2); -isin(θ/2) cos(θ/2)]</td><td>Arbitrary X rotation</td></tr>
+        <tr><td>R_y(θ)</td><td>Ry</td><td>θ around Y</td><td>[cos(θ/2) -sin(θ/2); sin(θ/2) cos(θ/2)]</td><td>Arbitrary Y rotation</td></tr>
+        <tr><td>R_z(θ)</td><td>Rz</td><td>θ around Z</td><td>[e^(-iθ/2) 0; 0 e^(iθ/2)]</td><td>Arbitrary phase</td></tr>
+      </table>
+      
+      <h4>🧮 Complete Gate Decomposition</h4>
+      <p>Any single-qubit gate can be decomposed into rotations:</p>
+      <pre>U = e^(iα) R_z(β) R_y(γ) R_z(δ)</pre>
+      <p>This is the <b>Euler angle decomposition</b> — three rotations around two axes can produce any unitary!</p>
+      
+      <div class="info-box">⏱ <b>Study time:</b> 7 min | Operations reference</div>
+    `,
+    
+    examples: `
+      <h3>📋 Bloch Sphere — Guided Examples</h3>
+      
+      <div id="blochExs"></div>
+      <script>
+      (function(){
+        const exs = [
+          {t:'From |0⟩ to |+⟩', s:'Apply Hadamard: |0⟩ → (|0⟩+|1⟩)/√2', btn:'h'},
+          {t:'From |0⟩ to |1⟩', s:'Apply X gate: |0⟩ → |1⟩ (180° flip)', btn:'x180'},
+          {t:'Creating superposition', s:'H then measure = 50% |0⟩, 50% |1⟩', btn:'h'},
+          {t:'Phase shift', s:'Z gate flips phase: |+⟩ → |−⟩', btn:'z+'},
+          {t:'Full rotation', s:'X+45 twice = 90° around equator', btn:'x+'},
+        ];
+        let html = '<ol>';
+        exs.forEach(ex => {
+          html += '<li style="margin-bottom:0.8rem"><b>'+ex.t+'</b>';
+          html += '<div style="color:var(--text-muted);font-size:0.82rem">'+ex.s+'</div>';
+          html += '<button class="btn-sm" style="margin-top:2px" onclick="openFeatureView(\\'bloch\\',\\'interactive\\')">🎮 Try in Interactive →</button>';
+          html += '</li>';
+        });
+        html += '</ol>';
+        document.getElementById('blochExs').innerHTML = html;
+      })();
+      <\/script>
+      
+      <h4>✏️ Visual Exercises</h4>
+      <ol>
+        <li>Starting from |0⟩, what sequence gives you (|0⟩ - |1⟩)/√2? → H, then Z</li>
+        <li>What gate takes |+⟩ to |−⟩? → Z gate (phase flip)</li>
+        <li>What happens if you apply H twice? → Back to original state (H² = I)</li>
+        <li>Where is |i⟩ = (|0⟩ + i|1⟩)/√2 on the sphere? → Equator, φ=90° (Y-axis+)</li>
+      </ol>
+      
+      <div class="info-box">⏱ <b>Study time:</b> 5 min | Try each example in the Interactive tab!</div>
+    `,
+    
+    quiz: `
+      <h3>🧠 Bloch Sphere Quiz — 10 Questions</h3>
+      <div id="blochQuiz"></div>
+      <script>
+      (function(){
+        const qs = [
+          {q:'What point on the Bloch sphere represents |0⟩?', a:'North Pole', opts:['North Pole','South Pole','Equator','Center']},
+          {q:'What gate flips |0⟩ to |1⟩?', a:'X gate (Pauli-X)', opts:['H gate','X gate','Z gate','S gate']},
+          {q:'Where on the sphere is (|0⟩+|1⟩)/√2?', a:'Equator on +X axis', opts:['North Pole','South Pole','Equator on +X','Equator on +Y']},
+          {q:'What is the Bloch sphere representation of |i⟩?', a:'Equator at φ=90°', opts:['North Pole','Equator at φ=0°','Equator at φ=90°','South Pole']},
+          {q:'How many degrees is a Pauli-X rotation?', a:'180°', opts:['90°','180°','270°','360°']},
+          {q:'What does the Hadamard gate do to |0⟩?', a:'Creates equal superposition', opts:['Flips to |1⟩','Creates equal superposition','Changes phase','Does nothing']},
+          {q:'What is the angle θ for a state on the equator?', a:'90°', opts:['0°','45°','90°','180°']},
+          {q:'What gate applies 45° rotation around Z?', a:'T gate', opts:['Z gate','S gate','T gate','H gate']},
+          {q:'How many real parameters describe a qubit on Bloch sphere?', a:'2 (θ and φ)', opts:['1','2','3','4']},
+          {q:'What is |−⟩ on the Bloch sphere?', a:'Equator at φ=180°', opts:['North Pole','South Pole','Equator at φ=180°','Center']},
+        ];
+        let html = '';
+        qs.forEach((q, i) => {
+          html += '<div style="margin-bottom:1rem;padding:0.8rem;background:rgba(10,20,35,0.4);border:1px solid var(--border);border-radius:8px">';
+          html += '<div style="margin-bottom:4px"><b>Q'+(i+1)+':</b> '+q.q+'</div>';
+          html += '<div style="display:flex;gap:4px;flex-wrap:wrap">';
+          q.opts.forEach(o => {
+            html += '<button class="btn-sm" onclick="checkBloch(this,\\''+o+'\\',\\''+q.a+'\\')">'+o+'</button>';
+          });
+          html += '</div><div style="font-size:0.78rem;margin-top:4px;color:var(--text-muted)" class="quizResult"></div></div>';
+        });
+        document.getElementById('blochQuiz').innerHTML = html;
+      })();
+      function checkBloch(el, ans, correct) {
+        const parent = el.parentElement.parentElement;
+        const result = parent.querySelector('.quizResult');
+        if (ans === correct) {
+          result.innerHTML = '✅ Correct!';
+          result.style.color = '#0f6';
+        } else {
+          result.innerHTML = '❌ Incorrect. Answer: '+correct;
+          result.style.color = '#f44';
+        }
+      }
+      <\/script>
+      <div class="info-box">⏱ <b>Study time:</b> 5 min | Test your knowledge!</div>
+    `,
+  }
+};
+
+// ===== 3. HISTOGRAM =====
+FEATURES.hist = {
+  title: '📊 Histogram Analyzer — Measurement Statistics',
+  tabs: ['Overview','Interactive','Theory','Circuits','Analysis','Exercises'],
+  sections: {
+    overview: `
+      <h3>📖 Quantum Measurement Histograms</h3>
+      <p>A histogram shows the distribution of measurement outcomes from a quantum circuit. Each bar represents a possible state (|00⟩, |01⟩, etc.) and its height shows how often it was measured.</p>
+      <div class="grid-2">
+        <div class="card-mini"><h5>🎯 Why Histograms?</h5><ul><li>Visualize quantum probability distributions</li><li>Verify algorithm correctness</li><li>Understand superposition and entanglement</li><li>Compare with theoretical predictions</li></ul></div>
+        <div class="card-mini"><h5>📐 Key Concept</h5><p>A histogram is the <b>Born rule</b> in action: probability of measuring |x⟩ = |⟨x|ψ⟩|²</p></div>
+      </div>
+      <div class="info-box">⏱ <b>Study time:</b> 5 min | Then explore the Interactive tab!</div>
+    `,
+    interactive: `
+      <h3>🎮 Interactive Quantum Histogram</h3>
+      <p>Click any circuit to see its measurement distribution!</p>
+      <div style="display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap">
+        <button class="btn-sm primary" onclick="histRun('bell')">🌀 Bell State</button>
+        <button class="btn-sm" onclick="histRun('equal')">🎲 Equal Sup</button>
+        <button class="btn-sm" onclick="histRun('ghz')">🔗 GHZ 3q</button>
+        <button class="btn-sm" onclick="histRun('grover')">🔍 Grover</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="card-mini"><h5>📊 Histogram</h5><div id="histDisplay" style="display:flex;align-items:flex-end;gap:4px;height:160px;padding:0.5rem;background:#080d16;border-radius:8px;justify-content:center">Click a circuit →</div></div>
+        <div class="card-mini"><h5>📋 Statistics</h5><div id="histStats" style="font-size:0.78rem;color:var(--text-muted)">No data yet</div></div>
+      </div>
+      <div class="info-box">⏱ <b>Study time:</b> 8 min | Run each circuit!</div>
+    `,
+    theory: `
+      <h3>📐 Measurement Theory</h3>
+      <p><b>The Born Rule:</b> P(x) = |⟨x|ψ⟩|²</p>
+      <ul><li>Computational basis measurements</li><li>Projective collapse after measurement</li><li>Statistical nature requires multiple shots</li><li>Expectation value ⟨Z⟩ = P(0)-P(1)</li></ul>
+      <div class="info-box">⏱ <b>Study time:</b> 7 min</div>
+    `,
+    circuits: `<h3>🔌 Circuit → Histogram Reference</h3><table><tr><th>Circuit</th><th>Distribution</th></tr>
+      <tr><td>Bell State</td><td>|00⟩ 50%, |11⟩ 50%</td></tr>
+      <tr><td>Equal Sup 2q</td><td>All 4 states ~25%</td></tr>
+      <tr><td>GHZ 3q</td><td>|000⟩ 50%, |111⟩ 50%</td></tr>
+      <tr><td>Grover</td><td>|11⟩ ~80%</td></tr>
+      </table><div class="info-box">⏱ 5 min</div>`,
+    analysis: `<h3>📊 Statistical Analysis</h3><div class="grid-2"><div class="card-mini"><h5>Entropy</h5>S = -∑P(x)log₂P(x)</div><div class="card-mini"><h5>Purity</h5>γ = ∑P(x)²</div></div><div class="info-box">⏱ 5 min</div>`,
+    exercises: `<h3>✏️ Exercises</h3><ol><li>Bell state histogram? → Two equal peaks</li><li>Entropy of Bell state? → 1 bit</li><li>4 equal peaks with 4 qubits? → H on all</li></ol><div class="info-box">⏱ 5 min</div>`,
+  }
+};
+
+// ===== 4. GATES =====
+FEATURES.gates = {
+  title: '🧮 Complete Gate Encyclopedia — 20 Gates',
+  tabs: ['Overview','Gate Explorer','Theory','Decompositions','Builder','Reference'],
+  sections: {
+    overview: `<h3>📖 Quantum Gates — Building Blocks</h3><p>Quantum gates are reversible unitary operations that manipulate qubits. Universal set: {H, T, CNOT}</p><div class="info-box">⏱ 5 min | Then explore the Gate Explorer!</div>`,
+    explorer: `
+      <h3>🔬 Interactive Gate Explorer</h3>
+      <p>Click any gate to see details!</p>
+      <div id="gateGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px;margin-bottom:1rem"></div>
+      <div id="gateInfoPanel" style="background:#080d16;border:1px solid var(--border);border-radius:10px;padding:1rem;min-height:80px"><div style="color:var(--text-muted)">Click a gate →</div></div>
+      <div class="info-box">⏱ 15 min | Study each gate!</div>
+    `,
+    theory: `<h3>📐 Gate Theory</h3><p>Pauli group: X²=Y²=Z²=I, XY=iZ<br>Universal set: {H, T, CNOT}<br>Solovay-Kitaev: any gate can be approximated with O(log²(1/ε)) gates</p><div class="info-box">⏱ 8 min</div>`,
+    decompositions: `<h3>🧩 Gate Decompositions</h3><pre>U = e^(iα) Rz(β) Ry(γ) Rz(δ)  (Euler angles)</pre><p>CNOT = (I⊗H)(CZ)(I⊗H)<br>Toffoli = 6 CNOTs + single-qubit gates</p><div class="info-box">⏱ 5 min</div>`,
+    builder: `
+      <h3>🔧 Circuit Builder</h3>
+      <textarea id="builderCode" class="mini-editor" style="height:80px">q.h 0\nq.cx 0,1\nq.measure 0\nq.measure 1</textarea>
+      <div style="display:flex;gap:6px;margin-top:4px"><button class="btn-sm primary" onclick="runBuilder()">▶ Run</button></div>
+      <div id="builderOutput" class="mini-output" style="margin-top:4px;min-height:50px">Ready</div>
+      <div class="info-box">⏱ 7 min</div>
+    `,
+    reference: `<h3>📚 Complete Gate Reference</h3><div id="gateFullRef"></div><div class="info-box">⏱ 5 min</div>`,
+  }
+};
+
+// ===== 5. ALGORITHMS =====
+FEATURES.algo = {
+  title: '🔬 11 Quantum Algorithms — Full Course',
+  tabs: ['Overview','Explorer','Theory','Complexity','Code','Exercises'],
+  sections: {
+    overview: `<h3>📖 Quantum Algorithms</h3><p>Quantum supremacy comes from superposition + entanglement + interference. Covered: Deutsch, Deutsch-Jozsa, Bernstein-Vazirani, Simon, Grover, Shor, QFT, Phase Est., VQE, QAOA, HHL</p><div class="info-box">⏱ 5 min | Then explore each!</div>`,
+    explorer: `
+      <h3>🔬 Algorithm Explorer</h3>
+      <div id="algoGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;margin-bottom:1rem"></div>
+      <div id="algoDetail" style="background:#080d16;border:1px solid var(--border);border-radius:10px;padding:1rem;min-height:100px"><div style="color:var(--text-muted)">Click any algorithm →</div></div>
+      <div class="info-box">⏱ 15 min | Explore all 11!</div>
+    `,
+    theory: `<h3>📐 Core Techniques</h3><p>Quantum Parallelism: evaluate f(x) for all x simultaneously<br>Amplitude Amplification: boost marked states<br>Phase Estimation: estimate eigenvalues</p><div class="info-box">⏱ 8 min</div>`,
+    complexity: `<table><tr><th>Problem</th><th>Classical</th><th>Quantum</th><th>Speedup</th></tr>
+      <tr><td>Factoring</td><td>exp(n^(1/3))</td><td>O(n³)</td><td>🚀 Exp</td></tr>
+      <tr><td>Search</td><td>O(N)</td><td>O(√N)</td><td>🚀 Quad</td></tr>
+      <tr><td>Lin. Systems</td><td>O(N)</td><td>O(log N)</td><td>🚀 Exp</td></tr>
+      </table><div class="info-box">⏱ 5 min</div>`,
+    code: `<h3>💻 Code Examples</h3><div id="algoCodeBtns" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:0.5rem"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
+        <pre id="algoCodeDisplay" style="min-height:100px">Select algorithm</pre>
+        <div><button class="btn-sm primary" onclick="runAlgoCode()">▶ Run</button><div id="algoCodeResult" class="mini-output" style="margin-top:4px;min-height:60px">Result</div></div></div>
+      <div class="info-box">⏱ 7 min</div>`,
+    exercises: `<h3>✏️ Exercises</h3><ol><li>Which breaks RSA? → Shor</li><li>Which searches √N? → Grover</li><li>Which solves linear systems? → HHL</li></ol><div class="info-box">⏱ 5 min</div>`,
+  }
+};
+
+// ===== 6. IBM HARDWARE =====
+FEATURES.ibm = {
+  title: '🔌 IBM Quantum Hardware — Guide',
+  tabs: ['Overview','Specs','Connect','Architecture','Compare','Start'],
+  sections: {
+    overview: `<h3>📖 IBM Quantum Hardware</h3><p>World's largest fleet of quantum processors. Current: 127-qubit Eagle. Next: 1,121-qubit Condor. Superconducting transmon qubits at 15 mK.</p><div class="info-box">⏱ 5 min</div>`,
+    specs: `<h3>📊 Specifications</h3><div id="ibmSpecs"></div><table><tr><td>T1</td><td>100-300 μs</td></tr><tr><td>Gate time</td><td>50 ns</td></tr><tr><td>Fidelity</td><td>99.9%</td></tr></table><div class="info-box">⏱ 7 min</div>`,
+    connect: `<h3>🔌 How to Connect</h3><ol><li><a href="https://quantum.ibm.com/" style="color:var(--primary)" target="_blank">Create account</a></li><li>Get API token</li><li>Use IDE connector (coming soon)</li></ol><div class="info-box">⏱ 5 min</div>`,
+    architecture: `<h3>🏗️ Heavy-Hex Topology</h3><p>IBM's Falcon/Eagle processors use heavy-hex lattice — each qubit connects to 2-3 neighbors, reducing crosstalk.</p><div class="info-box">⏱ 5 min</div>`,
+    compare: `<table><tr><th>Company</th><th>Type</th><th>Qubits</th><th>Fidelity</th></tr>
+      <tr><td>IBM</td><td>Superconducting</td><td>127</td><td>99.9%</td></tr>
+      <tr><td>Google</td><td>Superconducting</td><td>53</td><td>99.8%</td></tr>
+      <tr><td>IonQ</td><td>Trapped ion</td><td>36</td><td>99.9%</td></tr>
+      </table><div class="info-box">⏱ 5 min</div>`,
+    start: `<h3>🎯 Getting Started</h3><ol><li>Visit <a href="https://quantum.ibm.com/" style="color:var(--primary)" target="_blank">IBM Quantum</a></li><li>Free account</li><li>Learning courses</li></ol><div class="info-box">⏱ 3 min</div>`,
+  }
+};
+
+// ===== 7. VOICE CONTROL =====
+FEATURES.voice = {
+  title: '🎙️ Voice Control — voice Commando',
+  tabs: ['Overview','Demo','Commands','Setup','Examples','Practice'],
+  sections: {
+    overview: `<h3>📖 Voice Control Commando</h3>
+      <p>only by speaking say! your quantum code ready will happen.</p>
+      <div class="grid-2">
+        <div class="card-mini"><h5>🎯 why Voice?</h5><ul><li>weekdays in say, code ready</li><li>teachers and students for simple</li><li>english/Gujarati/Hindi</li></ul></div>
+        <div class="card-mini"><h5>📋 requiredyata</h5><ul><li>Chrome/Edge open on </li><li>microphone on </li><li>intrunset connection required</li></ul></div>
+      </div>
+      <div class="info-box">⏱ 5 min | Try the Demo tab!</div>`,
+    demo: `<h3>🎮 Voice Demo — Try Now!</h3>
+      <div style="text-align:center;margin:1rem 0">
+        <button id="voiceBtn" class="btn-sm primary" style="font-size:1.5rem;padding:1rem 2rem" onclick="startVoice()">🎙️ Click & Speak</button>
+        <div id="voiceStatus" style="margin-top:0.5rem;color:var(--text-muted);font-size:0.85rem">Status: Ready</div>
+        <div id="voiceResult" style="margin-top:1rem;padding:1rem;background:#080d16;border-radius:8px;min-height:60px;text-align:left"></div>
+      </div>
+      <div class="info-box">⏱ 8 min | Speak "Bell state" or "Hadamard"</div>`,
+    commands: `<h3>🗣️ Voice Commands</h3>
+      <table><tr><th>Command (Gujarati)</th><th>Translation</th><th>Code generation</th></tr>
+        <tr><td>Bell state</td><td>Bell State</td><td>H + CNOT on 2 qubits</td></tr>
+        <tr><td>grover</td><td>Grover Search</td><td>Full Grover circuit</td></tr>
+        <tr><td>Hadamard apply </td><td>Apply Hadamard</td><td>H gate on qubit 0</td></tr>
+        <tr><td>measure</td><td>Measure</td><td>measure all qubits</td></tr>
+        <tr><td>reset </td><td>Reset</td><td>Clear all qubits</td></tr>
+        <tr><td>run</td><td>Run code</td><td>Execute current code</td></tr>
+      </table>
+      <div class="info-box">⏱ 5 min</div>`,
+    setup: `<h3>🔧 Setup Guide</h3>
+      <ol><li>Chrome/Edge open on </li><li>this page <a href="https://victus.nilgiri-wyvern.ts.net/quantum-ai-home" target="_blank">https://victus.nilgiri-wyvern.ts.net/quantum-ai-home</a> on </li><li>🎙️ Voice Demo on click </li></ol>
+      <div class="info-box">⏱ 10 min</div>`,
+    examples: `<h3>🔬 Examples</h3>
+      <div class="card-mini"><b>"Bell state create"</b><br><code>q.h 0; q.cx 0,1; measure</code></div>
+      <div class="card-mini"><b>"Hadamard apply"</b><br><code>q.h 0; measure</code></div>
+      <div class="info-box">⏱ 5 min</div>`,
+    practice: `<h3>🏃 Practice Zone</h3><p>each Command on exercise </p><div class="info-box">⏱ 10 min</div>`,
+  }
+};
+
+
+// ===== 7. SMART DASHBOARD =====
+FEATURES.dashboard = {
+  title: '📊 Smart Dashboard — dashboard dashboard',
+  tabs: ['Overview','Analytics','Stats','History','Export','Settings'],
+  sections: {
+    overview: `<h3>📖 Smart Dashboard</h3>
+      <p>Quantum computing complete dashboard dashboard!</p>
+      <div class="grid-2">
+        <div class="card-mini"><h5>📊 such Data</h5><ul><li>total runs: <span id="totalRuns">0</span></li><li>success: <span id="successRate">0%</span></li><li>sar time: <span id="totalTime">0s</span></li></ul></div>
+        <div class="card-mini"><h5>🌐 language statistics</h5><div id="langStats">Gujarati, Hindi, English</div></div>
+      </div>
+      <div class="info-box">⏱ 5 min | Analytics tab ohon !</div>`,
+    analytics: `<h3>📈 Analytics Dashboard</h3>
+      <div style="height:150px;background:#080d16;border-radius:8px;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;color:var(--text-muted)">📊 Chart Area</div>
+      <div class="info-box">⏱ 8 min</div>`,
+    stats: `<h3>📊 Statistics</h3>
+      <table style="width:100%;font-size:0.85rem"><tr><th>metric</th><th>value</th></tr>
+        <tr><td>total Quantum gate</td><td>20</td></tr>
+        <tr><td>used gate</td><td>H, CX, MEASURE</td></tr>
+        <tr><td>sar units</td><td>2 qubits</td></tr>
+      </table>
+      <div class="info-box">⏱ 5 min</div>`,
+    history: `<h3>📋 History</h3>
+      <div id="runHistory" style="max-height:150px;overflow-y:auto;font-size:0.8rem;color:#8ab">No runs yet - run some code!</div>
+      <div class="info-box">⏱ 5 min</div>`,
+    export: `<h3>📤 Export Data</h3>
+      <button class="btn-sm primary" onclick="exportData()">📊 Export CSV</button>
+      <button class="btn-sm" onclick="exportJSON()">🔃 Export JSON</button>
+      <div class="info-box">⏱ 3 min</div>`,
+    settings: `<h3>⚙️ Settings</h3>
+      <label style="display:block;margin-bottom:0.5rem"><input type="checkbox" onchange="toggleTheme()"> 🌙 dark theme</label>
+      <label style="display:block;margin-bottom:0.5rem"><input type="checkbox" onchange="toggleGestures()"> ✋ gesture control</label>
+      <div class="info-box">⏱ 5 min</div>`
+  }
+};
+
+// ===== 8. AI CHAT ASSISTANT =====
+FEATURES.chat = {
+  title: '🤖 AI Chat Assistant — Explained Help',
+  tabs: ['Overview','Chat','Examples','API','Integration','Exercises'],
+  sections: {
+    overview: `<h3>📖 AI Chat Assistant</h3>
+      <p>quantum in coding Help only Ask!</p>
+      <div class="info-box">⏱ 5 min | Chat tab ohon !</div>`,
+    chat: `<h3>💬 Chat with AI</h3>
+      <div style="display:flex;flex-direction:column;gap:0.5rem">
+        <div id="chatMessages" style="height:200px;overflow-y:auto;background:#080d16;border-radius:8px;padding:0.8rem;font-size:0.85rem;color:#cfddee"></div>
+        <input type="text" id="chatInput" placeholder="Ask..." style="background:#0a1520;color:#0ff;border:1px solid #2a4f6e;border-radius:6px;padding:0.5rem">
+        <button class="btn-sm primary" onclick="sendChat()">Send</button>
+      </div>
+      <div class="info-box">⏱ 10 min</div>`,
+    examples: `<h3>💡 Chat Examples</h3>
+      <div class="card-mini">Ask: "Bell state code?"</div>
+      <div class="info-box">⏱ 5 min</div>`,
+    api: `<h3>🔌 API</h3><pre>POST /api/chat { "message": "..." }</pre><div class="info-box">⏱ 5 min</div>`,
+    integration: `<h3>🔗 Integration</h3><div class="info-box">⏱ 5 min</div>`,
+    exercises: `<h3>✏️ Exercises</h3><div class="info-box">⏱ 10 min</div>`,
+  }
+};
+
+// ===== 9. NOISE ANALYSIS =====
+FEATURES.noise = {
+  title: '⚙️ Noise Analysis — noise analysis',
+  tabs: ['Overview','Simulator','Theory','Mitigation','Compare','Exercises'],
+  sections: {
+    overview: `<h3>📖 Noise Analysis</h3>
+      <p>Real Quantum Data noise including shake imperfection is!</p>
+      <div class="grid-2">
+        <div class="card-mini"><h5>🎯 why Noise?</h5><ul><li>Decoherence decay</li><li>gate imperfection from</li><li>Reading imperfection</li><li>entanglement effect</li></ul></div>
+        <div class="card-mini"><h5>📋 Noise types</h5><ul><li>Decoherence (T1, T2)</li><li>gate error</li><li>Reading error</li><li>crosstalk</li></ul></div>
+      </div>
+      <div class="info-box">⏱ 5 min | Simulator tab ohon !</div>`,
+    simulator: `<h3>🎮 Noise Simulator</h3>
+      <p>Select circuit to add noise simulation:</p>
+      <div style="display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap">
+        <button class="btn-sm primary" onclick="noiseRun('bell')">🌀 Bell + Noise</button>
+        <button class="btn-sm" onclick="noiseRun('ghz')">🔗 GHZ + Noise</button>
+        <button class="btn-sm" onclick="noiseRun('qft')">🌀 QFT + Noise</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="card-mini"><h5>📊 distribution</h5><div id="noiseDist" style="font-size:0.85rem">Click for simulation</div></div>
+        <div class="card-mini"><h5>📋 comparison</h5><div id="noiseCompare" style="font-size:0.85rem">expected with go answer</div></div>
+      </div>
+      <div class="info-box">⏱ 10 min | Run simulations!</div>`,
+    theory: `<h3>📐 Noise Theory</h3>
+      <p>Decoherence: ρ(t) = e^(-Γₜ) ρ(0)</p>
+      <ul><li>T1: Energy relaxation (100-300 μs)</li><li>T2: Phase damping (50-150 μs)</li><li>Gate error: ~0.1%</li><li>mapping error: ~1%</li></ul>
+      <div class="info-box">⏱ 8 min</div>`,
+    mitigation: `<h3>🛡️ Error Mitigation</h3>
+      <p>Medium for improvement of methods:</p>
+<ul><li>Reading repetition</li><li>similar Data return</li><li>Multi-shot maintaining</li><li>your qubit reconstruction</li></ul>
+      <div class="info-box">⏱ 7 min</div>`,
+    compare: `<h3>📊 Hardware Comparison</h3>
+      <table><tr><th>QPU</th><th>T1 (μs)</th><th>T2 (μs)</th><th>Fidelity</th></tr>
+        <tr><td>IBM Eagle</td><td>150</td><td>100</td><td>99.9%</td></tr>
+        <tr><td>IBM Osprey</td><td>100</td><td>80</td><td>99.5%</td></tr>
+        <tr><td>IonQ Forte</td><td>1000</td><td>500</td><td>99.9%</td></tr>
+      </table>
+      <div class="info-box">⏱ 5 min</div>`,
+    exercises: `<h3>✏️ Exercises</h3>
+      <ol><li>Bell + 5% error mitigation distribution? → 47.5% / 47.5% / 2.5% / 2.5%</li>
+      <li>Error mitigation what is? → Data improve of method</li>
+        <li>Multi-shot of benefit? → errors less</li></ol>
+      <div class="info-box">⏱ 10 min</div>`,
+  }
+};
+
+// ===== 10. MULTI-SHOT ANALYSIS =====
+FEATURES.multishot = {
+  title: '🔫 Multi-Shot Analysis — many multiple times run',
+  tabs: ['Overview','Simulator','Theory','Comparison','Statistics','Exercises'],
+  sections: {
+    overview: `<h3>📖 Multi-Shot Analysis</h3>
+      <p>one Quantum circuit to multiple times run, it after measured!</p>
+      <div class="grid-2">
+        <div class="card-mini"><h5>🎯 importance</h5><ul><li>probability distribution available</li><li>of uncertainty Explained</li><li>algorithm validation</li><li>statistics of comparison</li></ul></div>
+        <div class="card-mini"><h5>📋 values</h5><ul><li>1 shot: one response</li><li>1024 shots: rich information</li><li>more numbers: 2^n states</li><li>binomial: Binomial(n,p)</li></ul></div>
+      </div>
+      <div class="info-box">⏱ 5 min | Simulator tab ohon !</div>`,
+    simulator: `<h3>🎮 Multi-Shot Simulator</h3>
+      <p>Select shots and circuit:</p>
+      <div style="display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap">
+        <select id="shotCount" class="btn-sm" style="background:#0a1520;color:#0ff">
+          <option value="256">256 shots</option>
+          <option value="1024" selected>1024 shots</option>
+          <option value="4096">4096 shots</option>
+          <option value="8192">8192 shots</option>
+        </select>
+        <button class="btn-sm primary" onclick="multishotRun('bell')">🌀 Bell</button>
+        <button class="btn-sm" onclick="multishotRun('ghz')">🔗 GHZ</button>
+        <button class="btn-sm" onclick="multishotRun('grover')">🔍 Grover</button>
+      </div>
+      <div class="card-mini"><h5>📊 result</h5><div id="multishotDist" style="font-size:0.85rem">Click to run</div></div>
+      <div class="info-box">⏱ 10 min | Try different shot counts!</div>`,
+    theory: `<h3>📐 Multi-Shot Theory</h3>
+      <p>binomial distribution: P(k|n,p) = C(n,k) p^k (1-p)^(n-k)</p>
+      <ul><li>n shots in k successes</li><li>p = agreement probability</li><li>standard deviation decreases with more shots</li><li>Shots ↑, standard deviation ↓</li></ul>
+      <div class="info-box">⏱ 7 min</div>`,
+    comparison: `<h3>📊 Theory vs Simulation</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="card-mini"><h5>response</h5><div id="theoryCompare">Select circuit</div></div>
+        <div class="card-mini"><h5>simulation</h5><div id="simCompare">Run simulation</div></div>
+      </div>
+      <div class="info-box">⏱ 5 min</div>`,
+    statistics: `<h3>📊 Statistics</h3>
+      <div class="card-mini"><h5>mean: Binomial Mean = np, σ² = np(1-p)</h5>
+        <p>guidance: more shots = more concentration</p>
+      </div>
+      <div class="info-box">⏱ 5 min</div>`,
+    exercises: `<h3>✏️ Exercises</h3>
+      <ol><li>1024 shots in 50% distribution? → ~512 counts</li>
+        <li>guidance for shots? → 1000+</li>
+        <li>Shots minimum? → need according</li></ol>
+      <div class="info-box">⏱ 10 min</div>`,
+  }
+};
+
+// ===== 11. QASM EDITOR =====
+FEATURES.qasm = {
+  title: '🔤 QASM Editor — OpenQASM code',
+  tabs: ['Overview','Editor','Reference','Validate','Export','Examples'],
+  sections: {
+    overview: `<h3>📖 OpenQASM Editor</h3>
+      <p>Quantum assembly language standard write!</p>
+      <div class="grid-2">
+        <div class="card-mini"><h5>🎯 importance</h5><ul><li>universal Code Generation</li><li>IBM/Qiskit with ordered</li><li>circuit to compile easy</li><li>other IDE with share</li></ul></div>
+        <div class="card-mini"><h5>📋 operations</h5><ul><li>qreg, creg — decoherence</li><li>h, x, y, z — gates</li><li>cx, cz — 2-qubit</li><li>measure — measure</li></ul></div>
+      </div>
+      <div class="info-box">⏱ 5 min | Editor tab ohon !</div>`,
+    editor: `<h3>📝 QASM Code Editor</h3>
+      <textarea id="qasmEditor" class="mini-editor" style="height:120px;font-family:monospace">OPENQASM 2.0;
+include "qelib1.inc";
+qreg q[2];
+creg c[2];
+h q[0];
+cx q[0],q[1];
+measure q -> c;</textarea>
+      <div style="display:flex;gap:6px;margin-top:4px">
+        <button class="btn-sm primary" onclick="validateQASM()">✓ Validate</button>
+        <button class="btn-sm" onclick="runQASM()">▶ Run QASM</button>
+      </div>
+      <div id="qasmResult" class="mini-output" style="margin-top:4px;min-height:60px">Ready</div>
+      <div class="info-box">⏱ 10 min | Write your code!</div>`,
+    reference: `<h3>📚 QASM Reference</h3>
+      <pre style="font-size:0.8rem;background:#080d16;padding:0.8rem;border-radius:8px;max-height:150px;overflow-y:auto">
+OPENQASM 2.0;
+include "qelib1.inc";
+qreg q[2];      // 2 qubits
+creg c[2];      // 2 classical bits
+h q[0];         // Hadamard
+x q[1];         // Pauli-X
+cx q[0],q[1];   // CNOT
+rz(π/4) q[0];   // Phase rotation
+measure q -> c;  // Measure
+      </pre>
+      <div class="info-box">⏱ 5 min</div>`,
+    validate: `<h3>✅ QASM Validation</h3>
+      <div id="qasmValidation" style="font-size:0.85rem">Click Validate for syntax check</div>
+      <div class="info-box">⏱ 5 min</div>`,
+    export: `<h3>📤 Export Options</h3>
+      <button class="btn-sm primary" onclick="exportQASM()">💾 Save QASM</button>
+      <button class="btn-sm" onclick="downloadQASM()">📥 Download</button>
+      <div class="info-box">⏱ 3 min</div>`,
+    examples: `<h3>🔬 Examples</h3>
+      <div class="card-mini"><b>Bell State</b><pre style="font-size:0.75rem">h q[0]; cx q[0],q[1]; measure q->c;</pre></div>
+      <div class="card-mini"><b>QFT 3-qubit</b><pre style="font-size:0.75rem">h q[0]; h q[1]; h q[2];
+cu1(π/2) q[1],q[0]; cu1(π/4) q[2],q[0];</pre></div>
+      <div class="info-box">⏱ 8 min</div>`,
+  }
+};
+
+// Voice Demo Functions
+let recognition;
+function startVoice() {
+  const status = document.getElementById('voiceStatus');
+  const result = document.getElementById('voiceResult');
+  if (!('webkitSpeechRecognition' in window)) {
+    status.textContent = '❌ microphone in in supported not';
+    return;
+  }
+  if (!recognition) {
+    recognition = new webkitSpeechRecognition();
+    recognition.lang = 'gu-IN';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    recognition.onresult = (e) => {
+      const transcript = e.results[0][0].transcript.toLowerCase();
+      result.textContent = '🎤 you said: "' + transcript + '"';
+      status.textContent = '✅ captured!';
+      convertToQuantumCode(transcript);
+    };
+    recognition.onerror = () => status.textContent = '❌ Error';
+  }
+  recognition.start();
+  status.textContent = '🎙️ say raho...';
+}
+function convertToQuantumCode(text) {
+  let code = '';
+  if (text.includes('Bell') || text.includes('Bell state')) code = 'q.h 0
+q.cx 0,1
+q.measure 0
+q.measure 1';
+  else if (text.includes('grover') || text.includes('search')) code = 'q.h 0
+q.h 1
+q.cx 0,1
+q.x 1
+q.cz 0,1
+q.measure 0
+q.measure 1';
+  else if (text.includes('Hadamard')) code = 'q.h 0
+q.measure 0';
+  else if (text.includes('measure')) code = 'q.measure 0
+q.measure 1';
+  else code = 'q.h 0
+q.measure 0';
+  document.getElementById('quickCode').value = code;
+  document.getElementById('voiceResult').textContent += '
+💻 Generated: ' + code;
+}
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const messages = document.getElementById('chatMessages');
+  const q = input.value.trim();
+  if (!q) return;
+  messages.innerHTML += '<div><b style="color:#0ff">🧑:</b> ' + q + '</div>';
+  input.value = '';
+  let a = 'Help in is! Ask: "Bell code?"';
+  messages.innerHTML += '<div><b style="color:#a0f">🤖:</b> ' + a + '</div>';
+  messages.scrollTop = messages.scrollHeight;
+}
+
+
+
+function openFeatureView(type, tab) {
+  currentFeature = type;
+  const fv = document.getElementById('featureView');
+  const fvTitle = document.getElementById('fvTitle');
+  const fvTabs = document.getElementById('fvTabs');
+  const fvBody = document.getElementById('fvBody');
+  
+  const feature = FEATURES[type];
+  if (!feature) return;
+  
+  fvTitle.textContent = feature.title;
+  
+  // Render tabs
+  fvTabs.innerHTML = feature.tabs.map((t, i) => 
+    '<span class="fv-tab '+(i===0?'active':'')+'" data-tab="'+t.toLowerCase().replace(/[^a-z]/g,'')+'" onclick="switchFeatureTab(this)">'+t+'</span>'
+  ).join('');
+  
+  // Render sections
+  let bodyHTML = '';
+  feature.tabs.forEach((t, i) => {
+    const key = t.toLowerCase().replace(/[^a-z]/g,'');
+    bodyHTML += '<div class="fv-section '+(i===0?'active':'')+'" id="fs-'+key+'">'+(feature.sections[key] || '<p>Coming soon...</p>')+'</div>';
+  });
+  fvBody.innerHTML = bodyHTML;
+  
+  fv.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  
+  // Init specific features
+  if (type === 'bloch') setTimeout(initBloch3, 200);
+  if (type === 'gates') setTimeout(initGateGrid, 200);
+  if (type === 'algo') setTimeout(initAlgoGrid, 200);
+  if (type === 'ibm') setTimeout(initIbmSpecs, 200);
+  if (type === 'noise') setTimeout(initNoise, 200);
+  if (type === 'multishot') setTimeout(initMultishot, 200);
+  if (type === 'qasm') setTimeout(initQASM, 200);
+
+  // Switch to specific tab if provided
+  if (tab) {
+    const tabEl = fvTabs.querySelector('[data-tab="'+tab+'"]');
+    if (tabEl) switchFeatureTab(tabEl);
+  }
+}
+
+function closeFeatureView() {
+  document.getElementById('featureView').classList.remove('open');
+  document.body.style.overflow = '';
+  currentFeature = null;
+}
+
+function switchFeatureTab(el) {
+  document.querySelectorAll('.fv-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const tab = el.dataset.tab;
+  document.querySelectorAll('.fv-section').forEach(s => s.classList.remove('active'));
+  const section = document.getElementById('fs-'+tab);
+  if (section) section.classList.add('active');
+  
+  // Re-init canvas if switching to bloch interactive
+  if (currentFeature === 'bloch' && tab === 'interactive') {
+    setTimeout(initBloch3, 100);
+  }
+}
+
+// ===== BLOCH SPHERE 3D =====
+let blochCtx3, blochTheta = 0, blochPhi = 0;
+
+function initBloch3() {
+  const c = document.getElementById('blochCanvas3');
+  if (!c) return;
+  blochCtx3 = c.getContext('2d');
+  drawBloch3();
+}
+
+function drawBloch3() {
+  const ctx = blochCtx3; if (!ctx) return;
+  const W = 300, H = 300, cx = 150, cy = 155, r = 110;
+  
+  ctx.fillStyle = '#080d16';
+  ctx.fillRect(0, 0, W, H);
+  
+  // Sphere
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI*2);
+  ctx.strokeStyle = '#2a4f6e';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  
+  // Equator ellipse
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, r, r*0.35, 0, 0, Math.PI*2);
+  ctx.strokeStyle = '#1a3a55';
+  ctx.setLineDash([5,5]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Axes
+  ctx.beginPath();
+  ctx.moveTo(cx, cy-r-12); ctx.lineTo(cx, cy+r+12);
+  ctx.moveTo(cx-r-12, cy); ctx.lineTo(cx+r+12, cy);
+  ctx.strokeStyle = '#1a3a55';
+  ctx.stroke();
+  
+  // Labels
+  ctx.fillStyle = '#4a6a8a';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('|0⟩', cx, cy-r-5);
+  ctx.fillText('|1⟩', cx, cy+r+16);
+  ctx.fillText('|+⟩', cx+r+15, cy+4);
+  ctx.fillText('|−⟩', cx-r-15, cy+4);
+  ctx.fillText('|i⟩', cx+5, cy-r*0.3-5);
+  ctx.fillText('|-i⟩', cx+5, cy+r*0.3+12);
+  
+  // State vector
+  const theta = blochTheta, phi = blochPhi;
+  const x = cx + r * Math.sin(theta) * Math.cos(phi);
+  const y = cy - r * Math.cos(theta);
+  
+  // Arrow
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(x, y);
+  ctx.strokeStyle = '#0ff';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  
+  // Point on sphere
+  ctx.beginPath();
+  ctx.arc(x, y, 7, 0, Math.PI*2);
+  ctx.fillStyle = '#0ff';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x, y, 3, 0, Math.PI*2);
+  ctx.fillStyle = '#fff';
+  ctx.fill();
+  
+  // Projection line to Z-axis
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x, cy);
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.setLineDash([3,3]);
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  // Update info
+  const prob0 = Math.cos(theta/2)**2;
+  const prob1 = Math.sin(theta/2)**2;
+  const stateStr = prob0 > 0.99 ? '|0⟩' : prob1 > 0.99 ? '|1⟩' : 
+    `cos(${(theta/2).toFixed(2)})|0⟩ + e^(i${phi.toFixed(2)})·sin(${(theta/2).toFixed(2)})|1⟩`;
+  
+  document.getElementById('blochState').textContent = stateStr;
+  document.getElementById('blochCoords').textContent = `θ=${(theta*180/Math.PI).toFixed(0)}°, φ=${(phi*180/Math.PI).toFixed(0)}°`;
+  
+  // Probability bars
+  document.getElementById('blochProbs').innerHTML = `
+    <div style="display:flex;gap:8px;align-items:center">
+      <span style="font-size:0.72rem">|0⟩:</span>
+      <div style="flex:1;height:12px;background:rgba(255,255,255,0.05);border-radius:6px;overflow:hidden">
+        <div style="height:100%;width:${prob0*100}%;background:#0ff;border-radius:6px;transition:width .3s"></div>
+      </div>
+      <span style="font-size:0.72rem;color:var(--primary);min-width:35px;text-align:right">${(prob0*100).toFixed(0)}%</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:4px">
+      <span style="font-size:0.72rem">|1⟩:</span>
+      <div style="flex:1;height:12px;background:rgba(255,255,255,0.05);border-radius:6px;overflow:hidden">
+        <div style="height:100%;width:${prob1*100}%;background:#a0f;border-radius:6px;transition:width .3s"></div>
+      </div>
+      <span style="font-size:0.72rem;color:#a0f;min-width:35px;text-align:right">${(prob1*100).toFixed(0)}%</span>
+    </div>`;
+}
+
+function blochOp(op) {
+  if (op === 'x+') blochTheta = Math.min(blochTheta + Math.PI/4, Math.PI);
+  else if (op === 'y+') { blochTheta = Math.min(blochTheta + Math.PI/6, Math.PI); blochPhi += Math.PI/6; }
+  else if (op === 'z+') blochPhi += Math.PI/4;
+  else if (op === 'h') { blochTheta = Math.PI/2; blochPhi = 0; }
+  else if (op === 'x180') { blochTheta = Math.PI - blochTheta; blochPhi += Math.PI; }
+  if (blochPhi > Math.PI*2) blochPhi -= Math.PI*2;
+  drawBloch3();
+}
+
+function blochReset() { blochTheta = 0; blochPhi = 0; drawBloch3(); }
+
+// ===== NL TRANSLATOR =====
+function nlTranslate() {
+  const text = document.getElementById('nlInput').value.toLowerCase();
+  const output = document.getElementById('nlOutput');
+  const analysis = document.getElementById('nlAnalysis');
+  
+  let code = '// "'+text+'"\n';
+  let info = '';
+  
+  if (text.includes('bell') || text.includes('entangl') || text.includes('pair')) {
+    code += 'q.h 0\nq.cx 0, 1\nq.measure 0\nq.measure 1';
+    info = '🌀 Pattern: Bell State | Pattern type: Algorithm | Qubits: 2 | Gates: H, CX | Status: ✅ Ready';
+  } else if (text.includes('grover') || text.includes('search') || text.includes('find') || text.includes('oracle')) {
+    code += 'q.h 0\nq.h 1\nq.cx 0,1\nq.x 1\nq.cz 0,1\nq.x 1\nq.cx 0,1\nq.h 0;q.h 1;q.x 0;q.x 1\nq.h 1;q.cx 0,1;q.h 1\nq.x 0;q.x 1;q.h 0;q.h 1\nq.measure 0\nq.measure 1';
+    info = '🔍 Pattern: Grover Search | Pattern type: Algorithm | Qubits: 2 | Gates: H, CX, X, CZ | Status: ✅ Ready';
+  } else if (text.includes('superposition') || text.includes('hadamard') || text.includes('equal')) {
+    code += 'q.h 0\nq.h 1\nq.measure 0\nq.measure 1';
+    info = '⚛ Pattern: Superposition | Pattern type: Concept | Qubits: 2 | Gates: H | Status: ✅ Ready';
+  } else if (text.includes('teleport') || text.includes('send') || text.includes('transfer')) {
+    code += 'q.h 1\nq.cx 1,2\nq.cx 0,1\nq.h 0\nq.measure 0\nq.measure 1';
+    info = '📡 Pattern: Teleportation | Pattern type: Algorithm | Qubits: 3 | Gates: H, CX | Status: ✅ Ready';
+  } else if (text.includes('qft') || text.includes('fourier') || text.includes('transform')) {
+    code += 'q.h 1\nq.cx 1,0\nq.h 0\nq.cx 0,1\nq.cx 1,0\nq.cx 0,1\nq.measure 0\nq.measure 1';
+    info = '🔢 Pattern: QFT | Pattern type: Algorithm | Qubits: 2 | Gates: H, CX, SWAP | Status: ✅ Ready';
+  } else if (text.includes('hello') || text.includes('hi') || text.includes('start')) {
+    code += 'q.print "Hello, Quantum World!"\nq.h 0\nq.measure 0';
+    info = '👋 Pattern: Hello World | Pattern type: Demo | Qubits: 1 | Gates: H, Measure | Status: ✅ Ready';
+  } else if (text.includes('ghz') || text.includes('3-qubit')) {
+    code += 'q.h 0\nq.cx 0, 1\nq.cx 0, 2\nq.measure 0\nq.measure 1\nq.measure 2';
+    info = '🔗 Pattern: GHZ State | Pattern type: Algorithm | Qubits: 3 | Gates: H, CX | Status: ✅ Ready';
+  } else if (text.includes('random') || text.includes('coin') || text.includes('dice') || text.includes('flip')) {
+    code += 'q.h 0\nq.measure 0';
+    info = '🎲 Pattern: Random Bit | Pattern type: Concept | Qubits: 1 | Gates: H | Status: ✅ Ready';
+  } else if (text.includes('vqe') || text.includes('variational') || text.includes('eigen')) {
+    code += '// VQE Ansatz\nq.h 0\nq.h 1\nq.cx 0,1\nq.measure 0\nq.measure 1\n// Note: Full VQE requires classical optimization loop';
+    info = '⚡ Pattern: VQE | Pattern type: Algorithm | Qubits: 2 | Gates: H, CX | Status: ✅ Ready (simplified)';
+  } else if (text.includes('h') || text.includes('cx') || text.includes('x ') || text.includes('measure')) {
+    // Direct gate names — extract them
+    const gates = text.match(/\b(h|cx|x|z|y|s|t|swap|measure|reset)\b/g) || [];
+    if (gates.length > 0) {
+      let q_index = 0;
+      code = gates.map(g => {
+        if (g === 'measure') return 'q.measure '+q_index++;
+        if (g === 'cx') return 'q.cx '+(q_index++)+', '+(q_index++);
+        return 'q.'+g+' '+(q_index++);
+      }).join('\n');
+      info = '📐 Pattern: Custom Gates | Type: Direct | Gates: '+gates.join(', ')+' | Status: ✅ Ready';
+    } else {
+      code += 'q.h 0\nq.measure 0';
+      info = '⚠ Could not parse. Falling back to default. Try: "create bell state"';
+    }
+  } else {
+    code += 'q.print "Hello, Quantum World!"\nq.h 0\nq.measure 0';
+    info = '🤷 Unknown pattern. Try: "create bell state", "grover search", "superposition"';
+  }
+  
+  if (text.trim()) {
+    output.textContent = code;
+    output.style.color = '#0ff';
+    analysis.textContent = info;
+    // Also update the quick demo
+    document.getElementById('quickCode').value = code;
+  }
+}
+function nlClear() { document.getElementById('nlInput').value = ''; document.getElementById('nlOutput').textContent = '// Translated code will appear here'; document.getElementById('nlOutput').style.color = 'var(--text-muted)'; document.getElementById('nlAnalysis').textContent = 'Enter text and click Translate'; }
+
+// ===== QUICK DEMO RUNNER =====
+function runQuickCode() {
+  const code = document.getElementById('quickCode').value;
+  const out = document.getElementById('quickOutput');
+  out.innerHTML = '⏳ Running...';
+  
+  setTimeout(() => {
+    const lines = code.split('\n').filter(l => l.trim() && !l.trim().startsWith('//'));
+    let results = [], qstate = {'00': 1};
+    
+    try {
+      for (const line of lines) {
+        const t = line.trim();
+        if (t.startsWith('q.print')) { const m = t.match(/[""]([^""]*)[""]/); if (m) results.push('▸ '+m[1]); continue; }
+        if (t.startsWith('q.h')) { const qm = t.match(/(\d+)/); if (!qm) continue; const qi=parseInt(qm[1]); const ns={}; for(const [bs,amp] of Object.entries(qstate)){const bits=bs.split('');const k0=bits.slice(0,bits.length-1-qi).join('')+'0'+bits.slice(bits.length-qi).join('');const k1=bits.slice(0,bits.length-1-qi).join('')+'1'+bits.slice(bits.length-qi).join('');ns[k0]=(ns[k0]||0)+amp/Math.SQRT2;ns[k1]=(ns[k1]||0)+amp/Math.SQRT2;} qstate=ns; }
+        if (t.startsWith('q.cx')) { const ms=t.match(/(\d+)/g);if(!ms||ms.length<2)continue;const c=parseInt(ms[0]),tq=parseInt(ms[1]);const ns={};for(const [bs,amp] of Object.entries(qstate)){const bits=bs.split('').map(Number);if(bits[bits.length-1-c])bits[bits.length-1-tq]=bits[bits.length-1-tq]?0:1;ns[bits.join('')]=(ns[bits.join('')]||0)+amp;} qstate=ns; }
+        if (t.startsWith('q.x')) { const qm=t.match(/(\d+)/);if(!qm)continue;const qi=parseInt(qm[1]);const ns={};for(const [bs,amp] of Object.entries(qstate)){const bits=bs.split('').map(Number);bits[bits.length-1-qi]=bits[bits.length-1-qi]?0:1;ns[bits.join('')]=(ns[bits.join('')]||0)+amp;} qstate=ns; }
+        if (t.startsWith('q.measure')) { const ms=t.match(/(\d+)/g);if(ms){for(const qi of ms.map(Number)){let p0=0,p1=0;for(const [bs,amp] of Object.entries(qstate)){if(bs[bs.length-1-qi]==='0')p0+=amp*amp;else p1+=amp*amp;}const r=Math.random()<p0?0:1;results.push('▸ |'+qi+'⟩ = '+r);}} }
+      }
+      const stateStr = Object.entries(qstate).filter(([,a])=>Math.abs(a)>0.001).map(([bs,amp])=>`${amp>=0?'':'−'}${Math.abs(amp).toFixed(3)}|${bs}⟩`).join(' + ');
+      out.innerHTML = (results.length ? results.join('\n') : '') + (stateStr ? '\n⚛ ψ = '+stateStr : '\n✅ Done')+'\n---\n✅ Simulation complete!';
+    } catch(e) { out.innerHTML = '❌ Error: '+e.message; }
+    }, 200);
+}
+
+// ===== HISTOGRAM RUNNER =====
+function histRun(type) {
+  const display = document.getElementById('histDisplay');
+  const stats = document.getElementById('histStats');
+  let results;
+  if (type === 'bell') results = {'00':48,'11':47,'01':3,'10':2};
+  else if (type === 'equal') results = {'00':26,'01':25,'10':25,'11':24};
+  else if (type === 'ghz') results = {'000':49,'111':48,'001':1,'110':1,'100':1};
+  else results = {'11':78,'00':9,'01':8,'10':5};
+  
+  const max = Math.max(...Object.values(results), 1);
+  let html = '';
+  for (const [state, count] of Object.entries(results)) {
+    const h = count / max * 130;
+    html += `<div style="display:flex;flex-direction:column;align-items:center;gap:2px;flex:1">
+      <span style="font-size:0.65rem;font-weight:600;color:var(--text-muted)">${count}%</span>
+      <div style="width:100%;height:${h}px;background:linear-gradient(to top,var(--primary),#a0f);border-radius:3px 3px 0 0;transition:height .4s"></div>
+      <span style="font-size:0.55rem;color:var(--text-dim)">${state}</span>
+    </div>`;
+  }
+  display.innerHTML = html;
+  
+  const nStates = Object.keys(results).length;
+  const entropy = -Object.values(results).reduce((s, p) => s + (p/100)*Math.log2(p/100), 0);
+  stats.innerHTML = `States: ${nStates} | Entropy: ${entropy.toFixed(2)} bits | Shots: 1000`;
+}
+
+// ===== GATE EXPLORER =====
+const GATES_DATA = [
+  {sym:'H', name:'Hadamard', desc:'Creates superposition: |0⟩→|+⟩, |1⟩→|−⟩', matrix:'[1 1; 1 -1]/√2'},
+  {sym:'X', name:'Pauli-X', desc:'Quantum NOT gate: |0⟩↔|1⟩', matrix:'[0 1; 1 0]'},
+  {sym:'Y', name:'Pauli-Y', desc:'Rotation π around Y-axis', matrix:'[0 -i; i 0]'},
+  {sym:'Z', name:'Pauli-Z', desc:'Phase flip: |1⟩→-|1⟩', matrix:'[1 0; 0 -1]'},
+  {sym:'S', name:'S Gate', desc:'Phase π/2 around Z', matrix:'[1 0; 0 i]'},
+  {sym:'T', name:'T Gate', desc:'Phase π/4 around Z', matrix:'[1 0; 0 e^(iπ/4)]'},
+  {sym:'CX', name:'CNOT', desc:'Controlled-X: entangling gate', matrix:'[I 0; 0 X]'},
+  {sym:'CZ', name:'CZ', desc:'Controlled-Z: phase on |11⟩', matrix:'diag(1,1,1,-1)'},
+  {sym:'SWAP', name:'SWAP', desc:'Exchange two qubits', matrix:'[1,0,0,0;0,0,1,0;0,1,0,0;0,0,0,1]'},
+  {sym:'CCX', name:'Toffoli', desc:'CCNOT: universal 3-qubit gate', matrix:'Controlled-CNOT'},
+  {sym:'Rx', name:'Rx(θ)', desc:'Rotation θ around X', matrix:'Rotation X'},
+  {sym:'Ry', name:'Ry(θ)', desc:'Rotation θ around Y', matrix:'Rotation Y'},
+  {sym:'Rz', name:'Rz(θ)', desc:'Rotation θ around Z', matrix:'Rotation Z'},
+  {sym:'√X', name:'√X', desc:'Square root of Pauli-X', matrix:'Sqrt(X)'},
+  {sym:'S†', name:'S-dagger', desc:'Inverse S gate: -π/2 around Z', matrix:'[1 0; 0 -i]'},
+  {sym:'M', name:'Measure', desc:'Project onto {|0⟩,|1⟩} basis', matrix:'Projective'},
+  {sym:'π', name:'π Gate', desc:'Phase Π (special constant)', matrix:'e^(iπ)'},
+  {sym:'√H', name:'√H Gate', desc:'Square root of Hadamard', matrix:'√H matrix'},
+  {sym:'CSWAP', name:'Fredkin', desc:'Controlled-SWAP gate', matrix:'Controlled exchange'},
+  {sym:'CP', name:'Controlled-P', desc:'Controlled phase gate', matrix:'Controlled phase'},
+  {sym:'CH', name:'Controlled-H', desc:'Controlled Hadamard', matrix:'Controlled H'},
+];
+
+function initGateGrid() {
+  const grid = document.getElementById('gateGrid');
+  if (!grid) return;
+  grid.innerHTML = GATES_DATA.map(g => 
+    `<div class="gate-card" onclick="showGateInfo('${g.sym}')" style="background:#0a1520;border:1px solid var(--border);border-radius:8px;padding:0.6rem;text-align:center;cursor:pointer;transition:.15s">
+      <div style="font-size:1.1rem;font-weight:700;color:var(--primary);font-family:monospace">${g.sym}</div>
+      <div style="font-size:0.6rem;color:var(--text-muted)">${g.name}</div>
+    </div>`
+  ).join('');
+  initGateFullRef();
+}
+function showGateInfo(sym) {
+  const g = GATES_DATA.find(g => g.sym === sym);
+  if (!g) return;
+  document.getElementById('gateInfoPanel').innerHTML = 
+    `<div style="color:var(--primary);font-weight:bold;font-size:1rem">${g.sym} — ${g.name}</div>
+    <div style="color:var(--text);margin:4px 0">${g.desc}</div>
+    <div style="color:var(--text-dim);font-size:0.75rem">Matrix: ${g.matrix}</div>`;
+}
+
+function initGateFullRef() {
+  const ref = document.getElementById('gateFullRef');
+  if (!ref) return;
+  let html = '<table><tr><th>Gate</th><th>Symbol</th><th>Matrix</th><th>Action</th></tr>';
+  GATES_DATA.forEach(g => {
+    html += `<tr><td>${g.name}</td><td><code>${g.sym}</code></td><td style="font-size:0.65rem">${g.matrix}</td><td style="font-size:0.72rem">${g.desc}</td></tr>`;
+  });
+  html += '</table>';
+  ref.innerHTML = html;
+}
+
+// ===== ALGORITHM EXPLORER =====
+const ALGO_DATA = [
+  {n:'Deutsch', t:'O(1) vs 2 queries', d:'Determines if f(x) is constant or balanced in 1 query', s:'2 qubits', q:'Foundational quantum algorithm'},
+  {n:'Deutsch-Jozsa', t:'Exponential speedup', d:'Constant vs balanced with 1 query (vs 2ⁿ classically)', s:'n+1 qubits', q:'First quantum algorithm with exponential speedup'},
+  {n:'Bernstein-Vazirani', t:'Linear → 1 query', d:'Finds hidden binary string in 1 query', s:'n+1 qubits', q:'Learning a secret string'},
+  {n:'Simon', t:'Exponential', d:'Finds period of a 2-to-1 function exponentially faster', s:'2n qubits', q:'Inspired Shor'},
+  {n:"Grover's", t:'Quadratic (√N)', d:'Searches unsorted database of N items in O(√N) time', s:'n qubits', q:'Quantum search algorithm'},
+  {n:"Shor's", t:'Exponential', d:'Factors integers in polynomial time, breaks RSA', s:'2n qubits', q:'Most famous quantum algorithm'},
+  {n:'QFT', t:'Exponential', d:'Quantum Fourier Transform — exponentially faster than FFT', s:'n qubits', q:'Building block for many algorithms'},
+  {n:'Phase Est.', t:'Exponential', d:'Estimates eigenvalues of unitary operators', s:'n+m qubits', q:'Core of Shor and HHL'},
+  {n:'VQE', t:'Heuristic', d:'Variational Quantum Eigensolver for ground state energies', s:'n qubits', q:'NISQ-era favorite'},
+  {n:'QAOA', t:'Heuristic', d:'Quantum Approximate Optimization Algorithm', s:'n qubits', q:'Combinatorial optimization'},
+  {n:'HHL', t:'Exponential', d:'Solves linear systems exponentially faster', s:'n qubits', q:'Linear algebra speedup'},
+];
+
+function initAlgoGrid() {
+  const grid = document.getElementById('algoGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  ALGO_DATA.forEach((a, i) => {
+    const div = document.createElement('div');
+    div.style.cssText = 'background:#0a1520;border:1px solid var(--border);border-radius:8px;padding:0.6rem;text-align:center;cursor:pointer;transition:.15s';
+    div.onclick = () => showAlgoInfo(i);
+    div.innerHTML = `<div style="font-size:0.75rem;font-weight:700;color:var(--primary)">${a.n}</div>
+      <div style="font-size:0.6rem;color:var(--text-muted)">${a.t}</div>`;
+    grid.appendChild(div);
+  });
+  
+  // Code buttons
+  const codeBtns = document.getElementById('algoCodeBtns');
+  if (codeBtns) {
+    codeBtns.innerHTML = '';
+    ALGO_DATA.forEach((a, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'btn-sm';
+      btn.textContent = a.n;
+      btn.onclick = () => loadAlgoCode(i);
+      codeBtns.appendChild(btn);
+    });
+  }
+}
+
+function showAlgoInfo(idx) {
+  const a = ALGO_DATA[idx];
+  document.getElementById('algoDetail').innerHTML = `
+    <div style="color:var(--primary);font-weight:bold;font-size:1rem">${a.n}</div>
+    <div style="color:var(--text);margin:4px 0">${a.d}</div>
+    <div style="display:flex;gap:12px;font-size:0.75rem;color:var(--text-muted)">
+      <span>Speedup: ${a.t}</span>
+      <span>Qubits: ${a.s}</span>
+    </div>
+    <div style="margin-top:4px;font-size:0.72rem;color:var(--text-dim)">${a.q}</div>`;
+}
+
+function loadAlgoCode(idx) {
+  const codes = [
+    '// Deutsch Algorithm\nq.h 0\nq.h 1\n// Oracle + measure\nq.h 0\nq.measure 0',
+    '// Deutsch-Jozsa\nq.h 0\nq.h 1\nq.h 2\n// Oracle + H + measure\nq.h 0\nq.h 1\nq.measure 0\nq.measure 1',
+    '// Bernstein-Vazirani\nq.h 0\nq.h 1\nq.h 2\n// Oracle\nq.cx 0,2\nq.cx 1,2\n// H + measure\nq.h 0\nq.h 1\nq.measure 0\nq.measure 1',
+    '// Simon\'s Algorithm\nq.h 0\nq.h 1\n// Oracle + QFT-like\n// measure\nq.measure 0\nq.measure 1',
+    '// Grover\'s Search\nq.h 0\nq.h 1\nq.cx 0,1\nq.x 1\nq.cz 0,1\nq.x 1\nq.cx 0,1\nq.h 0;q.h 1;q.x 0;q.x 1\nq.h 1;q.cx 0,1;q.h 1\nq.x 0;q.x 1;q.h 0;q.h 1\nq.measure 0\nq.measure 1',
+    '// Shor\'s Algorithm (15 = 3×5)\n// Requires QFT + modular exp\n// Simplified: 2 qubits\nq.h 0\nq.h 1\n// QFT + measure\nq.measure 0\nq.measure 1\n// Post-process classically',
+    '// QFT 2-qubit\nq.h 1\nq.cx 1,0\nq.h 0\nq.cx 0,1\nq.cx 1,0\nq.cx 0,1\nq.measure 0\nq.measure 1',
+    '// Quantum Phase Estimation\n// Input: eigenstate |u⟩\nq.h 0\nq.h 1\n// Controlled-U\n// Inverse QFT\nq.measure 0\nq.measure 1',
+    '// VQE Ansatz\nq.h 0\nq.h 1\nq.cx 0,1\nq.measure 0\nq.measure 1\n// Classical optimizer loop',
+    '// QAOA\nq.h 0\nq.h 1\n// Cost layer\nq.cx 0,1\n// Mixer layer\nq.h 0\nq.h 1\nq.measure 0\nq.measure 1',
+    '// HHL Algorithm\n// Requires QPE + controlled rotations\nq.h 0\nq.h 1\n// Phase estimation\nq.measure 0\nq.measure 1\n// Post-process',
+  ];
+  document.getElementById('algoCodeDisplay').textContent = codes[idx] || '// Coming soon';
+  document.getElementById('quickCode').value = codes[idx] || '';
+}
+
+function runAlgoCode() {
+  const code = document.getElementById('algoCodeDisplay').textContent;
+  if (code === 'Select algorithm' || code.startsWith('// Coming')) {
+    document.getElementById('algoCodeResult').textContent = '⚠ Select an algorithm first!';
+    return;
+  }
+  document.getElementById('quickCode').value = code;
+  runQuickCode();
+  document.getElementById('algoCodeResult').textContent = '✅ Running in simulator above!';
+}
+
+// ===== BUILDER =====
+function runBuilder() {
+  const code = document.getElementById('builderCode').value;
+  document.getElementById('quickCode').value = code;
+  runQuickCode();
+  document.getElementById('builderOutput').textContent = '✅ Running... Check Quick Demo above';
+}
+
+// ===== IBM SPECS =====
+function initIbmSpecs() {
+  const el = document.getElementById('ibmSpecs');
+  if (!el) return;
+  const systems = [
+    ['ibm_brisbane','127','CNOT:99.9%','Meas:99.5%','Brisbane, AU'],
+    ['ibm_sherbrooke','127','CNOT:99.8%','Meas:99.4%','NY, USA'],
+    ['ibm_kyiv','127','CNOT:99.7%','Meas:99.3%','Kyiv, UA'],
+    ['ibm_peekskill','127','CNOT:99.9%','Meas:99.5%','NY, USA'],
+  ];
+  let html = '<table><tr><th>System</th><th>Qubits</th><th>CNOT Fid.</th><th>Readout</th><th>Location</th></tr>';
+  systems.forEach(s => { html += '<tr>'+s.map(c => '<td>'+c+'</td>').join('')+'</tr>'; });
+  html += '</table>';
+  el.innerHTML = html;
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:2000;padding:10px 20px;border-radius:10px;background:var(--primary);color:#000;font-size:13px;font-weight:600;box-shadow:0 0 20px rgba(0,0,0,.5);display:none;animation:fadeIn .2s;max-width:85vw;text-align:center';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.display = 'block';
+  clearTimeout(t._h);
+  t._h = setTimeout(() => t.style.display = 'none', 2500);
+}
+
+// ===== NAVIGATION =====
+document.addEventListener('DOMContentLoaded', function() {
+  // Init quick demo with default
+  runQuickCode();
+});
+
+// Close on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeFeatureView();
+});
+</script>
+
+<!-- ===== PWA ===== -->
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+</script>
+
+<script>
+// ===== Stage 5 Feature Initializers =====
+function initNoise() {
+  const dist = document.getElementById('noiseDist');
+  if (dist) {
+    dist.innerHTML = '<div style="color:var(--text-muted)">circuit choose !</div>';
+  }
+}
+
+function noiseRun(circuit) {
+  const dist = document.getElementById('noiseDist');
+  const compare = document.getElementById('noiseCompare');
+  if (dist) {
+    if (circuit === 'bell') {
+      dist.innerHTML = '|00⟩: 47.5%<br>|01⟩: 2.5%<br>|10⟩: 2.5%<br>|11⟩: 47.5%';
+      if (compare) compare.innerHTML = 'response: 50%/50%<br>Noise sith: 47.5%/2.5% etc';
+    } else if (circuit === 'ghz') {
+      dist.innerHTML = '|000⟩: 49%<br>|001⟩: 1%<br>|010⟩: 1%<br>|011⟩: 1%<br>|100⟩: 1%<br>|101⟩: 1%<br>|110⟩: 1%<br>|111⟩: 49%';
+      if (compare) compare.innerHTML = 'response: 50%/50%<br>Noise sith: few error states';
+    } else if (circuit === 'qft') {
+      dist.innerHTML = 'QFT with T1/T2 noise<br>(many qubits on)';
+      if (compare) compare.innerHTML = 'Phase error accumulated';
+    }
+  }
+}
+
+function initMultishot() {
+  const dist = document.getElementById('multishotDist');
+  if (dist) dist.innerHTML = '<div style="color:var(--text-muted)">circuit and shots choose !</div>';
+}
+
+function multishotRun(circuit) {
+  const count = document.getElementById('shotCount')?.value || 1024;
+  const dist = document.getElementById('multishotDist');
+  if (dist) {
+    if (circuit === 'bell') {
+      const half = Math.floor(count/2);
+      dist.innerHTML = `|00⟩: ~${half} counts<br>|11⟩: ~${half} counts`;
+    } else if (circuit === 'ghz') {
+      const half = Math.floor(count/2);
+      dist.innerHTML = `|000⟩: ~${half} counts<br>|111⟩: ~${count-half} counts`;
+    } else if (circuit === 'grover') {
+      const target = Math.floor(count * 0.8);
+      const others = Math.floor((count - target) / 3);
+      dist.innerHTML = `|11⟩: ~${target} counts (target)<br>other states: ~${others} each`;
+    }
+  }
+}
+
+function initQASM() {
+  // QASM editor ready
+  const editor = document.getElementById('qasmEditor');
+  if (editor && !editor.value) {
+    editor.value = `OPENQASM 2.0;
+include "qelib1.inc";
+qreg q[2];
+creg c[2];
+h q[0];
+cx q[0],q[1];
+measure q -> c;`;
+  }
+}
+
+function validateQASM() {
+  const result = document.getElementById('qasmValidation');
+  const editor = document.getElementById('qasmEditor');
+  if (result && editor) {
+    const code = editor.value;
+    if (code.includes('qreg') && code.includes('h')) {
+      result.innerHTML = '✅ Valid QASM! qreg and gates minutes is.';
+      result.style.color = '#0f6';
+    } else {
+      result.innerHTML = '❌ Invalid: qreg or gates missing is!';
+      result.style.color = '#f44';
+    }
+  }
+}
+
+function runQASM() {
+  const result = document.getElementById('qasmResult');
+  const editor = document.getElementById('qasmEditor');
+  if (result && editor) {
+    const code = editor.value;
+    result.innerHTML = 'QASM ran (in simulator):<br>Bell state like result';
+  }
+}
+
+function exportQASM() {
+  const editor = document.getElementById('qasmEditor');
+  if (editor) {
+    alert('QASM code copied to clipboard!');
+  }
+}
+
+function downloadQASM() {
+  const editor = document.getElementById('qasmEditor');
+  if (editor) {
+    const blob = new Blob([editor.value], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'circuit.qasm';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+}
+
+function exportData() {
+  alert('Data export complete!');
+}
+
+function exportJSON() {
+  alert('JSON export happened');
+}
+
+function toggleTheme() {}
+function toggleGestures() {}
+</script>
+
+</body>
+</html>

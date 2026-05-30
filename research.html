@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔬 Quantum AI IDE — Research Articles</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap">
+    <style>
+        :root { --primary: #0ff; --text: #cfddee; --text-muted: #6a8aaa; --border: #2a4f6e; --bg: #0a1520; --card-bg: #0f1e2d; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', 'Noto Sans Gujarati', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        header { text-align: center; margin-bottom: 30px; padding: 20px; border-bottom: 1px solid var(--border); }
+        h1 { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
+        h2 { font-size: 1.3rem; color: var(--primary); margin-bottom: 10px; }
+        .article-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; transition: all 0.2s; }
+        .article-card:hover { transform: translateY(-3px); border-color: var(--primary); }
+        .meta { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; }
+        .excerpt { line-height: 1.6; margin-bottom: 15px; }
+        .read-link { color: var(--primary); text-decoration: none; font-weight: 500; display: inline-block; padding: 4px 12px; border: 1px solid var(--border); border-radius: 6px; }
+        .read-link:hover { background: rgba(10,20,30,0.5); }
+        .back-link { display: inline-block; margin-top: 30px; color: var(--primary); text-decoration: none; }
+        @media (max-width: 600px) {
+            .container { padding: 15px; } h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔬 Quantum AI IDE — Research Articles</h1>
+            <p style="color: var(--text-muted);">Latest discoveries and insights in quantum computing</p>
+        </header>
+
+        <article class="article-card">
+            <div class="meta">📅 May 29, 2026 • 🏷️ Quantum Computing • 🧪 Kanada Rishi</div>
+            <h2>The Ancient Discoverer of Atom and Proton</h2>
+            <p class="excerpt">
+                <strong>Kanada Rishi</strong> (c. 3rd century BCE) was the first to describe the atomic theory in the Vaisheshika Sutra — <strong>"Anu" (atom) and "Paramanu" (sub-atomic particle)</strong> — thousands of years before Western discovery. His verses laid the foundation for quantum mechanics!
+            </p>
+            <a href="/research/kanada-atomic-theory" class="read-link">🔍 Read More →</a>
+        </article>
+
+        <article class="article-card">
+            <div class="meta">📅 May 28, 2026 • 🏷️ Retrocausality • 🧪 Quantum Foundations</div>
+            <h2>Retrocausality: Quantum Particles from the Future</h2>
+            <p class="excerpt">
+                "Retrocausality" means the future affects the past. Quantum experiments suggest particles can "know" what measurement will be made — challenging Einstein's causality!
+            </p>
+            <a href="/research/retrocausality" class="read-link">🔍 Read More →</a>
+        </article>
+
+        <article class="article-card">
+            <div class="meta">📅 May 27, 2026 • 🏷️ Quantum Algorithms • 🧪 Grover</div>
+            <h2>How Grover's Algorithm Searches Unsorted Databases</h2>
+            <p class="excerpt">
+                Grover's algorithm finds items in O(√N) time instead of O(N). For 1 billion items? Just 30,000 steps! Perfect for optimization and AI.
+            </p>
+            <a href="/research/grovers-algorithm" class="read-link">🔍 Read More →</a>
+        </article>
+
+        <a href="/quantum-ai-ide" class="back-link">← Back to Quantum AI IDE</a>
+    </div>
+</body>
+</html>

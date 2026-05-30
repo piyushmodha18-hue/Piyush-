@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+<meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>શિક્ષકો — ટાઇમટેબલ</title>
+<style>
+/* --- CRITICAL: navbar + base (inline) --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+--primary: #0ff;
+  --primary-hover: #3cf;
+  --primary-light: rgba(0,255,255,0.1);
+  --bg: #0a0f1a;
+  --card: rgba(10,20,35,0.85);
+  --text: #cfddee;
+  --text-muted: #6a8aaa;
+  --border: #2a4f6e;
+  --shadow: 0 1px 3px rgba(0,0,0,.3);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,.4);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --green: #059669;
+  --green-bg: rgba(5,150,105,0.15);
+  --yellow: #d97706;
+  --yellow-bg: rgba(217,119,6,0.15);
+  --red: #dc2626;
+  --red-bg: rgba(220,38,38,0.15);
+}
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text);
+  min-height: 100vh;
+  padding-top: 56px;
+}
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: flex; align-items: center;
+  padding: 0 12px;
+  height: 56px;
+  gap: 4px;
+}
+.nav-toggle { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
+.nav-hamburger {
+  display: none;
+  font-size: 24px; cursor: pointer; padding: 4px 8px;
+  border-radius: 8px; user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-hamburger:hover { background: var(--bg-gradient); }
+.nav-hamburger::before { content: '\2630'; }
+.nav-toggle:checked ~ .nav-hamburger {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+.nav-toggle:checked ~ .nav-hamburger::before { content: '\2715'; }
+.navbar .brand {
+  font-size: 15px; font-weight: 700;
+  white-space: nowrap; margin-right: auto;
+  color: var(--text);
+  text-decoration: none;
+}
+.navbar .brand span { color: var(--primary); }
+.nav-menu {
+  display: flex; align-items: center; gap: 4px;
+}
+.nav-link {
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px; font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.nav-link:hover { background: var(--primary-light); color: var(--primary); }
+.nav-link.active { background: var(--primary); color: #000; font-weight: 700; }
+@media (max-width: 768px) {
+  .nav-hamburger { display: block; }
+  .nav-menu {
+    display: none;
+    position: fixed; top: 56px; left: 0; right: 0;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    padding: 8px;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 99;
+    animation: slideDown .2s ease;
+  }
+  @keyframes slideDown {
+    from { transform: translateY(-10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .nav-toggle:checked ~ .nav-menu { display: flex; }
+  .nav-menu .nav-link {
+    display: block;
+    width: 100%; padding: 12px 16px;
+    font-size: 15px; border-radius: 8px;
+  }
+  .nav-menu .nav-link.active {
+    background: var(--primary);
+    color: #000;
+  }
+}
+@media (max-width: 480px) {
+  .navbar .brand { font-size: 14px; }
+  .navbar .brand span { display: none; }
+}
+@media (max-width: 360px) {
+  .navbar .brand { font-size: 13px; }
+}
+/* --- end critical --- */
+</style>
+<link rel="stylesheet" href="/css/style.css?v=3">
+</head>
+<body>
+<nav class="navbar">
+<input type="checkbox" id="navToggle" class="nav-toggle">
+<a href="/" class="brand">🏫 <span>સમયપત્રક</span></a>
+<label for="navToggle" class="nav-hamburger"></label>
+<div class="nav-menu">
+<a href="/" class="nav-link">🏠 હોમ</a>
+<a href="/classes" class="nav-link">🏫 ક્લાસ</a>
+<a href="/subjects" class="nav-link">📚 વિષયો</a>
+<a href="/teachers" class="nav-link active" aria-current="page">👨‍🏫 શિક્ષકો</a>
+<a href="/timetable" class="nav-link">📅 ટાઇમટેબલ</a>
+<a href="/playground" class="nav-link">🧪 પ્લેગ્રાઉન્ડ</a>
+                    <a href="/settings" class="nav-link">⚙️ સેટિંગ</a>
+</div>
+</nav>
+<div class="container">
+  <!-- Load Summary Bar -->
+  <div id="loadSummaryBar" class="card" style="margin-bottom:12px"></div>
+  <!-- Teacher List + Add Form -->
+  <div class="row">
+    <div class="col-7">
+      <div class="card">
+        <div class="card-header">👨‍🏫 શિક્ષકો</div>
+        <div id="teacherList"></div>
+      </div>
+    </div>
+    <div class="col-5">
+      <div class="card">
+        <div class="card-header">➕ શિક્ષક ઉમેરો</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>શિક્ષકનું નામ</label>
+            <input type="text" id="newTeacherInput" placeholder="દા.ત. લીલાવનબેન">
+          </div>
+        </div>
+        <button class="btn btn-primary" id="addTeacherBtn">👨‍🏫 ઉમેરો</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="planSummaryArea" style="margin-top:12px"></div>
+<div id="toast"></div>
+<script src="/js/api.js"></script>
+<script src="/js/chat.js?v=1"></script>
+<script>
+// ========== DATA ==========
+var state = {
+  teachers: [],
+  gradeSubjects: [],
+  loads: [],
+  periodMinutes: 40,
+  suggestions: {},  // { teacherName: [suggestions] }
+  claimedSuggestions: {},  // { teacherName: { "subject||class": count } }
+  planClasses: [],  // [{grade, sections: [{name, subjects}]}]
+  planSummary: []  // [{class, needs: {subj: {required, filled, remaining}}}]
+};
+
+// ========== LOCALSTORAGE PERSISTENCE ==========
+function saveClaimedToStorage() {
+  try {
+    localStorage.setItem('teachers_claimed', JSON.stringify(state.claimedSuggestions));
+  } catch(e) {}
+}
+function loadClaimedFromStorage() {
+  try {
+    var d = localStorage.getItem('teachers_claimed');
+    if (d) state.claimedSuggestions = JSON.parse(d) || {};
+  } catch(e) { state.claimedSuggestions = {}; }
+}
+
+// ========== INIT ==========
+async function init() {
+  try {
+    var r = await fetch('/api/class-subjects/all');
+    var d = await r.json();
+    state.gradeSubjects = d.subjects || [];
+  } catch(e) {}
+  loadClaimedFromStorage();
+  await loadTeachers();
+  await loadLoads();
+  await loadAllSuggestions();
+  await loadPlanData();
+}
+
+async function loadAllSuggestions() {
+  // Load suggestions for all teachers in parallel
+  for (var i = 0; i < state.teachers.length; i++) {
+    var tname = state.teachers[i].name;
+    try {
+      var r = await fetch('/api/teachers/' + encodeURIComponent(tname) + '/suggestions');
+      var d = await r.json();
+      state.suggestions[tname] = d.suggestions || [];
+    } catch(e) { state.suggestions[tname] = []; }
+  }
+  render();
+}
+
+async function loadPlanData() {
+  try {
+    var r = await fetch('/api/plan/classes');
+    var d = await r.json();
+    state.planClasses = d.grades || [];
+  } catch(e) { state.planClasses = []; }
+  try {
+    var r2 = await fetch('/api/plan/summary');
+    var d2 = await r2.json();
+    state.planSummary = d2.summary || [];
+  } catch(e) { state.planSummary = []; }
+  renderPlanSummary();
+}
+
+async function loadTeachers() {
+  try {
+    var r = await API.getTeachers();
+    state.teachers = r.teachers || [];
+  } catch(e) { state.teachers = []; }
+  render();
+}
+
+async function loadLoads() {
+  try {
+    var r = await fetch('/api/teachers/loads');
+    var d = await r.json();
+    state.loads = d.loads || [];
+    state.periodMinutes = d.period_minutes || 40;
+  } catch(e) { state.loads = []; }
+  renderLoadSummary();
+  render();
+}
+
+function getLoad(name) {
+  for (var i = 0; i < state.loads.length; i++) {
+    if (state.loads[i].name === name) return state.loads[i];
+  }
+  return {name: name, load: 0, hours: 0, status: 'low', per_class: []};
+}
+
+// Projected load = current load + claimed suggestion periods
+function getProjectedLoad(name) {
+  var base = getLoad(name);
+  var extra = 0;
+  if (state.claimedSuggestions[name]) {
+    for (var key in state.claimedSuggestions[name]) {
+      extra += state.claimedSuggestions[name][key];
+    }
+  }
+  return {load: base.load + extra, hours: base.hours + Math.round(extra * state.periodMinutes / 60 * 10) / 10};
+}
+
+// Get total planned periods for a class+subject across all teachers
+function getTotalPlannedFor(cls, subj) {
+  var total = 0;
+  for (var tname in state.claimedSuggestions) {
+    var key = subj + '||' + cls;
+    if (state.claimedSuggestions[tname][key]) {
+      total += state.claimedSuggestions[tname][key];
+    }
+  }
+  for (var gi = 0; gi < state.planSummary.length; gi++) {
+    if (state.planSummary[gi]['class'] === cls) {
+      var needs = state.planSummary[gi].needs;
+      if (needs && needs[subj]) {
+        total += needs[subj].filled;
+      }
+      break;
+    }
+  }
+  return total;
+}
+
+// Get remaining available periods for a class+subject
+function getRemainingFor(cls, subj) {
+  var required = 0;
+  for (var gi = 0; gi < state.planSummary.length; gi++) {
+    if (state.planSummary[gi]['class'] === cls) {
+      var needs = state.planSummary[gi].needs;
+      if (needs && needs[subj]) {
+        required = needs[subj].required;
+      }
+      break;
+    }
+  }
+  var totalPlanned = getTotalPlannedFor(cls, subj);
+  return Math.max(0, required - totalPlanned);
+}
+
+// CLAIM: add subject + mark as claimed
+async function claimSuggestion(tname, subj, cls, avail) {
+  var remaining = getRemainingFor(cls, subj);
+  if (avail > remaining) {
+    showToast('⚠️ ' + subj + ' (' + cls + ') માટે હવે ફક્ત ' + remaining + ' પિરિયડ બાકી છે', 'error');
+    return;
+  }
+  // Add subject to teacher if not already
+  var t = getTeacher(tname);
+  if (t && (!t.subjects || t.subjects.indexOf(subj) === -1)) {
+    var subs = (t.subjects || []).slice();
+    var primaries = (t.primary_subjects || []).slice();
+    var mainSubj = t.main_subject || subs[0] || subj;
+    subs.push(subj);
+    primaries.push(subj);
+    try {
+      await fetch('/api/teachers/' + encodeURIComponent(tname), {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({subjects: subs, primary_subjects: primaries, main_subject: mainSubj})
+      });
+      await loadTeachers();
+    } catch(e) {
+      showToast('⚠️ સેવ ન થયો', 'error');
+      return;
+    }
+  }
+  // Mark as claimed
+  if (!state.claimedSuggestions[tname]) state.claimedSuggestions[tname] = {};
+  var key = subj + '||' + cls;
+  state.claimedSuggestions[tname][key] = avail;
+  // Remove from suggestions
+  var suggs = state.suggestions[tname] || [];
+  var newSuggs = [];
+  for (var i = 0; i < suggs.length; i++) {
+    var s = suggs[i];
+    if (!(s.subject === subj && s['class'] === cls)) {
+      newSuggs.push(s);
+    }
+  }
+  state.suggestions[tname] = newSuggs;
+  // Show updated load
+  var proj = getProjectedLoad(tname);
+  showToast('✅ ' + subj + ' (' + cls + ') +' + avail + ' પિરિયડ! અંદાજ: ' + proj.load + ' (' + proj.hours + 'ક)', 'success');
+  saveClaimedToStorage();
+  render();
+  renderPlanSummary();
+}
+
+// ========== RENDER LOAD SUMMARY ==========
+function renderLoadSummary() {
+  var el = document.getElementById('loadSummaryBar');
+  if (state.loads.length === 0) {
+    el.innerHTML = '<div style="padding:10px 14px;font-size:13px;color:var(--text-muted)">📊 ટાઇમટેબલ જનરેટ થયા પછી શિક્ષક લોડ જોઈ શકાશે</div>';
+    return;
+  }
+  var ok = 0, low = 0, high = 0;
+  var items = '';
+  for (var i = 0; i < state.loads.length; i++) {
+    var l = state.loads[i];
+    if (l.status === 'ok') ok++;
+    else if (l.status === 'low') low++;
+    else if (l.status === 'high') high++;
+    var bg = l.status === 'ok' ? 'var(--green-bg)' : (l.status === 'high' ? 'var(--red-bg)' : 'var(--yellow-bg)');
+    var color = l.status === 'ok' ? 'var(--green)' : (l.status === 'high' ? 'var(--red)' : 'var(--yellow)');
+    var lbl = l.status === 'ok' ? '✔' : (l.status === 'high' ? '⬆' : '⬇');
+    items += '<span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:' + bg + ';color:' + color + ';margin:2px">' + lbl + ' ' + esc(l.name) + ': ' + l.load + ' (' + l.hours + 'ક)' + '</span>';
+  }
+  var summary = '✅ ' + ok + ' સારા | ⬇ ' + low + ' ઓછા | ⬆ ' + high + ' વધુ';
+  el.innerHTML = '<div style="padding:10px 14px;font-size:13px"><strong>📊 શિક્ષક લોડ:</strong> ' + summary + '<br><div style="margin-top:4px">' + items + '</div></div>';
+}
+
+// ========== RENDER PLAN SUMMARY ==========
+function renderPlanSummary() {
+  var el = document.getElementById('planSummaryArea');
+  if (!el) return;
+  if (!state.planSummary || state.planSummary.length === 0) {
+    el.style.display = 'none';
+    return;
+  }
+  el.style.display = 'block';
+  var hasNeeds = false;
+  var totalRemaining = 0;
+  var html = '<div class="card"><div class="card-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap">';
+  html += '<span>📊 સ્કૂલની બાકી જરૂરિયાત</span>';
+  html += '<button id="autoFitBtn" class="btn btn-sm" style="background:var(--primary);color:white;border:none;border-radius:6px;padding:4px 12px;font-size:12px;cursor:pointer;font-weight:600">🤖 ઓટો ફિટ કરો</button>';
+  html += '</div><div style="padding:10px 14px;font-size:12px">';
+  for (var gi = 0; gi < state.planSummary.length; gi++) {
+    var cls = state.planSummary[gi];
+    var clsNeeds = [];
+    for (var subj in cls.needs) {
+      var n = cls.needs[subj];
+      if (n.remaining > 0) {
+        var adjusted = getRemainingFor(cls['class'], subj);
+        if (adjusted <= 0) continue;
+        totalRemaining += adjusted;
+        var capableStr = n.capable_teachers && n.capable_teachers.length > 0 ? n.capable_teachers.join(', ') : '❌ કોઈ શિક્ષક નથી!';
+        // Count how many capable teachers are under max load
+        var availTeachers = [];
+        for (var ct = 0; ct < n.capable_teachers.length; ct++) {
+          var tname = n.capable_teachers[ct];
+          var tload = getLoad(tname);
+          if (tload.load < 33) availTeachers.push(tname);
+        }
+        clsNeeds.push({
+          subj: subj,
+          filled: n.filled,
+          required: n.required,
+          remaining: adjusted,
+          capable: capableStr,
+          avail_teachers: availTeachers.length > 0 ? availTeachers.join(', ') : '❌ બધા 33 પર'
+        });
+        hasNeeds = true;
+      }
+    }
+    if (clsNeeds.length > 0) {
+      html += '<div style="margin-bottom:8px;padding:8px;background:white;border-radius:8px;border:1px solid var(--border)">';
+      html += '<div style="font-weight:600;font-size:13px;margin-bottom:4px">📚 <strong>' + esc(cls['class']) + '</strong></div>';
+      for (var ni = 0; ni < clsNeeds.length; ni++) {
+        var nd = clsNeeds[ni];
+        var pct = nd.required > 0 ? Math.round(nd.filled / nd.required * 100) : 0;
+        var barColor = pct >= 100 ? 'var(--green)' : (pct >= 50 ? 'var(--yellow)' : 'var(--red)');
+        html += '<div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:11px;border-bottom:1px solid #f1f5f9">';
+        html += '<span style="font-weight:600;min-width:70px">' + esc(nd.subj) + '</span>';
+        // Progress bar
+        html += '<div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;min-width:40px">';
+        html += '<div style="height:100%;width:' + pct + '%;background:' + barColor + ';border-radius:3px"></div></div>';
+        html += '<span style="font-weight:600;color:' + barColor + ';min-width:40px;text-align:right">' + nd.filled + '/' + nd.required + '</span>';
+        html += '<span style="color:var(--text-muted);min-width:30px;text-align:right">' + nd.remaining + ' બાકી</span>';
+        html += '<span style="color:var(--text-muted);font-size:10px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">👤 ' + nd.avail_teachers + '</span>';
+        html += '</div>';
+      }
+      html += '</div>';
+    }
+  }
+  if (!hasNeeds) {
+    html += '<div style="text-align:center;padding:16px;color:var(--green);font-weight:600;font-size:14px">✅ બધી જરૂરિયાત પૂરી! બધા વર્ગોના બધા વિષયો પૂરા થઈ ગયા છે.</div>';
+  } else {
+    html += '<div style="text-align:right;padding:4px 0;font-size:11px;color:var(--text-muted)">કુલ ' + totalRemaining + ' પિરિયડ બાકી — ઉપરના 🤖 બટનથી ઓટો ફિટ કરો</div>';
+  }
+  html += '</div></div>';
+  el.innerHTML = html;
+  
+  // Attach auto-fit click handler
+  var autoBtn = document.getElementById('autoFitBtn');
+  if (autoBtn) {
+    autoBtn.addEventListener('click', autoFitRemaining);
+  }
+}
+
+
+// ========== AUTO FIT REMAINING PERIODS ==========
+async function autoFitRemaining() {
+  var btn = document.getElementById('autoFitBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ ફિટ થઈ રહ્યું...'; btn.style.opacity = '0.6'; }
+  
+  var assigned = [];
+  var errors = [];
+  
+  // Collect all remaining needs
+  for (var gi = 0; gi < state.planSummary.length; gi++) {
+    var cls = state.planSummary[gi];
+    for (var subj in cls.needs) {
+      var n = cls.needs[subj];
+      var remaining = getRemainingFor(cls['class'], subj);
+      if (remaining <= 0) continue;
+      if (!n.capable_teachers || n.capable_teachers.length === 0) {
+        errors.push(cls['class'] + ' - ' + subj + ': કોઈ શિક્ષક નથી');
+        continue;
+      }
+      
+      // Find best teacher: main > sub > least loaded
+      var bestTeacher = null;
+      var bestScore = -999;
+      
+      for (var ct = 0; ct < n.capable_teachers.length; ct++) {
+        var tname = n.capable_teachers[ct];
+        var t = getTeacher(tname);
+        if (!t) continue;
+        var tload = getLoad(tname);
+        var proj = getProjectedLoad(tname);
+        var currentTotal = proj.load;
+        
+        // Skip if already at max
+        if (currentTotal >= 33) continue;
+        
+        // Score: main=80, sub=40, other=0, minus load
+        var score = 0;
+        if (t.main_subject === subj) score = 80;
+        else if (t.sub_subjects && t.sub_subjects.indexOf(subj) !== -1) score = 40;
+        score = score - currentTotal;
+        
+        if (score > bestScore) {
+          bestScore = score;
+          bestTeacher = tname;
+        }
+      }
+      
+      if (!bestTeacher) {
+        errors.push(cls['class'] + ' - ' + subj + ': બધા શિક્ષકો 33 પર પહોંચી ગયા');
+        continue;
+      }
+      
+      // Add subject to teacher if not already
+      var t = getTeacher(bestTeacher);
+      if (t && (!t.subjects || t.subjects.indexOf(subj) === -1)) {
+        var subs = (t.subjects || []).slice();
+        var primaries = (t.primary_subjects || []).slice();
+        var mainSubj = t.main_subject || subs[0] || subj;
+        subs.push(subj);
+        primaries.push(subj);
+        try {
+          await fetch('/api/teachers/' + encodeURIComponent(bestTeacher), {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({subjects: subs, primary_subjects: primaries, main_subject: mainSubj})
+          });
+        } catch(e) {
+          errors.push(bestTeacher + ' ને ' + subj + ' ઉમેરતા એરર');
+          continue;
+        }
+      }
+      
+      // Claim periods (up to what teacher can take)
+      if (!state.claimedSuggestions[bestTeacher]) state.claimedSuggestions[bestTeacher] = {};
+      var projNow = getProjectedLoad(bestTeacher);
+      var canTake = Math.min(remaining, 33 - projNow.load);
+      if (canTake <= 0) {
+        errors.push(cls['class'] + ' - ' + subj + ': ' + bestTeacher + ' 33 પર છે');
+        continue;
+      }
+      var key = subj + '||' + cls['class'];
+      state.claimedSuggestions[bestTeacher][key] = canTake;
+      assigned.push(bestTeacher + ' ➡ ' + cls['class'] + ' - ' + subj + ' (+' + canTake + ')');
+      if (canTake < remaining) {
+        assigned[assigned.length-1] += ' (માત્ર ' + canTake + ' મળ્યા, ' + (remaining - canTake) + ' બાકી)';
+      }
+    }
+  }
+  
+  saveClaimedToStorage();
+  
+  // Refresh all data
+  await loadTeachers();
+  await loadLoads();
+  await loadAllSuggestions();
+  await loadPlanData();
+  
+  if (btn) { btn.disabled = false; btn.textContent = '🤖 ઓટો ફિટ કરો'; btn.style.opacity = '1'; }
+  
+  if (assigned.length > 0) {
+    showToast('✅ ' + assigned.length + ' આપોઆપ ફિટ થયા!', 'success');
+  }
+  if (errors.length > 0) {
+    showToast('⚠️ ' + errors.length + ' ફિટ ન થઈ શક્યા — ' + errors[0], 'error');
+  }
+}
+
+// ========== RENDER TEACHER CARDS ==========
+function render() {
+  var el = document.getElementById('teacherList');
+  if (state.teachers.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="icon">👨‍🏫</div><h2>કોઈ શિક્ષક નથી</h2><p>જમણી બાજુ ફોર્મમાં શિક્ષક ઉમેરો</p></div>';
+    return;
+  }
+  var h = '';
+  for (var i = 0; i < state.teachers.length; i++) {
+    var t = state.teachers[i];
+    var subs = t.subjects || [];
+    var load = getLoad(t.name);
+    var loadBg = load.status === 'ok' ? 'var(--green-bg)' : (load.status === 'high' ? 'var(--red-bg)' : 'var(--yellow-bg)');
+    var loadColor = load.status === 'ok' ? 'var(--green)' : (load.status === 'high' ? 'var(--red)' : 'var(--yellow)');
+    var loadIcon = load.status === 'ok' ? '✔' : (load.status === 'high' ? '⬆' : '⬇');
+    
+    h += '<div class="teacher-card" data-tid="' + i + '">';
+    h += '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">';
+    h += '<span class="tname">👤 ' + esc(t.name) + '</span>';
+    // Show main subject ⭐ and sub subjects 📎
+    var mainSubj = t.main_subject || '';
+    var subSubjs = t.sub_subjects || [];
+    if (mainSubj) {
+      h += '<span style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--yellow);color:var(--primary)">⭐ ' + esc(mainSubj) + '</span>';
+    }
+    var shownSubs = [];
+    for (var si = 0; si < subSubjs.length; si++) {
+      if (subSubjs[si] !== mainSubj && shownSubs.indexOf(subSubjs[si]) === -1) {
+        shownSubs.push(subSubjs[si]);
+        h += '<span style="font-size:11px;font-weight:500;padding:2px 6px;border-radius:10px;background:#e0e7ff;color:var(--primary)">📎 ' + esc(subSubjs[si]) + '</span>';
+      }
+    }
+    h += '<span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;background:' + loadBg + ';color:' + loadColor + '">' + loadIcon + ' ' + load.load + ' (' + load.hours + 'ક)</span>';
+    h += '</div>';
+    
+    // Per-class breakdown
+    var perClass = [];
+    if (load.per_class && load.per_class.length > 0) {
+      for (var pi = 0; pi < load.per_class.length; pi++) {
+        var pc = load.per_class[pi];
+        perClass.push(pc['class'] + '(' + pc.periods + ')');
+      }
+    }
+    if (perClass.length > 0) {
+      h += '<div style="font-size:10px;color:var(--text-muted);margin-top:2px">📋 ' + perClass.join(', ') + '</div>';
+    }
+    
+    // Show projected load if claimed
+    var proj = getProjectedLoad(t.name);
+    var hasClaimed = state.claimedSuggestions[t.name] && Object.keys(state.claimedSuggestions[t.name]).length > 0;
+    if (hasClaimed) {
+      var projStatus = proj.load >= 21 && proj.load <= 33 ? 'ok' : (proj.load > 33 ? 'high' : 'low');
+      var projBg = projStatus === 'ok' ? 'var(--green-bg)' : (projStatus === 'high' ? 'var(--red-bg)' : 'var(--yellow-bg)');
+      var projColor = projStatus === 'ok' ? 'var(--green)' : (projStatus === 'high' ? 'var(--red)' : 'var(--yellow)');
+      h += '<span style="font-size:10px;font-weight:600;padding:1px 6px;border-radius:8px;background:' + projBg + ';color:' + projColor + ';border:1px dashed ' + projColor + '">➡️ અંદાજ: ' + proj.load + ' (' + proj.hours + 'ક)</span>';
+    }
+    
+    // ====== AVAILABLE ADDITIONS (ALWAYS VISIBLE) ======
+    var suggs = state.suggestions[t.name] || [];
+    // Deduplicate and group by (class, subject)
+    var addMap = {}; // key: "cls||subj"
+    for (var si = 0; si < suggs.length; si++) {
+      var sug = suggs[si];
+      var adjustedAvail = getRemainingFor(sug['class'], sug.subject);
+      if (adjustedAvail <= 0) continue;
+      var key = sug['class'] + '||' + sug.subject;
+      if (!addMap[key]) {
+        addMap[key] = {cls: sug['class'], subj: sug.subject, avail: adjustedAvail};
+      }
+    }
+    var addKeys = Object.keys(addMap);
+    if (addKeys.length > 0) {
+      h += '<div style="margin-top:4px;padding:4px 6px;background:#f0fdf4;border-radius:6px;font-size:11px">';
+      h += '<span style="font-weight:600;color:var(--green);font-size:10px">📊 ઉમેરી શકાય (+ ઉમેરો):</span> ';
+      for (var ai = 0; ai < addKeys.length; ai++) {
+        var item = addMap[addKeys[ai]];
+        h += '<span class="claim-sugg" data-tname="' + escAttr(t.name) + '" data-subj="' + escAttr(item.subj) + '" data-cls="' + escAttr(item.cls) + '" data-avail="' + item.avail + '" style="display:inline-flex;align-items:center;gap:2px;padding:1px 6px;margin:1px;background:white;border:1px solid #bbf7d0;border-radius:4px;cursor:pointer;font-size:11px">';
+        h += '<span style="font-weight:500">' + esc(item.cls) + '-' + esc(item.subj) + '</span>';
+        h += '<span style="color:var(--green);font-weight:700"> +' + item.avail + '</span>';
+        h += '</span> ';
+      }
+      h += '</div>';
+    }
+    
+    // ====== CLAIMED ITEMS (REMOVE) ======
+    if (hasClaimed) {
+      h += '<div style="margin-top:4px;padding:4px 6px;background:#fef2f2;border-radius:6px;font-size:11px">';
+      h += '<span style="font-weight:600;color:#dc2626;font-size:10px">📌 ક્લેમ (✕ દૂર કરો):</span> ';
+      for (var ck in state.claimedSuggestions[t.name]) {
+        var parts = ck.split('||');
+        var csub = parts[0] || '';
+        var ccls = parts[1] || '';
+        var ccnt = state.claimedSuggestions[t.name][ck] || 0;
+        h += '<span class="remove-claim" data-tname="' + escAttr(t.name) + '" data-key="' + escAttr(ck) + '" style="display:inline-flex;align-items:center;gap:2px;padding:1px 6px;margin:1px;background:white;border:1px solid #fecaca;border-radius:4px;cursor:pointer;font-size:11px">';
+        h += esc(ccls) + '-' + esc(csub) + '(' + ccnt + ')';
+        h += '<span style="color:#dc2626;font-weight:700;font-size:13px">✕</span>';
+        h += '</span> ';
+      }
+      h += '</div>';
+    }
+    
+    // ====== SUBJECT TAGS AREA ======
+    h += '<div class="subj-area" style="display:flex;flex-wrap:wrap;gap:3px;flex:1;margin-top:4px">';
+    for (var j = 0; j < subs.length; j++) {
+      var s = subs[j];
+      var isMain = t.main_subject === s;
+      var isSub = t.sub_subjects && t.sub_subjects.indexOf(s) !== -1 && !isMain;
+      var tagStyle = isMain ? 'background:var(--yellow);border-color:var(--yellow);color:var(--primary)' : (isSub ? 'background:#e0e7ff;border-color:#a5b4fc;color:var(--primary)' : 'background:var(--bg);border-color:var(--border);color:var(--text)');
+      var tagPrefix = isMain ? '⭐ ' : (isSub ? '📎 ' : '');
+      h += '<span class="tag on tgl" data-tname="' + escAttr(t.name) + '" data-subj="' + escAttr(s) + '" style="font-size:11px;padding:1px 6px;border-radius:4px;border:1px solid;cursor:pointer;' + tagStyle + '">' + tagPrefix + esc(s) + ' ✕</span>';
+    }
+    if (subs.length === 0) {
+      h += '<span style="font-size:11px;color:var(--text-muted);width:100%">કોઈ વિષય નથી — નીચે ઉમેરો</span>';
+    }
+    h += '</div>';
+    
+    // ====== ADD SUBJECT ROW ======
+    h += '<div class="add-subj-row" style="display:flex;gap:4px;margin-top:4px;width:100%;align-items:center">';
+    h += '<input type="text" class="new-subj-input" list="subjList_' + i + '" placeholder="+ નવો વિષય" style="flex:1;padding:3px 6px;font-size:11px;border:1px dashed var(--border);border-radius:4px" data-tname="' + escAttr(t.name) + '">';
+    h += '<datalist id="subjList_' + i + '">';
+    for (var si = 0; si < state.gradeSubjects.length; si++) {
+      h += '<option value="' + escAttr(state.gradeSubjects[si]) + '">';
+    }
+    h += '</datalist>';
+    var hasMain = !!t.main_subject;
+    h += '<button class="add-subj-type btn btn-sm" data-tname="' + escAttr(t.name) + '" data-is-main="' + (hasMain ? '0' : '1') + '" style="padding:3px 7px;font-size:10px;border-radius:4px;border:1px solid var(--border);background:' + (hasMain ? '#e0e7ff' : 'var(--yellow)') + ';color:' + (hasMain ? 'var(--primary)' : 'var(--primary)') + ';cursor:pointer;font-weight:600;white-space:nowrap">' + (hasMain ? '📎 SUB' : '⭐ MAIN') + '</button>';
+    h += '<button class="btn btn-sm add-subj-btn" style="padding:3px 8px;font-size:11px" data-tname="' + escAttr(t.name) + '">➕</button>';
+    h += '</div>';
+    
+    // Delete button
+    h += '<button class="btn btn-outline btn-sm del-teacher-btn" style="color:#ef4444;margin-top:4px;font-size:11px" data-tname="' + escAttr(t.name) + '">✕ દૂર કરો</button>';
+    h += '</div>';
+  }
+  el.innerHTML = h;
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function escAttr(s) {
+  return String(s).replace(/\"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ========== EVENT DELEGATION ==========
+document.getElementById('teacherList').addEventListener('click', function(e) {
+  var target = e.target;
+  
+  // Toggle subject tag
+  if (target.classList.contains('tgl')) {
+    var name = target.getAttribute('data-tname');
+    var subj = target.getAttribute('data-subj');
+    if (name && subj) toggleSubject(name, subj);
+    return;
+  }
+  
+  // Add subject type toggle (Main/Sub)
+  if (target.classList.contains('add-subj-type')) {
+    var name = target.getAttribute('data-tname');
+    var isMain = target.getAttribute('data-is-main');
+    var newIsMain = isMain === '1' ? '0' : '1';
+    target.setAttribute('data-is-main', newIsMain);
+    target.style.background = newIsMain === '1' ? 'var(--yellow)' : '#e0e7ff';
+    target.style.color = newIsMain === '1' ? 'var(--primary)' : 'var(--primary)';
+    target.textContent = newIsMain === '1' ? '⭐ MAIN' : '📎 SUB';
+    return;
+  }
+  
+  // Add subject button
+  if (target.classList.contains('add-subj-btn')) {
+    var name = target.getAttribute('data-tname');
+    var row = target.parentElement;
+    var input = row.querySelector('.new-subj-input');
+    var typeBtn = row.querySelector('.add-subj-type');
+    var isMain = typeBtn ? typeBtn.getAttribute('data-is-main') === '1' : false;
+    if (input && name) addCustomSubject(name, input, isMain);
+    return;
+  }
+  
+  // Delete teacher button
+  if (target.classList.contains('del-teacher-btn')) {
+    var name = target.getAttribute('data-tname');
+    if (name) deleteTeacher(name);
+    return;
+  }
+  
+  // Claim suggestion click
+  if (target.classList.contains('claim-sugg') || target.parentElement.classList.contains('claim-sugg')) {
+    var el = target.classList.contains('claim-sugg') ? target : target.parentElement;
+    var tname = el.getAttribute('data-tname');
+    var subj = el.getAttribute('data-subj');
+    var cls = el.getAttribute('data-cls');
+    var avail = parseInt(el.getAttribute('data-avail')) || 0;
+    if (tname && subj && cls && avail > 0) {
+      claimSuggestion(tname, subj, cls, avail);
+    }
+    return;
+  }
+  
+  // Remove claim click
+  if (target.classList.contains('remove-claim') || target.parentElement.classList.contains('remove-claim')) {
+    var el = target.classList.contains('remove-claim') ? target : target.parentElement;
+    var tname = el.getAttribute('data-tname');
+    var key = el.getAttribute('data-key');
+    if (tname && key && state.claimedSuggestions[tname] && state.claimedSuggestions[tname][key]) {
+      delete state.claimedSuggestions[tname][key];
+      if (Object.keys(state.claimedSuggestions[tname]).length === 0) {
+        delete state.claimedSuggestions[tname];
+      }
+      saveClaimedToStorage();
+      showToast('🗑️ દૂર કર્યો', 'info');
+      render();
+      renderPlanSummary();
+    }
+    return;
+  }
+});
+
+// Add teacher
+document.getElementById('addTeacherBtn').addEventListener('click', addTeacher);
+document.getElementById('newTeacherInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') addTeacher();
+});
+
+// Enter key for custom subject inputs
+document.getElementById('teacherList').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && e.target.classList.contains('new-subj-input')) {
+    var name = e.target.getAttribute('data-tname');
+    if (name) {
+      var row = e.target.parentElement;
+      var typeBtn = row.querySelector('.add-subj-type');
+      var isMain = typeBtn ? typeBtn.getAttribute('data-is-main') === '1' : false;
+      addCustomSubject(name, e.target, isMain);
+    }
+  }
+});
+
+// ========== TOGGLE SUBJECT ==========
+async function toggleSubject(name, subj) {
+  try {
+    var t = getTeacher(name);
+    if (!t) return;
+    var subs = (t.subjects || []).slice();
+    var primaries = (t.primary_subjects || []).slice();
+    var mainSubj = t.main_subject || null;
+    var idx = subs.indexOf(subj);
+    if (idx !== -1) {
+      subs.splice(idx, 1);
+      var pidx = primaries.indexOf(subj);
+      if (pidx !== -1) primaries.splice(pidx, 1);
+      if (mainSubj === subj) {
+        mainSubj = subs.length > 0 ? subs[0] : null;
+      }
+    } else {
+      subs.push(subj);
+      primaries.push(subj);
+      if (!mainSubj) mainSubj = subj;
+    }
+    await fetch('/api/teachers/' + encodeURIComponent(name), {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({subjects: subs, primary_subjects: primaries, main_subject: mainSubj})
+    });
+    showToast('✅ ' + subj + ' ' + (idx !== -1 ? 'દૂર કર્યો' : 'ઉમેર્યો'), 'success');
+    await loadTeachers();
+    await loadLoads();
+    await loadAllSuggestions();
+  } catch(e) { showToast('⚠️ સેવ ન થયો — ફરી પ્રયાસ કરો', 'error'); }
+}
+
+// ========== ADD CUSTOM SUBJECT ==========
+async function addCustomSubject(name, input, isMain) {
+  var subj = input.value.trim();
+  if (!subj) { showToast('⚠️ વિષયનું નામ લખો', 'error'); return; }
+  try {
+    var t = getTeacher(name);
+    if (!t) return;
+    var subs = (t.subjects || []).slice();
+    var primaries = (t.primary_subjects || []).slice();
+    var mainSubj = t.main_subject || null;
+    if (subs.indexOf(subj) === -1) {
+      subs.push(subj);
+      primaries.push(subj);
+    }
+    if (isMain) {
+      mainSubj = subj;
+    } else if (!mainSubj) {
+      mainSubj = subj;
+    }
+    await fetch('/api/teachers/' + encodeURIComponent(name), {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({subjects: subs, primary_subjects: primaries, main_subject: mainSubj})
+    });
+    input.value = '';
+    showToast('✅ ' + subj + ' ઉમેર્યો' + (isMain ? ' (મેઈન)' : ' (સબ)'), 'success');
+    await loadTeachers();
+    await loadLoads();
+    await loadAllSuggestions();
+  } catch(e) { showToast('⚠️ સેવ ન થયો — ફરી પ્રયાસ કરો', 'error'); }
+}
+
+// ========== ADD TEACHER ==========
+async function addTeacher() {
+  var inp = document.getElementById('newTeacherInput');
+  var name = inp.value.trim();
+  if (!name) { showToast('⚠️ નામ લખો', 'error'); return; }
+  try {
+    await API.addTeacher(name);
+    inp.value = '';
+    showToast('✅ ' + name + ' ઉમેરાયા', 'success');
+    await loadTeachers();
+    await loadLoads();
+    await loadAllSuggestions();
+  } catch(e) { showToast('⚠️ આ શિક્ષક પહેલેથી છે', 'error'); }
+}
+
+// ========== DELETE TEACHER ==========
+async function deleteTeacher(name) {
+  if (!confirm(name + ' ને દૂર કરવા?')) return;
+  try {
+    await API.deleteTeacher(name);
+    showToast('🗑️ ' + name + ' દૂર કર્યા', 'info');
+    await loadTeachers();
+    await loadLoads();
+    await loadAllSuggestions();
+  } catch(e) { showToast('⚠️ એરર', 'error'); }
+}
+
+// ========== HELPER ==========
+function getTeacher(name) {
+  for (var i = 0; i < state.teachers.length; i++) {
+    if (state.teachers[i].name === name) return state.teachers[i];
+  }
+  return null;
+}
+
+// ========== START ==========
+init();
+</script>
+
+<script>
+// Mobile navbar toggle
+document.addEventListener('DOMContentLoaded', function() {
+  var toggle = document.getElementById('navToggle');
+  var label = document.querySelector('.nav-hamburger');
+  var menu = document.querySelector('.nav-menu');
+  if (toggle && label && menu) {
+    label.addEventListener('click', function(e) {
+      e.preventDefault();
+      toggle.checked = !toggle.checked;
+      if (toggle.checked) {
+        menu.style.display = 'flex';
+      } else {
+        menu.style.display = '';
+      }
+    });
+    menu.querySelectorAll('.nav-link').forEach(function(link) {
+      link.addEventListener('click', function() {
+        toggle.checked = false;
+        menu.style.display = '';
+      });
+    });
+  }
+});
+</script>
+
+<script>
+// Register Service Worker for PWA
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(reg => {
+    console.log('✅ SW registered');
+  }).catch(err => {
+    console.log('SW registration failed:', err);
+  });
+}
+</script>
+</body>
+</html>

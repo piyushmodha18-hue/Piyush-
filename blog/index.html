@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Quantum AI IDE</title>
+    <style>
+        :root { --primary: #0ff; --text: #cfddee; --text-muted: #6a8aaa; --border: #2a4f6e; --bg: #0a1520; --card-bg: #0f1e2d; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        header { text-align: center; margin-bottom: 30px; padding: 20px; border-bottom: 1px solid var(--border); }
+        h1 { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
+        h2 { font-size: 1.3rem; color: var(--primary); margin: 25px 0 15px; }
+        .article-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .article-card:hover { border-color: var(--primary); }
+        .meta { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; }
+        .excerpt { line-height: 1.6; margin-bottom: 15px; }
+        .read-link { color: var(--primary); text-decoration: none; font-weight: 500; }
+        .back-link { display: inline-block; margin-top: 20px; color: var(--primary); text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📝 Quantum AI Blog</h1>
+            <p style="color: var(--text-muted);">Quantum computing insights and tutorials</p>
+        </header>
+
+        <article class="article-card">
+            <div class="meta">📅 Latest • 🧪 Research</div>
+            <h2>Kanada Rishi's Atomic Theory: Ancient Wisdom Meets Quantum Computing</h2>
+            <p class="excerpt">Exploring how the 3rd century BCE Vaisheshika Sutra anticipated modern atomic theory and quantum principles...</p>
+            <a href="/research/kanada-atomic-theory" class="read-link">Read More →</a>
+        </article>
+
+        <article class="article-card">
+            <div class="meta">📅 May 28, 2026 • 🕳️ Retrocausality</div>
+            <h2>Retrocausality: When Future Affects the Past</h2>
+            <p class="excerpt">Quantum experiments reveal particles that "know" future measurements...</p>
+            <a href="/research/retrocausality" class="read-link">Read More →</a>
+        </article>
+
+        <article class="article-card">
+            <div class="meta">📅 May 27, 2026 • 🔍 Algorithms</div>
+            <h2>Grover's Algorithm in Quantum Computing</h2>
+            <p class="excerpt">How quantum search reduces O(N) to O(√N) complexity...</p>
+            <a href="/research/grovers-algorithm" class="read-link">Read More →</a>
+        </article>
+
+        <div style="text-align: center; margin-top: 30px; color: var(--text-muted); font-size: 0.85rem;">
+            Blog Author: Piyush Modha
+        </div>
+
+        <a href="/quantum-ai-ide" class="back-link">← Back to Quantum AI IDE</a>
+    </div>
+</body>
+</html>

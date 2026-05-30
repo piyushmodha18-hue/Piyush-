@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Grover's Algorithm Explained</title>
+    <style>
+        :root { --primary: #0ff; --text: #cfddee; --border: #2a4f6e; --bg: #0a1520; --card-bg: #0f1e2d; }
+        body { font-family: 'Inter', 'Noto Sans Gujarati', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        .container { max-width: 700px; margin: 0 auto; }
+        h1 { color: var(--primary); margin-bottom: 20px; }
+        h2 { color: var(--primary); margin: 25px 0 15px; }
+        h3 { color: var(--primary); margin: 20px 0 10px; font-size: 1.1rem; }
+        p { line-height: 1.7; margin-bottom: 15px; }
+        .code-block { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 15px; font-family: monospace; margin: 15px 0; overflow-x: auto; }
+        .back-link { display: inline-block; margin-top: 30px; color: var(--primary); text-decoration: none; padding: 8px 16px; border: 1px solid var(--border); border-radius: 6px; }
+        .back-link:hover { background: rgba(10,20,30,0.5); }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid var(--border); padding: 10px; text-align: center; }
+        th { background: var(--card-bg); color: var(--primary); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Grover's Algorithm Explained</h1>
+        
+        <p style="color: var(--text-muted);"><em>Lov Groverનું ક્વાણ્ટમ શોધ અલ્ગોરિધમ — અણવયક્ત ડેટાબેઝમાં O(√N) સમય!</em></p>
+        
+        <h2>Classical vs Quantum Search</h2>
+        <table>
+            <tr><th>Database Size N</th><th>Classical Steps</th><th>Grover Steps</th><th>Speedup</th></tr>
+            <tr><td>1,000</td><td>500</td><td>~32</td><td>15x</td></tr>
+            <tr><td>1,000,000</td><td>500,000</td><td>~1,000</td><td>500x</td></tr>
+            <tr><td>1 billion</td><td>500 million</td><td>~30,000</td><td>16,666x</td></tr>
+        </table>
+        
+        <h2>ક્વાણ્ટમ ટ્રિક — Amplitude Amplification</h2>
+        <p>Groverનું અલ્ગોરિધમ બે મુખ્ય પગલાં ધરાવે છે:</p>
+        <ol>
+            <li><strong>Oracle</strong> — લક્ષ્યને જણતા જવાબ આપે</li>
+            <li><strong>Diffusion Operator</strong> — સમકલ્પનાને વિશેષ કરે</li>
+        </ol>
+        
+        <h2>NovaLang ઉદાહરણ</h2>
+        <div class="code-block">
+# 3-qubit search (8 states)
+q0, q1, q2 = qubit(), qubit(), qubit()
+
+# Initialize superposition
+h(q0); h(q1); h(q2)
+
+# Oracle: flip target state (ઉદા: '101')
+x(q0); cx(q2, q1)  # જવાબદેવીનું લક્ષ્ય જણતા
+
+# Diffusion: amplify amplitude
+# (આપણે આવશ્યક પગલાં ધરાવે)
+
+# Measure result
+measure(q0); measure(q1); measure(q2)</div>
+        
+        <h2>વ્યાપારિક ઉપયોગો</h2>
+        <ul>
+            <li>ડેટાનું ક્વિક શોધ</li>
+            <li>ઓપ્ટિમાઇઝેશન (ન્યાય શોધ)</li>
+            <li>એઆઈમાં પ્રતિક સમજૂતી</li>
+        </ul>
+        
+        <a href="/research" class="back-link">← Back to Research Articles</a>
+    </div>
+</body>
+</html>

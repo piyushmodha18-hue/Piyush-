@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚛️ Quantum AI IDE — API Docs</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: linear-gradient(135deg, #0a0f1a, #0a1a2a);
+            color: #cfddee;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .header {
+            background: rgba(10,20,35,0.85);
+            border: 1px solid #0ff;
+            border-radius: 1.5rem 1.5rem 0 0;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 0 30px rgba(0,255,255,0.15);
+            text-align: center;
+        }
+        .header h1 { font-size: 1.8rem; background: linear-gradient(135deg, #0ff, #a0f); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .header p { color: #6a8aaa; margin-top: 0.3rem; font-size: 0.9rem; }
+        .header .badge {
+            display: inline-block; background: #0ff; color: #000; padding: 2px 12px;
+            border-radius: 999px; font-size: 0.7rem; font-weight: 700; margin-top: 8px;
+        }
+        .content {
+            background: rgba(10,20,35,0.8);
+            border: 1px solid #2a4f6e;
+            border-top: none;
+            border-radius: 0 0 1.5rem 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 0 20px rgba(0,255,255,0.05);
+        }
+        .endpoint {
+            background: rgba(0,15,25,0.6);
+            border: 1px solid #2a4f6e;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        .endpoint-header {
+            display: flex; align-items: center; gap: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            border-bottom: 1px solid #2a4f6e;
+            background: rgba(0,255,255,0.03);
+        }
+        .method {
+            font-weight: 700; font-size: 0.75rem; padding: 2px 10px;
+            border-radius: 6px; letter-spacing: 0.5px;
+        }
+        .method.post { background: #1a6e3a; color: #4cff7a; }
+        .method.get { background: #1a4a6e; color: #4cc9ff; }
+        .endpoint-url {
+            font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #0ff; flex: 1;
+        }
+        .endpoint-desc {
+            font-size: 0.72rem; color: #6a8aaa;
+        }
+        .endpoint-body { padding: 1rem 1.2rem; }
+        .endpoint-body h4 {
+            color: #0ff; font-size: 0.78rem; margin: 0.8rem 0 0.4rem;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .endpoint-body h4:first-child { margin-top: 0; }
+        pre {
+            background: #080d16; border: 1px solid #1a3a55; border-radius: 8px;
+            padding: 0.8rem 1rem; overflow-x: auto;
+            font-family: 'Fira Code', monospace; font-size: 0.78rem;
+            color: #0ff; line-height: 1.5; margin: 0.3rem 0;
+        }
+        code { font-family: 'Fira Code', monospace; }
+        .param-table { width: 100%; border-collapse: collapse; margin: 0.3rem 0; font-size: 0.78rem; }
+        .param-table th, .param-table td {
+            border: 1px solid #1a3a55; padding: 0.4rem 0.8rem; text-align: left;
+        }
+        .param-table th { background: rgba(0,255,255,0.06); color: #0ff; font-weight: 600; }
+        .param-table td { color: #8ab; }
+        .param-table .type { color: #4cc9ff; }
+        .try-btn {
+            display: inline-block; background: #0ff; color: #000; border: none;
+            padding: 6px 16px; border-radius: 8px; font-size: 0.75rem; font-weight: 700;
+            cursor: pointer; margin: 0.5rem 0; transition: 0.2s;
+        }
+        .try-btn:hover { box-shadow: 0 0 16px #0ff; transform: translateY(-1px); }
+        .try-result {
+            background: #080d16; border: 1px solid #1a3a55; border-radius: 8px;
+            padding: 0.8rem; margin-top: 0.5rem; font-family: 'Fira Code', monospace;
+            font-size: 0.75rem; color: #8ab; display: none; white-space: pre-wrap; max-height: 200px; overflow: auto;
+        }
+        .try-result.show { display: block; }
+        .try-result.error { color: #f55; border-color: #533; }
+        .section-title {
+            font-size: 1.2rem; color: #0ff; margin: 1.5rem 0 1rem;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .section-title:first-child { margin-top: 0; }
+        .curl-box { position: relative; }
+        .copy-btn {
+            position: absolute; top: 8px; right: 8px;
+            background: rgba(0,255,255,0.1); border: 1px solid #0ff; color: #0ff;
+            padding: 2px 10px; border-radius: 6px; font-size: 0.65rem; cursor: pointer;
+            transition: 0.15s;
+        }
+        .copy-btn:hover { background: #0ff; color: #000; }
+        .footer {
+            text-align: center; padding: 1.5rem; color: #4a6a8a; font-size: 0.75rem;
+        }
+        .footer a { color: #6a8aaa; text-decoration: none; }
+        .footer a:hover { color: #0ff; }
+        .status-codes { display: flex; gap: 1rem; flex-wrap: wrap; margin: 0.5rem 0; }
+        .status {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 0.72rem; padding: 2px 10px; border-radius: 6px;
+        }
+        .status-200 { background: rgba(0,255,100,0.1); color: #4cff7a; border: 1px solid rgba(0,255,100,0.2); }
+        .status-400 { background: rgba(255,200,0,0.1); color: #fc0; border: 1px solid rgba(255,200,0,0.2); }
+        .status-500 { background: rgba(255,50,50,0.1); color: #f55; border: 1px solid rgba(255,50,50,0.2); }
+        .tab-bar { display: flex; gap: 4px; margin: 0.5rem 0; flex-wrap: wrap; }
+        .tab-btn {
+            padding: 4px 14px; border-radius: 6px; font-size: 0.7rem; font-weight: 600;
+            cursor: pointer; border: 1px solid #2a4f6e; background: transparent; color: #6a8aaa;
+            transition: 0.15s;
+        }
+        .tab-btn:hover { background: rgba(0,255,255,0.06); color: #0ff; }
+        .tab-btn.active { background: #0ff; color: #000; border-color: #0ff; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .content { padding: 1rem; }
+            .endpoint-header { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>⚛️ Quantum AI IDE — REST API</h1>
+        <p>Quantum circuit simulator & NovaLang converter — backend API</p>
+        <span class="badge">⚡ Pure Python Quantum Simulator</span>
+    </div>
+
+    <div class="content">
+
+        <!-- ===== OVERVIEW ===== -->
+        <div class="section-title">📖 Overview</div>
+        <p style="color:#8ab;font-size:0.85rem;margin-bottom:1rem;line-height:1.7">
+            This API lets you run quantum circuits written in <strong style="color:#0ff;">NovaLang</strong> 
+            on a pure Python quantum simulator, or convert them to 
+            <strong style="color:#64c8ff;">Qiskit</strong>, 
+            <strong style="color:#00c896;">Cirq</strong>, or 
+            <strong style="color:#9664ff;">Q#</strong>.
+            No external quantum libraries required — built with <code>numpy</code>.
+        </p>
+
+        <div class="status-codes">
+            <span class="status status-200">✅ 200 Success</span>
+            <span class="status status-400">⚠️ 400 Bad Request</span>
+            <span class="status status-500">❌ 500 Server Error</span>
+        </div>
+
+        <!-- ===== ENDPOINT 1: run-circuit ===== -->
+        <div class="endpoint">
+            <div class="endpoint-header">
+                <span class="method post">POST</span>
+                <span class="endpoint-url">/api/run-circuit</span>
+                <span class="endpoint-desc">Run NovaLang code on quantum simulator</span>
+            </div>
+            <div class="endpoint-body">
+                <h4>📥 Request Body</h4>
+                <table class="param-table">
+                    <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                    <tr><td><code>code</code></td><td class="type">string</td><td>—</td><td>NovaLang quantum code</td></tr>
+                    <tr><td><code>shots</code></td><td class="type">int</td><td><code>1024</code></td><td>Number of simulation shots</td></tr>
+                </table>
+
+                <h4>📤 Response</h4>
+                <pre>{
+  "success": true,
+  "n_qubits": 2,
+  "instructions": 4,
+  "output": "measure(q0) = 1\nmeasure(q1) = 1",
+  "state_vector": [
+    {"bits": "11", "real": 1.0, "imag": 0.0, "prob": 1.0}
+  ],
+  "measurements": [1, 1],
+  "counts": {"11": 1024},
+  "gates_applied": 2,
+  "errors": null
+}</pre>
+
+                <h4>🖥 Try it</h4>
+                <div class="tab-bar">
+                    <span class="tab-btn active" onclick="switchAPITab(this, 'run-curl')">curl</span>
+                    <span class="tab-btn" onclick="switchAPITab(this, 'run-python')">Python</span>
+                    <span class="tab-btn" onclick="switchAPITab(this, 'run-js')">JavaScript</span>
+                </div>
+                <div id="run-curl" class="tab-content active">
+                    <div class="curl-box">
+                        <button class="copy-btn" onclick="copyText(this)">📋 Copy</button>
+                        <pre>curl -X POST https://victus.nilgiri-wyvern.ts.net/api/run-circuit \
+  -H "Content-Type: application/json" \
+  -d '{
+    "code": "q0 = qubit()\nq1 = qubit()\nh(q0)\ncx(q0, q1)\nmeasure(q0)\nmeasure(q1)",
+    "shots": 1024
+  }'</pre>
+                    </div>
+                </div>
+                <div id="run-python" class="tab-content">
+                    <div class="curl-box">
+                        <button class="copy-btn" onclick="copyText(this)">📋 Copy</button>
+                        <pre>import requests
+
+code = """q0 = qubit()
+q1 = qubit()
+h(q0)
+cx(q0, q1)
+measure(q0)
+measure(q1)"""
+
+resp = requests.post(
+    "https://victus.nilgiri-wyvern.ts.net/api/run-circuit",
+    json={"code": code, "shots": 1024}
+)
+print(resp.json())</pre>
+                    </div>
+                </div>
+                <div id="run-js" class="tab-content">
+                    <div class="curl-box">
+                        <button class="copy-btn" onclick="copyText(this)">📋 Copy</button>
+                        <pre>const code = `q0 = qubit()
+q1 = qubit()
+h(q0)
+cx(q0, q1)
+measure(q0)
+measure(q1)`;
+
+fetch('https://victus.nilgiri-wyvern.ts.net/api/run-circuit', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify({code, shots: 1024})
+})
+.then(r => r.json())
+.then(console.log);</pre>
+                    </div>
+                </div>
+                <button class="try-btn" onclick="tryRunCircuit()">▶ Try it now!</button>
+                <div id="runResult" class="try-result"></div>
+            </div>
+        </div>
+
+        <!-- ===== ENDPOINT 2: export ===== -->
+        <div class="endpoint">
+            <div class="endpoint-header">
+                <span class="method post">POST</span>
+                <span class="endpoint-url">/api/export</span>
+                <span class="endpoint-desc">Convert NovaLang → Qiskit / Cirq / Q#</span>
+            </div>
+            <div class="endpoint-body">
+                <h4>📥 Request Body</h4>
+                <table class="param-table">
+                    <tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr>
+                    <tr><td><code>code</code></td><td class="type">string</td><td>—</td><td>NovaLang quantum code</td></tr>
+                    <tr><td><code>target</code></td><td class="type">string</td><td><code>"qiskit"</code></td><td><code>qiskit</code>, <code>cirq</code>, or <code>qsharp</code></td></tr>
+                </table>
+
+                <h4>📤 Response</h4>
+                <pre>{
+  "success": true,
+  "code": "from qiskit import ...\nqc = QuantumCircuit(2, 2)\nqc.h(0)\n...",
+  "language": "python",
+  "framework": "qiskit",
+  "target": "qiskit"
+}</pre>
+
+                <h4>🖥 Try it</h4>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin:0.5rem 0">
+                    <select id="exportTarget" style="background:#080d16;color:#0ff;border:1px solid #0ff;border-radius:8px;padding:4px 12px;font-size:0.78rem;">
+                        <option value="qiskit">⚛️ Qiskit</option>
+                        <option value="cirq">🔵 Cirq</option>
+                        <option value="qsharp">🔶 Q#</option>
+                    </select>
+                    <button class="try-btn" onclick="tryExport()">▶ Try it now!</button>
+                </div>
+                <div id="exportResult" class="try-result"></div>
+            </div>
+        </div>
+
+        <!-- ===== ENDPOINT 3: info ===== -->
+        <div class="endpoint">
+            <div class="endpoint-header">
+                <span class="method get">GET</span>
+                <span class="endpoint-url">/api/quantum/info</span>
+                <span class="endpoint-desc">API info & capabilities</span>
+            </div>
+            <div class="endpoint-body">
+                <h4>📤 Response</h4>
+                <pre>{
+  "name": "Quantum AI IDE — Backend Simulator",
+  "version": "1.0.0",
+  "max_qubits": 10,
+  "supports": ["qiskit", "cirq", "qsharp"],
+  "algorithms": ["Bell State", "Grover Search", ...],
+  "endpoints": {
+    "POST /api/run-circuit": "...",
+    "POST /api/export": "...",
+    "GET /api/quantum/info": "..."
+  }
+}</pre>
+                <button class="try-btn" onclick="tryInfo()">▶ Try it now!</button>
+                <div id="infoResult" class="try-result"></div>
+            </div>
+        </div>
+
+        <!-- ===== ALGORITHMS ===== -->
+        <div class="section-title">🧪 Sample NovaLang Codes</div>
+        <div class="endpoint">
+            <div class="endpoint-body">
+                <div class="tab-bar">
+                    <span class="tab-btn active" onclick="switchAlgoTab(this, 'algo-bell')">🔮 Bell</span>
+                    <span class="tab-btn" onclick="switchAlgoTab(this, 'algo-grover')">🌀 Grover</span>
+                    <span class="tab-btn" onclick="switchAlgoTab(this, 'algo-qft')">📐 QFT</span>
+                    <span class="tab-btn" onclick="switchAlgoTab(this, 'algo-dj')">🔍 DJ</span>
+                </div>
+                <div id="algo-bell" class="tab-content active">
+                    <div class="curl-box">
+                        <button class="copy-btn" onclick="copyText(this)">📋 Copy</button>
+                        <pre># Bell State
+q0 = qubit()
+q1 = qubit()
+h(q0)
+cx(q0, q1)
+measure(q0)
+measure(q1)</pre>
+                    </div>
+                </div>
+                <div id="algo-grover" class="tab-content">
+                    <div class="curl-box">
+                        <button class="copy-btn" onclick="copyText(this)">📋 Copy</button>
+                        <pre># Grover's Search (2 qubits)
+q0 = qubit()
+q1 = qubit()
+h(q0)
+h(q1)
+# Oracle
+cz(q0, q1)
+# Diffusion
+h(q0)
+h(q1)
+x(q0)
+x(q1)
+cz(q0, q1)
+x(q0)
+x(q1)
+h(q0)
+h(q1)
+measure(q0)
+measure(q1)</pre>
+                    </div>
+                </div>
+                <div id="algo-qft" class="tab-content">
+                    <div class="curl-box">
+                        <button class="copy-btn" onclick="copyText(this)">📋 Copy</button>
+                        <pre># Quantum Fourier Transform (2 qubits)
+q0 = qubit()
+q1 = qubit()
+h(q0)
+cz(q0, q1)
+h(q1)
+measure(q0)
+measure(q1)</pre>
+                    </div>
+                </div>
+                <div id="algo-dj" class="tab-content">
+                    <div class="curl-box">
+                        <button class="copy-btn" onclick="copyText(this)">📋 Copy</button>
+                        <pre># Deutsch-Jozsa (balanced)
+q0 = qubit()
+q1 = qubit()
+x(q1)
+h(q0)
+h(q1)
+cx(q0, q1)
+h(q0)
+measure(q0)</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== BACKEND DETAILS ===== -->
+        <div class="section-title">⚙️ How It Works</div>
+        <div style="background:rgba(0,15,25,0.6);border:1px solid #2a4f6e;border-radius:1rem;padding:1.2rem;font-size:0.82rem;color:#8ab;line-height:1.7">
+            <p>📦 <strong style="color:#0ff;">Pure Python</strong> — No Qiskit/Cirq required. Uses only <code>numpy</code> for matrix operations.</p>
+            <p style="margin-top:8px;">🔄 <strong style="color:#0ff;">State vector simulation</strong> — Tracks full <code>2ⁿ</code> amplitude vector (up to 10 qubits).</p>
+            <p style="margin-top:8px;">🎲 <strong style="color:#0ff;">Measurement sampling</strong> — Probabilistic collapse based on Born rule.</p>
+            <p style="margin-top:8px;">📤 <strong style="color:#0ff;">Code conversion</strong> — NovaLang → Qiskit/Cirq/Q# via pattern-matching parser.</p>
+            <p style="margin-top:8px;">🔗 <strong style="color:#0ff;">No external dependencies</strong> (except FastAPI + numpy). Runs in your timetable app's backend!</p>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <a href="https://victus.nilgiri-wyvern.ts.net/quantum-ai-ide">← Back to Quantum AI IDE</a>
+        &nbsp;·&nbsp; ⚛️ Quantum AI IDE v1.0
+    </div>
+</div>
+
+<script>
+function copyText(btn) {
+    const pre = btn.parentElement.querySelector('pre');
+    if (!pre) return;
+    const text = pre.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+    }).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+    });
+}
+
+function switchAPITab(el, id) {
+    const parent = el.closest('.endpoint-body');
+    parent.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    parent.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+function switchAlgoTab(el, id) {
+    const parent = el.closest('.endpoint');
+    parent.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    parent.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+async function tryRunCircuit() {
+    const el = document.getElementById('runResult');
+    el.classList.add('show');
+    el.classList.remove('error');
+    el.textContent = '⏳ Running circuit...';
+    
+    try {
+        const resp = await fetch('/api/run-circuit', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                code: `q0 = qubit()\nq1 = qubit()\nh(q0)\ncx(q0, q1)\nmeasure(q0)\nmeasure(q1)`,
+                shots: 100
+            })
+        });
+        const data = await resp.json();
+        if (data.success) {
+            el.textContent = JSON.stringify({
+                n_qubits: data.n_qubits,
+                output: data.output,
+                counts: data.counts,
+                state_vector: data.state_vector
+            }, null, 2);
+        } else {
+            el.textContent = '❌ Error: ' + JSON.stringify(data);
+            el.classList.add('error');
+        }
+    } catch(e) {
+        el.textContent = '❌ Network error: ' + e.message;
+        el.classList.add('error');
+    }
+}
+
+async function tryExport() {
+    const el = document.getElementById('exportResult');
+    const target = document.getElementById('exportTarget').value;
+    el.classList.add('show');
+    el.classList.remove('error');
+    el.textContent = '⏳ Converting...';
+    
+    try {
+        const resp = await fetch('/api/export', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                code: `q0 = qubit()\nq1 = qubit()\nh(q0)\ncx(q0, q1)\nmeasure(q0)\nmeasure(q1)`,
+                target: target
+            })
+        });
+        const data = await resp.json();
+        if (data.success) {
+            el.textContent = data.code;
+        } else {
+            el.textContent = '❌ Error: ' + JSON.stringify(data);
+            el.classList.add('error');
+        }
+    } catch(e) {
+        el.textContent = '❌ Network error: ' + e.message;
+        el.classList.add('error');
+    }
+}
+
+async function tryInfo() {
+    const el = document.getElementById('infoResult');
+    el.classList.add('show');
+    el.textContent = '⏳ Loading...';
+    
+    try {
+        const resp = await fetch('/api/quantum/info');
+        const data = await resp.json();
+        el.textContent = JSON.stringify(data, null, 2);
+    } catch(e) {
+        el.textContent = '❌ Error: ' + e.message;
+        el.classList.add('error');
+    }
+}
+</script>
+</body>
+</html>

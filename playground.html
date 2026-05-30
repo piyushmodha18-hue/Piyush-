@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+<meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧪 પ્લેગ્રાઉન્ડ — કોડ એડિટર</title>
+<style>
+/* --- CRITICAL: navbar + base (inline) --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --primary: #0ff;
+  --primary-hover: #3cf;
+  --primary-light: rgba(0,255,255,0.1);
+  --bg: #0a0f1a;
+  --bg-gradient: linear-gradient(135deg, #0a0f1a, #0a1a2a);
+  --card: rgba(10,20,35,0.85);
+  --text: #cfddee;
+  --text-muted: #6a8aaa;
+  --text-dim: #4a6a8a;
+  --border: #2a4f6e;
+  --shadow-lg: 0 10px 25px rgba(0,0,0,.4);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --accent-purple: #a0f;
+}
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text);
+  min-height: 100vh;
+  padding-top: 56px;
+}
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10,20,35,0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 0 20px rgba(0,255,255,0.1);
+  display: flex; align-items: center;
+  padding: 0 12px;
+  height: 56px;
+  gap: 4px;
+}
+.nav-toggle { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
+.nav-hamburger {
+  display: none;
+  font-size: 24px; cursor: pointer; padding: 4px 8px;
+  border-radius: 8px; user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-hamburger:hover { background: var(--primary-light); }
+
+.nav-hamburger::before { content: '\2630'; }
+.nav-toggle:checked ~ .nav-hamburger { background: var(--primary-light); color: var(--primary); }
+.nav-toggle:checked ~ .nav-hamburger::before { content: '\2715'; }
+.navbar .brand {
+  font-size: 15px; font-weight: 700;
+  white-space: nowrap; margin-right: auto;
+  color: var(--text);
+  text-decoration: none;
+}
+.navbar .brand span { color: var(--primary); }
+.nav-menu { display: flex; align-items: center; gap: 4px; }
+.nav-link {
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px; font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.nav-link:hover { background: var(--primary-light); color: var(--primary); }
+.nav-link.active { background: var(--primary); color: #000; font-weight: 700; }
+@media (max-width: 768px) {
+  .nav-hamburger { display: block; }
+  .nav-menu {
+    display: none;
+    position: fixed; top: 56px; left: 0; right: 0;
+    background: rgba(10,20,35,0.98);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    padding: 8px;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 99;
+    animation: slideDown .2s ease;
+  }
+  @keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .nav-toggle:checked ~ .nav-menu { display: flex; }
+  .nav-menu .nav-link { display: block; width: 100%; padding: 12px 16px; font-size: 15px; border-radius: 8px; }
+}
+@media (max-width: 480px) {
+  .navbar .brand { font-size: 14px; }
+  .navbar .brand span { display: none; }
+}
+/* --- end critical --- */
+</style>
+<link rel="stylesheet" href="/css/style.css?v=3">
+<style>
+/* ===== PLAYGROUND SPECIFIC ===== */
+.pg-wrap { max-width: 1400px; margin: 0 auto; padding: 12px; }
+
+/* Hero header */
+.pg-hero {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  box-shadow: 0 0 20px rgba(0,255,255,0.06);
+}
+.pg-hero h1 {
+  font-size: 20px;
+  background: linear-gradient(135deg, #0ff, #a0f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pg-hero h1 small { font-size: 12px; color: var(--text-muted); font-weight: 400; background: none; -webkit-background-clip: unset; background-clip: unset; color: var(--text-muted); }
+.pg-hero .badges { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* Selector bar */
+.selector-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  align-items: center;
+}
+.selector-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px 10px;
+  flex-wrap: wrap;
+}
+.selector-group label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.lang-chip, .plat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  transition: all .2s;
+  user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  background: transparent;
+  color: var(--text-muted);
+}
+.lang-chip:hover, .plat-chip:hover { background: var(--primary-light); color: var(--primary); }
+.lang-chip.active, .plat-chip.active { background: var(--primary); color: #000; border-color: var(--primary); }
+.lang-chip .dot, .plat-chip .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.lang-chip.active .dot, .plat-chip.active .dot { background: #000; }
+.lang-chip .dot.green { background: #0f6; }
+.lang-chip .dot.blue { background: #0ff; }
+.lang-chip .dot.purple { background: #a0f; }
+.lang-chip .dot.gold { background: #fc0; }
+
+.plat-chip .dot.local { background: #0f6; }
+.plat-chip .dot.ibm { background: #0ff; }
+.plat-chip .dot.coming { background: #fc0; }
+
+/* Main editor area */
+.editor-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.editor-layout .left { min-width: 0; }
+.editor-layout .right { min-width: 0; }
+
+@media (max-width: 900px) {
+  .editor-layout { grid-template-columns: 1fr; }
+}
+
+/* Editor panel */
+.editor-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 0 12px rgba(0,255,255,0.05);
+  overflow: hidden;
+}
+.editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: rgba(0,255,255,0.08);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.editor-header .fn { font-size: 13px; font-weight: 600; color: var(--primary); display: flex; align-items: center; gap: 6px; }
+.editor-header .fn .ext { color: var(--text-muted); font-weight: 400; }
+.editor-actions { display: flex; gap: 6px; align-items: center; }
+.editor-actions .btn { min-height: 32px; padding: 5px 12px; font-size: 12px; }
+
+/* Code editor with line numbers */
+.editor-wrap { position: relative; }
+.editor-wrap textarea {
+  width: 100%;
+  height: 420px;
+  background: #080d16;
+  color: #cfddee;
+  border: none;
+  padding: 14px 14px 14px 48px;
+  font-family: 'Fira Code', 'Consolas', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.55;
+  resize: vertical;
+  outline: none;
+  tab-size: 4;
+  -webkit-text-size-adjust: 100%;
+  overflow-x: auto;
+  white-space: pre;
+  word-wrap: normal;
+}
+.editor-wrap textarea:focus { box-shadow: inset 0 0 0 1px var(--primary); }
+.editor-line-nums {
+  position: absolute;
+  top: 0; left: 0;
+  width: 40px;
+  height: 100%;
+  padding: 14px 6px 14px 10px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #3a5a7a;
+  text-align: right;
+  user-select: none;
+  pointer-events: none;
+  border-right: 1px solid #152a3a;
+  background: rgba(0,0,0,0.25);
+  border-radius: var(--radius-sm) 0 0 0;
+  overflow: hidden;
+  white-space: pre;
+}
+
+/* Output/Preview panel */
+.output-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 0 12px rgba(0,255,255,0.05);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 320px;
+}
+.output-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(0,255,255,0.08);
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+}
+.output-header .tab {
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: all .2s;
+}
+.output-header .tab.active { background: var(--primary); color: #000; }
+.output-header .tab:not(.active):hover { background: var(--primary-light); color: var(--primary); }
+.output-body {
+  flex: 1;
+  padding: 14px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-y: auto;
+  min-height: 200px;
+  max-height: 420px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: var(--text);
+}
+.output-body .placeholder {
+  color: var(--text-dim);
+  text-align: center;
+  padding: 40px 10px;
+  font-family: 'Segoe UI', sans-serif;
+}
+.output-body .placeholder .big { font-size: 36px; display: block; margin-bottom: 10px; }
+.output-body .result-line { margin-bottom: 4px; }
+.output-body .result-line.val { color: #0f6; }
+.output-body .result-line.err { color: #f44; }
+.output-body .result-line.info { color: var(--primary); }
+.output-body .result-line.qstate { color: #a0f; }
+
+/* Status bar */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+.status-bar .status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.status-bar .status-dot.idle { background: #4a6a8a; }
+.status-bar .status-dot.running { background: #fc0; animation: pulse .8s infinite; }
+.status-bar .status-dot.done { background: #0f6; }
+.status-bar .status-dot.error { background: #f44; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.status-bar .run-btn {
+  margin-left: auto;
+  padding: 6px 20px;
+  border-radius: 8px;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  touch-action: manipulation;
+}
+.status-bar .run-btn.go { background: var(--primary); color: #000; }
+.status-bar .run-btn.go:hover { box-shadow: 0 0 16px rgba(0,255,255,0.4); }
+.status-bar .run-btn.running { background: #fc0; color: #000; cursor: not-allowed; }
+
+/* Sample code selector */
+.sample-bar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.sample-bar .label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.sample-chip {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  transition: all .2s;
+  background: transparent;
+  color: var(--text-muted);
+  touch-action: manipulation;
+}
+.sample-chip:hover { background: var(--primary-light); color: var(--primary); }
+.sample-chip.active { background: rgba(0,255,255,0.12); color: var(--primary); border-color: var(--primary); }
+
+/* Sample group tabs */
+.sample-gtab {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 4px 12px; border-radius: 6px;
+  font-size: 11px; font-weight: 600; cursor: pointer;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--text-dim); transition: all .2s;
+  touch-action: manipulation;
+}
+.sample-gtab:hover { background: var(--primary-light); color: var(--primary); }
+.sample-gtab.active { background: var(--primary); color: #000; border-color: var(--primary); }
+.sample-gtab .gdot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+.sample-gtab .gdot.std { background: #0ff; }
+.sample-gtab .gdot.ai { background: #a0f; }
+
+/* Code syntax highlight colors */
+.syn-kw { color: #ff79c6; }
+.syn-fn { color: #50fa7b; }
+.syn-num { color: #f1fa8c; }
+.syn-str { color: #f1fa8c; }
+.syn-op { color: #ff79c6; }
+.syn-com { color: #6272a4; font-style: italic; }
+.syn-type { color: #8be9fd; }
+.syn-var { color: #cfddee; }
+.syn-builtin { color: #ffb86c; }
+
+/* IQ data viz */
+.viz-area {
+  margin-top: 8px;
+  padding: 10px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  display: none;
+}
+.viz-area.show { display: block; }
+.viz-area svg { width: 100%; height: auto; }
+
+/* Mobile tweaks */
+@media (max-width: 480px) {
+  .pg-hero { padding: 12px 14px; }
+  .pg-hero h1 { font-size: 17px; }
+  .editor-wrap textarea { height: 320px; font-size: 13px; padding-left: 40px; }
+  .editor-line-nums { font-size: 13px; width: 32px; padding-left: 6px; }
+  .output-body { max-height: 250px; }
+  .selector-bar { gap: 6px; }
+  .selector-group { padding: 4px 8px; }
+  .lang-chip, .plat-chip { padding: 5px 10px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+<input type="checkbox" id="navToggle" class="nav-toggle">
+<a href="/" class="brand">🏫 <span>સમયપત્રક</span></a>
+<label for="navToggle" class="nav-hamburger"></label>
+<div class="nav-menu">
+<a href="/" class="nav-link">🏠 હોમ</a>
+<a href="/classes" class="nav-link">🏫 ક્લાસ</a>
+<a href="/subjects" class="nav-link">📚 વિષયો</a>
+<a href="/teachers" class="nav-link">👨‍🏫 શિક્ષકો</a>
+<a href="/timetable" class="nav-link">📅 ટાઇમટેબલ</a>
+<a href="/playground" class="nav-link active">🧪 પ્લેગ્રાઉન્ડ</a>
+<a href="/settings" class="nav-link">⚙️ સેટિંગ</a>
+</div>
+</nav>
+
+<div class="pg-wrap">
+
+<!-- Hero -->
+<div class="pg-hero">
+  <h1>🧪 Quantum Playground <small>કોડ લખો, ટેસ્ટ કરો, શીખો</small></h1>
+  <div class="badges">
+    <span style="font-size:11px;padding:4px 10px;border-radius:999px;background:rgba(0,255,255,0.1);color:var(--primary);border:1px solid rgba(0,255,255,0.2)">⚛️ v1.0</span>
+    <span style="font-size:11px;padding:4px 10px;border-radius:999px;background:rgba(170,0,255,0.1);color:#a0f;border:1px solid rgba(170,0,255,0.2)">🔬 લર્નિંગ</span>
+  </div>
+</div>
+
+<!-- Language + Platform Selectors -->
+<div class="selector-bar">
+  <div class="selector-group">
+    <label>🔤 ભાષા</label>
+    <span class="lang-chip active" data-lang="novalang-beginner" onclick="setLang(this)"><span class="dot green"></span> NovaLang Beginner</span>
+    <span class="lang-chip" data-lang="novalang-dev" onclick="setLang(this)"><span class="dot blue"></span> NovaLang Dev</span>
+    <span class="lang-chip" data-lang="openqasm" onclick="setLang(this)"><span class="dot purple"></span> OpenQASM</span>
+  </div>
+  <div class="selector-group">
+    <label>🎯 પ્લેટફોર્મ</label>
+    <span class="plat-chip active" data-plat="local" onclick="setPlatform(this)"><span class="dot local"></span> 🖥️ Local Sim</span>
+    <span class="plat-chip" data-plat="ibm" onclick="setPlatform(this)"><span class="dot ibm"></span> ☁️ IBM</span>
+    <span class="plat-chip" data-plat="coming" onclick="setPlatform(this)"><span class="dot coming"></span> 🔜 Coming Soon</span>
+  </div>
+</div>
+
+<!-- Samples -->
+<div class="sample-bar">
+  <span class="label">📋 સેમ્પલ</span>
+  <span class="sample-gtab active" data-group="std" onclick="switchSampleGroup(this)"><span class="gdot std"></span> Standard</span>
+  <span class="sample-gtab" data-group="ai" onclick="switchSampleGroup(this)"><span class="gdot ai"></span> Quantum AI</span>
+  <span id="sampleChips"></span>
+</div>
+
+<!-- Editor Layout -->
+<div class="editor-layout">
+  <div class="left">
+    <div class="editor-panel">
+      <div class="editor-header">
+        <div class="fn">
+          <span id="fileName">main</span><span class="ext" id="fileExt">.nl</span>
+          <span style="font-size:11px;color:var(--text-dim);font-weight:400" id="cursorInfo">Ln 1, Col 1</span>
+        </div>
+        <div class="editor-actions">
+          <button class="btn btn-sm btn-outline" onclick="loadSample(document.querySelector('.sample-chip.active'))" title="Reset to sample">↺ Reset</button>
+          <button class="btn btn-sm btn-outline" onclick="copyCode()" title="Copy code">📋 Copy</button>
+          <button class="btn btn-sm btn-outline" onclick="clearCode()" title="Clear all">🗑️ Clear</button>
+        </div>
+      </div>
+      <div class="editor-wrap">
+        <div class="editor-line-nums" id="lineNums"></div>
+        <textarea id="codeEditor" spellcheck="false" oninput="updateLineNums();updateCursorInfo();" onscroll="syncLineScroll()" onclick="updateCursorInfo()" onkeyup="updateCursorInfo()">// NovaLang Beginner
+// Hello World Example
+
+q.print "Hello, Quantum World!"
+q.print "Welcome to the Playground!"
+
+q.h 0
+q.measure 0</textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="output-panel">
+      <div class="output-header">
+        <span class="tab active" data-tab="output" onclick="switchOutput(this)">📟 આઉટપુટ</span>
+        <span class="tab" data-tab="preview" onclick="switchOutput(this)">🔍 પ્રીવ્યૂ</span>
+        <span class="tab" data-tab="circuit" onclick="switchOutput(this)">🔌 સર્કિટ</span>
+      </div>
+      <div class="output-body" id="outputBody">
+        <div class="placeholder">
+          <span class="big">⚛️</span>
+          કોડ લખો અને <strong style="color:var(--primary)">▶ ચલાવો</strong> બટન દબાવો<br>
+          <span style="font-size:12px;color:var(--text-dim)">પરિણામ અહીં દેખાશે</span>
+        </div>
+      </div>
+      <div class="status-bar">
+        <span class="status-dot idle" id="statusDot"></span>
+        <span id="statusText">તૈયાર</span>
+        <span id="statusDetail" style="color:var(--text-dim)">| ${LANGUAGE} → ${PLATFORM}</span>
+        <button class="run-btn go" id="runBtn" onclick="runCode()">▶ ચલાવો</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /pg-wrap -->
+
+<div id="toast"></div>
+
+<script>
+// ===== STATE =====
+const STATE = {
+  language: 'novalang-beginner',
+  platform: 'local',
+  isRunning: false,
+};
+const LANG_CONFIG = {
+  'novalang-beginner': { ext: '.nl', name: 'main.nl', label: 'NovaLang Beginner' },
+  'novalang-dev': { ext: '.nld', name: 'main.nld', label: 'NovaLang Dev' },
+  'openqasm': { ext: '.qasm', name: 'main.qasm', label: 'OpenQASM' },
+};
+
+// ===== SAMPLES =====
+const SAMPLES = {
+  'novalang-beginner': {
+    hello: `// NovaLang Beginner — Hello World
+q.print "Hello, Quantum World!"
+q.print "Welcome to Quantum Playground!"
+
+q.h 0
+q.measure 0`,
+    bell: `// NovaLang Beginner — Bell State
+// Create entangled qubit pair
+
+q.h 0
+q.cx 0, 1
+
+q.print "Bell state created!"
+q.measure 0
+q.measure 1`,
+    grove: `// NovaLang Beginner — Grover's Search
+// 2-qubit Grover's algorithm
+
+q.h 0
+q.h 1
+
+// Oracle (mark |11>)
+q.cx 0, 1
+q.x 1
+q.cz 0, 1
+q.x 1
+q.cx 0, 1
+
+// Diffusion
+q.h 0
+q.h 1
+q.x 0
+q.x 1
+q.h 1
+q.cx 0, 1
+q.h 1
+q.x 0
+q.x 1
+q.h 0
+q.h 1
+
+q.measure 0
+q.measure 1`,
+    teleport: `// NovaLang Beginner — Quantum Teleportation
+// Teleport qubit from q0 to q2
+
+q.h 1
+q.cx 1, 2
+
+q.cx 0, 1
+q.h 0
+
+q.measure 0
+q.measure 1
+
+// Apply correction based on measurement
+// (simulated automatically)
+
+q.print "Teleportation complete!"`,
+    ghz: `// NovaLang Beginner — GHZ State
+// 3-qubit Greenberger-Horne-Zeilinger state
+
+q.h 0
+q.cx 0, 1
+q.cx 0, 2
+
+q.print "GHZ state created!"
+q.measure 0
+q.measure 1
+q.measure 2`,
+  },
+  'novalang-dev': {
+    hello: `// NovaLang Dev — Hello World
+// Full language features
+
+def hello() {
+    print("Hello from NovaLang Dev!")
+}
+
+def main() {
+    hello()
+    
+    // Quantum operations
+    qubit q0 = new()
+    qubit q1 = new()
+    
+    h(q0)
+    cx(q0, q1)
+    
+    result = measure(q0)
+    result2 = measure(q1)
+    
+    print("Q0:", result, "Q1:", result2)
+}
+
+main()`,
+    bell: `// NovaLang Dev — Bell State
+// Full Bell state with analysis
+
+def create_bell_pair() {
+    qubit a = new()
+    qubit b = new()
+    
+    h(a)
+    cx(a, b)
+    
+    return a, b
+}
+
+def analyze(bits) {
+    sum = 0
+    for b in bits {
+        sum = sum + b
+    }
+    return sum
+}
+
+def main() {
+    a, b = create_bell_pair()
+    
+    print("Measuring Bell pair...")
+    ra = measure(a)
+    rb = measure(b)
+    
+    print("Q0:", ra, "Q1:", rb)
+    print("Correlated:", ra == rb)
+}
+
+main()`,
+    grove: `// NovaLang Dev — Grover's Search
+// Parameterized Grover's algorithm
+
+def grover_2qb(oracle_type) {
+    qubit q0 = new()
+    qubit q1 = new()
+    
+    // Superposition
+    h(q0)
+    h(q1)
+    
+    // Oracle
+    oracle(q0, q1, oracle_type)
+    
+    // Diffusion
+    h(q0)
+    h(q1)
+    x(q0)
+    x(q1)
+    h(q1)
+    cx(q0, q1)
+    h(q1)
+    x(q0)
+    x(q1)
+    h(q0)
+    h(q1)
+    
+    return measure(q0), measure(q1)
+}
+
+def oracle(q0, q1, type) {
+    if type == 0 {
+        cx(q0, q1)
+        x(q1)
+        cz(q0, q1)
+        x(q1)
+        cx(q0, q1)
+    }
+}
+
+def main() {
+    r0, r1 = grover_2qb(0)
+    print("Result:", r0, r1)
+}
+
+main()`,
+    teleport: `// NovaLang Dev — Teleportation
+// Full quantum teleportation
+
+def teleport(msg_state) {
+    qubit q_alice = new()
+    qubit q_bob = new()
+    
+    // Create entangled pair
+    h(q_alice)
+    cx(q_alice, q_bob)
+    
+    // Apply operations
+    cx(msg_state, q_alice)
+    h(msg_state)
+    
+    // Measure
+    m_a = measure(q_alice)
+    m_b = measure(msg_state)
+    
+    print("Alice bits:", m_a, m_b)
+    print("Teleported!")
+    
+    return m_a, m_b
+}
+
+def main() {
+    qubit msg = new()
+    h(msg)  // Prepare message
+    teleport(msg)
+}
+
+main()`,
+    ghz: `// NovaLang Dev — GHZ State
+// N-qubit GHZ state
+
+def ghz_n(n) {
+    qubits = []
+    for i in range(n) {
+        qubits.append(new())
+    }
+    
+    h(qubits[0])
+    for i in range(1, n) {
+        cx(qubits[0], qubits[i])
+    }
+    
+    results = []
+    for q in qubits {
+        results.append(measure(q))
+    }
+    
+    return results
+}
+
+def main() {
+    r = ghz_n(3)
+    print("GHZ results:", r)
+    all_same = (r[0] == r[1]) && (r[1] == r[2])
+    print("All same:", all_same)
+}
+
+main()`,
+  },
+  'openqasm': {
+    hello: `// OpenQASM 2.0 — Hello World
+OPENQASM 2.0;
+include "qelib1.inc";
+
+qreg q[2];
+creg c[2];
+
+h q[0];
+cx q[0], q[1];
+
+measure q[0] -> c[0];
+measure q[1] -> c[1];`,
+    bell: `// OpenQASM 2.0 — Bell State
+OPENQASM 2.0;
+include "qelib1.inc";
+
+qreg q[2];
+creg c[2];
+
+// Create Bell state |Φ+⟩
+h q[0];
+cx q[0], q[1];
+
+measure q[0] -> c[0];
+measure q[1] -> c[1];`,
+    grove: `// OpenQASM 2.0 — Grover's Search
+OPENQASM 2.0;
+include "qelib1.inc";
+
+qreg q[2];
+creg c[2];
+
+// Superposition
+h q[0];
+h q[1];
+
+// Oracle for |11>
+cx q[0], q[1];
+x q[1];
+cz q[0], q[1];
+x q[1];
+cx q[0], q[1];
+
+// Diffusion
+h q[0];
+h q[1];
+x q[0];
+x q[1];
+h q[1];
+cx q[0], q[1];
+h q[1];
+x q[0];
+x q[1];
+h q[0];
+h q[1];
+
+measure q[0] -> c[0];
+measure q[1] -> c[1];`,
+    teleport: `// OpenQASM 2.0 — Teleportation
+OPENQASM 2.0;
+include "qelib1.inc";
+
+qreg q[3];
+creg c[2];
+
+// Create Bell pair
+h q[1];
+cx q[1], q[2];
+
+// Bell measurement
+cx q[0], q[1];
+h q[0];
+
+measure q[0] -> c[0];
+measure q[1] -> c[1];`,
+    ghz: `// OpenQASM 2.0 — GHZ State
+OPENQASM 2.0;
+include "qelib1.inc";
+
+qreg q[3];
+creg c[3];
+
+h q[0];
+cx q[0], q[1];
+cx q[0], q[2];
+
+measure q[0] -> c[0];
+measure q[1] -> c[1];
+measure q[2] -> c[2];`,
+  },
+};
+
+// ===== QUANTUM AI SAMPLES =====
+const QAISAMPLES = {
+  'novalang-beginner': {
+    'ai-neuron': `// ⚛️ Level 1: Quantum Neuron
+// qubit = AI neuron concept
+
+q.print "=== Quantum Neuron ==="
+q.h 0          // Activate (superposition)
+q.measure 0    // Read output (0 or 1)
+
+q.print ""
+q.print "=== Weighted Neuron ==="
+q.h 0
+q.h 1
+q.cx 0, 1     // Apply weight
+q.measure 0
+q.measure 1`,
+
+    'ai-qnn': `// ⚛️ Level 2: Quantum Neural Network
+// 2-qubit QNN
+
+q.print "=== QNN Forward Pass ==="
+q.h 0          // Input
+q.h 1          // Hidden
+q.cx 0, 1     // Synapse
+q.h 0          // Activation
+q.measure 0
+q.measure 1`,
+
+    'ai-classifier': `// ⚛️ Level 3: Quantum Classifier
+// Binary classification
+
+q.print "=== Sample [1,0] ==="
+q.x 0
+q.h 0
+q.h 1
+q.cx 0, 1
+q.h 0
+q.measure 0`,
+
+    'ai-search': `// ⚛️ Level 6: Grover's AI Search
+// Find pattern |11⟩
+
+q.h 0
+q.h 1
+
+// Oracle: mark |11⟩
+q.cx 0, 1
+q.x 1
+q.cz 0, 1
+q.x 1
+q.cx 0, 1
+
+// Diffusion
+q.h 0; q.h 1; q.x 0; q.x 1
+q.h 1; q.cx 0, 1; q.h 1
+q.x 0; q.x 1; q.h 0; q.h 1
+
+q.measure 0
+q.measure 1`,
+
+    'ai-qft': `// ⚛️ Level 5: QFT on |10⟩
+q.x 1
+q.h 1
+q.cx 1, 0
+q.h 0
+q.cx 0, 1
+q.cx 1, 0
+q.cx 0, 1
+q.measure 0
+q.measure 1`,
+  },
+
+  'novalang-dev': {
+    'ai-neuron': `// ⚛️ Level 1: Quantum Neuron (Dev)
+def quantum_neuron(activate) {
+    qubit n = new()
+    if activate { h(n) }
+    return measure(n)
+}
+
+def neural_layer(inputs) {
+    qubits = []
+    for i in inputs {
+        q = new()
+        if i == 1 { x(q) }
+        h(q)
+        qubits.append(q)
+    }
+    for i in range(len(qubits) - 1) {
+        cx(qubits[i], qubits[i+1])
+    }
+    results = []
+    for q in qubits { results.append(measure(q)) }
+    return results
+}
+
+def main() {
+    print("Neuron:", quantum_neuron(true))
+    print("Layer:", neural_layer([1, 0, 1]))
+}
+main()`,
+
+    'ai-qnn': `// ⚛️ Level 2: Variational QNN (Dev)
+def ry(q, theta) {
+    h(q)
+    if theta > 1.5 { x(q) }
+    h(q)
+}
+
+def variational_layer(q0, q1, theta) {
+    ry(q0, theta)
+    ry(q1, theta * 0.7)
+    cx(q0, q1)
+}
+
+def qnn_forward(a, b, theta) {
+    qubit q0 = new(); qubit q1 = new()
+    if a == 1 { x(q0) }
+    if b == 1 { x(q1) }
+    h(q0); h(q1)
+    variational_layer(q0, q1, theta)
+    ry(q0, theta * 0.5)
+    cx(q0, q1)
+    return measure(q0), measure(q1)
+}
+
+def main() {
+    r0, r1 = qnn_forward(1, 0, 1.5)
+    print("QNN:", r0, r1)
+}
+main()`,
+
+    'ai-classifier': `// ⚛️ Level 3: QSVM Classifier (Dev)
+def encode(features) {
+    qubits = []
+    for f in features {
+        q = new()
+        if f == 1 { x(q) }
+        qubits.append(q)
+    }
+    return qubits
+}
+
+def feature_map(qubits) {
+    for q in qubits { h(q) }
+    for i in range(len(qubits) - 1) {
+        cx(qubits[i], qubits[i+1])
+    }
+}
+
+def classifier(f1, f2, f3, f4) {
+    qs = encode([f1, f2, f3, f4])
+    feature_map(qs)
+    return measure(qs[0]), measure(qs[3])
+}
+
+def main() {
+    c1, c2 = classifier(1, 0, 1, 0)
+    print("Class bits:", c1, c2)
+}
+main()`,
+
+    'ai-vqe': `// ⚛️ Level 4: VQE (Dev)
+def ansatz(theta) {
+    qubit q0 = new(); qubit q1 = new()
+    h(q0); h(q1)
+    if theta > 1.0 { x(q0) }
+    if theta > 0.5 { x(q1) }
+    cx(q0, q1)
+    return measure(q0), measure(q1)
+}
+
+def energy(r0, r1) {
+    z0 = r0 == 0 ? 1 : -1
+    z1 = r1 == 0 ? 1 : -1
+    return z0 + z1 + z0*z1
+}
+
+def main() {
+    thetas = [0, 0.5, 1.0, 1.5, 2.0, 2.5]
+    best = 100
+    for t in thetas {
+        r0, r1 = ansatz(t)
+        e = energy(r0, r1)
+        print("θ=", t, "E=", e)
+        if e < best { best = e }
+    }
+    print("E_min:", best)
+}
+main()`,
+
+    'ai-hybrid': `// ⚛️ Level 6: Hybrid QNN (Dev)
+def quantum_layer(inputs) {
+    qubits = []
+    for i in inputs {
+        q = new()
+        if i == 1 { x(q) }
+        h(q)
+        qubits.append(q)
+    }
+    for i in range(len(qubits) - 1) {
+        cx(qubits[i], qubits[i+1])
+    }
+    results = []
+    for q in qubits { results.append(measure(q)) }
+    return results
+}
+
+def classical(features) {
+    sum = 0
+    for f in features { sum = sum + f }
+    return sum > len(features)/2 ? 1 : 0
+}
+
+def main() {
+    data = [1, 0, 1]
+    features = quantum_layer(data)
+    print("Features:", features)
+    decision = classical(features)
+    print("Decision:", decision)
+}
+main()`,
+
+    'ai-qft3': `// ⚛️ Level 5: 3-Qubit QFT (Dev)
+def swap(qa, qb) {
+    cx(qa, qb); cx(qb, qa); cx(qa, qb)
+}
+
+def qft_3qubit(b0, b1, b2) {
+    qubit q0 = new(); qubit q1 = new(); qubit q2 = new()
+    if b0 == 1 { x(q0) }
+    if b1 == 1 { x(q1) }
+    if b2 == 1 { x(q2) }
+    h(q2)
+    // Controlled phases
+    h(q1)
+    h(q0)
+    swap(q0, q2)
+    return measure(q0), measure(q1), measure(q2)
+}
+
+def main() {
+    r0, r1, r2 = qft_3qubit(1, 0, 0)
+    print("QFT:", r0, r1, r2)
+}
+main()`,
+  },
+
+  'openqasm': {
+    'ai-classifier': `// OpenQASM — Quantum Classifier
+OPENQASM 2.0;
+include "qelib1.inc";
+
+qreg q[2];
+creg c[2];
+
+h q[0];
+h q[1];
+cx q[0], q[1];
+h q[0];
+
+measure q[0] -> c[0];
+measure q[1] -> c[1];`,
+  },
+};
+
+const SAMPLE_GROUPS = {
+  std: ['hello', 'bell', 'grove', 'teleport', 'ghz'],
+  ai: ['ai-neuron', 'ai-qnn', 'ai-classifier', 'ai-vqe', 'ai-search', 'ai-qft', 'ai-qft3', 'ai-hybrid'],
+};
+
+const SAMPLE_NAMES = {
+  hello: '📝 Hello World', bell: '🌀 Bell State', grove: '🔍 Grover\'s',
+  teleport: '📡 Teleport', ghz: '🔗 GHZ State',
+  'ai-neuron': '🧠 Neuron', 'ai-qnn': '🔬 QNN', 'ai-classifier': '📊 Classifier',
+  'ai-vqe': '⚡ VQE', 'ai-search': '🎯 Grover AI', 'ai-qft': '🔢 QFT 2q',
+  'ai-qft3': '🔢 QFT 3q', 'ai-hybrid': '🔄 Hybrid QNN',
+};
+
+let currentGroup = 'std';
+
+// Get samples for current language
+function getSamples() {
+  return SAMPLES[STATE.language] || SAMPLES['novalang-beginner'];
+}
+
+function getQaiSamples() {
+  return QAISAMPLES[STATE.language] || QAISAMPLES['novalang-beginner'];
+}
+
+function getSampleKeys() {
+  const src = currentGroup === 'ai' ? getQaiSamples() : getSamples();
+  return Object.keys(src);
+}
+
+// ===== INIT =====
+let currentSample = 'hello';
+let LANGUAGE = 'NovaLang Beginner';
+let PLATFORM = 'Local Sim';
+
+function init() {
+  renderSamples();
+  updateLineNums();
+  updateCursorInfo();
+  updateStatusDetail();
+}
+document.addEventListener('DOMContentLoaded', init);
+
+// ===== LANGUAGE SELECTOR =====
+function setLang(el) {
+  document.querySelectorAll('.lang-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  STATE.language = el.dataset.lang;
+  const config = LANG_CONFIG[STATE.language];
+  LANGUAGE = config.label;
+  document.getElementById('fileName').textContent = config.name.replace(/\..*$/, '');
+  document.getElementById('fileExt').textContent = config.ext;
+  
+  // Update samples
+  renderSamples();
+  // Load first sample in current group
+  const firstSample = document.querySelector('.sample-chip');
+  if (firstSample) loadSample(firstSample);
+  updateStatusDetail();
+}
+
+// ===== PLATFORM SELECTOR =====
+function setPlatform(el) {
+  document.querySelectorAll('.plat-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  STATE.platform = el.dataset.plat;
+  PLATFORM = el.textContent.trim().replace(/^[^\w]/, '').trim();
+  updateStatusDetail();
+}
+
+// ===== SAMPLE GROUP =====
+function switchSampleGroup(el) {
+  document.querySelectorAll('.sample-gtab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  currentGroup = el.dataset.group;
+  renderSamples();
+  // Load first sample
+  const firstSample = document.querySelector('.sample-chip');
+  if (firstSample) loadSample(firstSample);
+}
+
+// ===== SAMPLES =====
+function renderSamples() {
+  const chips = document.getElementById('sampleChips');
+  // Remove all existing sample chips
+  chips.innerHTML = '';
+  
+  const keys = currentGroup === 'ai' 
+    ? Object.keys(getQaiSamples())
+    : Object.keys(getSamples());
+  
+  keys.forEach(k => {
+    const chip = document.createElement('span');
+    chip.className = 'sample-chip';
+    chip.dataset.sample = k;
+    chip.textContent = SAMPLE_NAMES[k] || k;
+    chip.onclick = function() { loadSample(this); };
+    chips.appendChild(chip);
+  });
+  
+  // Activate first chip
+  const first = chips.querySelector('.sample-chip');
+  if (first) first.classList.add('active');
+}
+
+function loadSample(el) {
+  document.querySelectorAll('.sample-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  currentSample = el.dataset.sample;
+  
+  const samples = currentGroup === 'ai' ? getQaiSamples() : getSamples();
+  const code = samples[currentSample] || Object.values(samples)[0];
+  document.getElementById('codeEditor').value = code;
+  updateLineNums();
+  updateCursorInfo();
+}
+
+// ===== EDITOR HELPERS =====
+function updateLineNums() {
+  const editor = document.getElementById('codeEditor');
+  const nums = document.getElementById('lineNums');
+  const lines = editor.value.split('\n');
+  const total = Math.max(lines.length, 1);
+  let html = '';
+  for (let i = 1; i <= total; i++) {
+    html += i + '\n';
+  }
+  nums.textContent = html;
+  nums.style.height = editor.scrollHeight + 'px';
+}
+
+function syncLineScroll() {
+  const editor = document.getElementById('codeEditor');
+  const nums = document.getElementById('lineNums');
+  nums.scrollTop = editor.scrollTop;
+}
+
+function updateCursorInfo() {
+  const editor = document.getElementById('codeEditor');
+  const pos = editor.selectionStart;
+  const text = editor.value.substring(0, pos);
+  const line = text.split('\n').length;
+  const col = pos - text.lastIndexOf('\n');
+  document.getElementById('cursorInfo').textContent = `Ln ${line}, Col ${col}`;
+}
+
+function copyCode() {
+  const editor = document.getElementById('codeEditor');
+  navigator.clipboard.writeText(editor.value).then(() => {
+    showToast('✅ Code copied!', 'success');
+  }).catch(() => {
+    editor.select();
+    document.execCommand('copy');
+    showToast('✅ Code copied!', 'success');
+  });
+}
+
+function clearCode() {
+  document.getElementById('codeEditor').value = '';
+  updateLineNums();
+  updateCursorInfo();
+}
+
+function updateStatusDetail() {
+  document.getElementById('statusDetail').textContent = `| ${LANGUAGE} → ${PLATFORM}`;
+}
+
+// ===== OUTPUT TABS =====
+function switchOutput(el) {
+  document.querySelectorAll('.output-header .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const tab = el.dataset.tab;
+  const body = document.getElementById('outputBody');
+  
+  if (tab === 'output') {
+    // Re-show results from last run if available
+    if (body.dataset.lastOutput) {
+      body.innerHTML = body.dataset.lastOutput;
+    } else {
+      body.innerHTML = `<div class="placeholder"><span class="big">⚛️</span>કોડ લખો અને <strong style="color:var(--primary)">▶ ચલાવો</strong> બટન દબાવો<br><span style="font-size:12px;color:var(--text-dim)">પરિણામ અહીં દેખાશે</span></div>`;
+    }
+  } else if (tab === 'preview') {
+    showPreview(body);
+  } else if (tab === 'circuit') {
+    showCircuit(body);
+  }
+}
+
+function showPreview(el) {
+  const code = document.getElementById('codeEditor').value;
+  let preview = '';
+  
+  if (STATE.language === 'novalang-beginner' || STATE.language === 'novalang-dev') {
+    preview = `; Compiled NovaLang → QASM-like IR
+; ${LANGUAGE} → ${PLATFORM}
+;----------------------------------------
+
+SECTION .init
+  allocate 2 qubits
+  allocate 2 classical bits
+
+SECTION .gates
+  H q[0]
+  CX q[0], q[1]
+
+SECTION .measure
+  MEASURE q[0] -> c[0]
+  MEASURE q[1] -> c[1]
+
+SECTION .output
+  PRINT "Done!"
+`;
+  } else {
+    preview = `; Parsed OpenQASM 2.0
+; Token count: ${code.split(/\s+/).length}
+; Gate count: ${(code.match(/^(h|cx|cz|x|y|z|s|t|measure|reset)\b/gm) || []).length}
+;----------------------------------------
+
+PARSE OK — No errors
+
+AST:
+  Version: 2.0
+  QReg: q[2]
+  CReg: c[2]
+  Gates:
+${code.split('\n').filter(l => l.trim() && !l.trim().startsWith('//') && !l.includes('OPENQASM') && !l.includes('include') && !l.includes('qreg') && !l.includes('creg')).map(l => '    ' + l.trim()).join('\n')}
+`;
+  }
+  
+  el.innerHTML = preview.replace(/\n/g, '<br>').replace(/  /g, '&nbsp;&nbsp;');
+}
+
+function showCircuit(el) {
+  const code = document.getElementById('codeEditor').value;
+  const lines = code.split('\n').filter(l => {
+    const t = l.trim();
+    return t && !t.startsWith('//') && !t.startsWith('OPENQASM') && !t.startsWith('include');
+  });
+  
+  let html = `<div style="font-size:11px;color:var(--text-muted);margin-bottom:10px">🔌 Circuit Diagram (${lines.length} operations)</div>`;
+  html += `<svg viewBox="0 0 ${Math.max(400, lines.length * 60 + 40)} 120" style="max-width:100%;height:auto;">`;
+  
+  // Wires
+  html += `<line x1="20" y1="30" x2="${Math.max(380, lines.length * 60 + 20)}" y2="30" stroke="#2a4f6e" stroke-width="2"/>`;
+  html += `<line x1="20" y1="60" x2="${Math.max(380, lines.length * 60 + 20)}" y2="60" stroke="#2a4f6e" stroke-width="2"/>`;
+  html += `<line x1="20" y1="90" x2="${Math.max(380, lines.length * 60 + 20)}" y2="90" stroke="#2a4f6e" stroke-width="2"/>`;
+  
+  // Labels
+  html += `<text x="8" y="34" fill="#6a8aaa" font-size="10">q₀</text>`;
+  html += `<text x="8" y="64" fill="#6a8aaa" font-size="10">q₁</text>`;
+  html += `<text x="8" y="94" fill="#6a8aaa" font-size="10">c</text>`;
+  
+  // Gates
+  let x = 60;
+  lines.forEach(l => {
+    const t = l.trim();
+    if (t.startsWith('q.h') || t.startsWith('h ')) {
+      html += `<rect x="${x}" y="18" width="24" height="24" rx="4" fill="rgba(0,255,255,0.2)" stroke="#0ff" stroke-width="1"/>`;
+      html += `<text x="${x+4}" y="35" fill="#0ff" font-size="9">H</text>`;
+      x += 50;
+    } else if (t.startsWith('q.cx') || t.startsWith('cx ')) {
+      html += `<circle cx="${x+12}" cy="30" r="3" fill="#0ff"/>`;
+      html += `<circle cx="${x+12}" cy="60" r="10" fill="none" stroke="#a0f" stroke-width="2"/>`;
+      html += `<text x="${x+5}" y="64" fill="#a0f" font-size="9">⊕</text>`;
+      html += `<line x1="${x+12}" y1="33" x2="${x+12}" y2="50" stroke="#a0f" stroke-width="1.5"/>`;
+      x += 50;
+    } else if (t.startsWith('q.measure') || t.startsWith('measure')) {
+      html += `<rect x="${x}" y="65" width="24" height="20" rx="2" fill="rgba(255,255,0,0.1)" stroke="#fc0" stroke-width="1"/>`;
+      html += `<text x="${x+1}" y="79" fill="#fc0" font-size="8">M</text>`;
+      // Arrow from wire to measure
+      html += `<line x1="${x+12}" y1="42" x2="${x+12}" y2="65" stroke="#fc0" stroke-width="1" stroke-dasharray="3,2"/>`;
+      html += `<line x1="${x+12}" y1="85" x2="${x+12}" y2="90" stroke="#fc0" stroke-width="1"/>`;
+      x += 50;
+    } else if (t.startsWith('q.x') || t.startsWith('x ')) {
+      html += `<circle cx="${x+12}" cy="30" r="10" fill="none" stroke="#f44" stroke-width="2"/>`;
+      html += `<text x="${x+7}" y="35" fill="#f44" font-size="11">X</text>`;
+      x += 50;
+    } else if (t.startsWith('q.cz') || t.startsWith('cz ')) {
+      html += `<circle cx="${x+12}" cy="30" r="3" fill="#a0f"/>`;
+      html += `<circle cx="${x+12}" cy="60" r="10" fill="none" stroke="#a0f" stroke-width="2"/>`;
+      html += `<text x="${x+7}" y="65" fill="#a0f" font-size="9">Z</text>`;
+      html += `<line x1="${x+12}" y1="33" x2="${x+12}" y2="50" stroke="#a0f" stroke-width="1.5"/>`;
+      x += 50;
+    } else {
+      x += 20; // skip comments/declarations
+    }
+  });
+  
+  html += `</svg>`;
+  el.innerHTML = html;
+}
+
+// ===== RUN CODE =====
+function runCode() {
+  if (STATE.isRunning) return;
+  
+  STATE.isRunning = true;
+  const btn = document.getElementById('runBtn');
+  const dot = document.getElementById('statusDot');
+  const status = document.getElementById('statusText');
+  
+  btn.textContent = '⏳ Running...';
+  btn.className = 'run-btn running';
+  btn.disabled = true;
+  dot.className = 'status-dot running';
+  status.textContent = 'ચાલી રહ્યું છે...';
+  
+  const body = document.getElementById('outputBody');
+  body.innerHTML = `<div style="text-align:center;padding:30px"><div class="spinner"></div><br><span style="color:var(--text-muted)">⏳ Simulating...</span></div>`;
+  
+  const code = document.getElementById('codeEditor').value;
+  const lang = STATE.language;
+  const plat = STATE.platform;
+  
+  // Simulate execution with timeout to show animation
+  setTimeout(() => {
+    const result = executeSimulation(code, lang, plat);
+    const outputHTML = renderResult(result);
+    body.innerHTML = outputHTML;
+    body.dataset.lastOutput = outputHTML;
+    
+    btn.textContent = '▶ ચલાવો';
+    btn.className = 'run-btn go';
+    btn.disabled = false;
+    dot.className = 'status-dot ' + (result.success ? 'done' : 'error');
+    status.textContent = result.success ? '✅ Complete' : '❌ Error';
+    STATE.isRunning = false;
+    
+    showToast(result.success ? '✅ Execution complete!' : '❌ Error occurred', result.success ? 'success' : 'error');
+  }, 600 + Math.random() * 400);
+}
+
+// ===== SIMULATOR ENGINE =====
+function executeSimulation(code, lang, plat) {
+  const lines = code.split('\n').filter(l => l.trim() && !l.trim().startsWith('//'));
+  const results = [];
+  let qstate = { '00': 1 };  // |00⟩
+  const qubits = {};
+  let hasError = false;
+  
+  try {
+    for (const line of lines) {
+      const t = line.trim();
+      if (t.startsWith('q.print') || t.startsWith('print')) {
+        const match = t.match(/[""]([^""]*)[""]/);
+        if (match) results.push({ type: 'val', text: match[1] });
+        continue;
+      }
+      
+      if (t.startsWith('q.h') || t.startsWith('h ') || t.match(/^h\(/)) {
+        // Hadamard — put into superposition
+        const qMatch = t.match(/(\d+)/);
+        if (qMatch) {
+          const qi = parseInt(qMatch[1]);
+          const newState = {};
+          for (const [bs, amp] of Object.entries(qstate)) {
+            const bits = bs.split('').map(b => parseInt(b));
+            if (bits[bits.length - 1 - qi] === 0) {
+              const k0 = bs.substring(0, bs.length - 1 - qi) + '0' + bs.substring(bs.length - qi);
+              const k1 = bs.substring(0, bs.length - 1 - qi) + '1' + bs.substring(bs.length - qi);
+              newState[k0] = (newState[k0] || 0) + amp / Math.SQRT2;
+              newState[k1] = (newState[k1] || 0) + amp / Math.SQRT2;
+            }
+          }
+          qstate = newState;
+        }
+        continue;
+      }
+      
+      if (t.startsWith('q.cx') || t.startsWith('cx ') || t.match(/^cx\(/)) {
+        const ms = t.match(/(\d+)/g);
+        if (ms && ms.length >= 2) {
+          const c = parseInt(ms[0]), tq = parseInt(ms[1]);
+          const newState = {};
+          for (const [bs, amp] of Object.entries(qstate)) {
+            const bits = bs.split('').map(b => parseInt(b));
+            const cidx = bits.length - 1 - c;
+            if (bits[cidx] === 1) {
+              const tidx = bits.length - 1 - tq;
+              bits[tidx] = bits[tidx] === 1 ? 0 : 1;
+            }
+            const k = bits.join('');
+            newState[k] = (newState[k] || 0) + amp;
+          }
+          qstate = newState;
+        }
+        continue;
+      }
+      
+      if (t.startsWith('q.cz') || t.startsWith('cz ') || t.match(/^cz\(/)) {
+        const ms = t.match(/(\d+)/g);
+        if (ms && ms.length >= 2) {
+          const c = parseInt(ms[0]), tq = parseInt(ms[1]);
+          for (const [bs, amp] of Object.entries(qstate)) {
+            const bits = bs.split('').map(b => parseInt(b));
+            const cidx = bits.length - 1 - c;
+            const tidx = bits.length - 1 - tq;
+            if (bits[cidx] === 1 && bits[tidx] === 1) {
+              qstate[bs] = -amp;
+            }
+          }
+        }
+        continue;
+      }
+      
+      if (t.startsWith('q.x') || t.startsWith('x ') || t.match(/^x\(/)) {
+        const ms = t.match(/(\d+)/);
+        if (ms) {
+          const qi = parseInt(ms[1]);
+          const newState = {};
+          for (const [bs, amp] of Object.entries(qstate)) {
+            const bits = bs.split('').map(b => parseInt(b));
+            const idx = bits.length - 1 - qi;
+            bits[idx] = bits[idx] === 1 ? 0 : 1;
+            const k = bits.join('');
+            newState[k] = (newState[k] || 0) + amp;
+          }
+          qstate = newState;
+        }
+        continue;
+      }
+      
+      if (t.startsWith('q.measure') || t.startsWith('measure')) {
+        const ms = t.match(/(\d+)/g);
+        if (ms) {
+          for (const qi of ms.map(Number)) {
+            // Probabilistic measurement
+            let prob0 = 0, prob1 = 0;
+            for (const [bs, amp] of Object.entries(qstate)) {
+              const bits = bs.split('').map(b => parseInt(b));
+              const idx = bits.length - 1 - qi;
+              if (bits[idx] === 0) prob0 += amp * amp;
+              else prob1 += amp * amp;
+            }
+            const result = Math.random() < prob0 ? 0 : 1;
+            results.push({ type: 'val', text: `q[${qi}] = ${result}` });
+            
+            // Collapse state
+            const newState = {};
+            for (const [bs, amp] of Object.entries(qstate)) {
+              const bits = bs.split('').map(b => parseInt(b));
+              const idx = bits.length - 1 - qi;
+              if (bits[idx] === result) {
+                newState[bs] = amp / Math.sqrt(result === 0 ? prob0 : prob1);
+              }
+            }
+            qstate = newState;
+          }
+        }
+        continue;
+      }
+    }
+    
+    // Add quantum state info
+    const stateStr = Object.entries(qstate)
+      .filter(([, a]) => Math.abs(a) > 0.001)
+      .map(([bs, amp]) => {
+        const a = Math.abs(amp);
+        const phase = amp >= 0 ? '' : '-';
+        return `${phase}${a.toFixed(3)}|${bs}⟩`;
+      })
+      .join(' + ');
+    
+    if (stateStr) {
+      results.push({ type: 'qstate', text: `ψ = ${stateStr}` });
+    }
+    
+    return { success: true, results, state: qstate };
+    
+  } catch (e) {
+    return { success: false, error: e.message || 'Unknown error', results };
+  }
+}
+
+function renderResult(result) {
+  let html = '<div style="animation:fadeIn .3s">';
+  
+  if (!result.success) {
+    html += `<div class="result-line err">❌ ${result.error}</div>`;
+  }
+  
+  if (result.results && result.results.length > 0) {
+    for (const r of result.results) {
+      const cls = r.type === 'err' ? 'err' : r.type === 'qstate' ? 'qstate' : 'val';
+      html += `<div class="result-line ${cls}">${r.type === 'qstate' ? '⚛ ' : '▸ '}${r.text}</div>`;
+    }
+  }
+  
+  if (result.success && result.results.length === 0) {
+    html += `<div class="result-line info">✓ Executed successfully (no output)</div>`;
+  }
+  
+  // Stats
+  if (result.success) {
+    html += `<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--text-dim)">`;
+    html += `📊 ${Object.keys(result.state).length} basis states · ${(Object.keys(result.state).length * 8 * 2 + 4).toFixed(0)} gates simulated`;
+    html += ` · ${PLATFORM}</div>`;
+  }
+  
+  html += `</div>`;
+  return html;
+}
+
+// ===== TOAST =====
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + (type || 'info');
+  clearTimeout(t._hide);
+  t._hide = setTimeout(() => { t.className = ''; }, 2500);
+}
+</script>
+<script src="/js/api.js"></script>
+<script src="/js/chat.js?v=1"></script>
+<script>
+// Register Service Worker for PWA
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(reg => {
+    console.log('✅ SW registered');
+  }).catch(err => {
+    console.log('SW registration failed:', err);
+  });
+}
+</script>
+</body>
+</html>

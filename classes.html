@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+<meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ક્લાસ — ટાઇમટેબલ</title>
+<style>
+/* --- CRITICAL: navbar + base (inline) --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --primary: #0ff;
+  --primary-hover: #3cf;
+  --primary-light: rgba(0,255,255,0.1);
+  --bg: #0a0f1a;
+  --card: rgba(10,20,35,0.85);
+  --text: #cfddee;
+  --text-muted: #6a8aaa;
+  --border: #2a4f6e;
+  --shadow: 0 1px 3px rgba(0,0,0,.3);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,.4);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text);
+  min-height: 100vh;
+  padding-top: 56px;
+}
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: flex; align-items: center;
+  padding: 0 12px;
+  height: 56px;
+  gap: 4px;
+}
+.nav-toggle { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
+.nav-hamburger {
+  display: none;
+  font-size: 24px; cursor: pointer; padding: 4px 8px;
+  border-radius: 8px; user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-hamburger:hover { background: var(--bg-gradient); }
+.nav-hamburger::before { content: '\2630'; }
+.nav-toggle:checked ~ .nav-hamburger {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+.nav-toggle:checked ~ .nav-hamburger::before { content: '\2715'; }
+.navbar .brand {
+  font-size: 15px; font-weight: 700;
+  white-space: nowrap; margin-right: auto;
+  color: var(--text);
+  text-decoration: none;
+}
+.navbar .brand span { color: var(--primary); }
+.nav-menu {
+  display: flex; align-items: center; gap: 4px;
+}
+.nav-link {
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px; font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.nav-link:hover { background: var(--primary-light); color: var(--primary); }
+.nav-link.active { background: var(--primary); color: #000; font-weight: 700; }
+@media (max-width: 768px) {
+  .nav-hamburger { display: block; }
+  .nav-menu {
+    display: none;
+    position: fixed; top: 56px; left: 0; right: 0;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    padding: 8px;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 99;
+    animation: slideDown .2s ease;
+  }
+  @keyframes slideDown {
+    from { transform: translateY(-10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .nav-toggle:checked ~ .nav-menu { display: flex; }
+  .nav-menu .nav-link {
+    display: block;
+    width: 100%; padding: 12px 16px;
+    font-size: 15px; border-radius: 8px;
+  }
+  .nav-menu .nav-link.active {
+    background: var(--primary);
+    color: #000;
+  }
+}
+@media (max-width: 480px) {
+  .navbar .brand { font-size: 14px; }
+  .navbar .brand span { display: none; }
+}
+@media (max-width: 360px) {
+  .navbar .brand { font-size: 13px; }
+}
+/* --- end critical --- */
+</style>
+<link rel="stylesheet" href="/css/style.css?v=3">
+</head>
+<body>
+<nav class="navbar">
+<input type="checkbox" id="navToggle" class="nav-toggle">
+<a href="/" class="brand">🏫 <span>સમયપત્રક</span></a>
+<label for="navToggle" class="nav-hamburger"></label>
+<div class="nav-menu">
+<a href="/" class="nav-link">🏠 હોમ</a>
+<a href="/classes" class="nav-link active" aria-current="page">🏫 ક્લાસ</a>
+<a href="/subjects" class="nav-link">📚 વિષયો</a>
+<a href="/teachers" class="nav-link">👨‍🏫 શિક્ષકો</a>
+<a href="/timetable" class="nav-link">📅 ટાઇમટેબલ</a>
+<a href="/playground" class="nav-link">🧪 પ્લેગ્રાઉન્ડ</a>
+                    <a href="/settings" class="nav-link">⚙️ સેટિંગ</a>
+</div>
+</nav>
+<div class="container">
+<div class="row">
+<div class="col-6">
+<div class="card">
+<div class="card-header">🏫 ક્લાસની યાદી</div>
+<div id="classList"></div>
+</div>
+</div>
+<div class="col-6">
+<div class="card">
+<div class="card-header">➕ નવો ક્લાસ ઉમેરો</div>
+<div class="form-row">
+<div class="form-group">
+<label>ક્લાસનું નામ</label>
+<input type="text" id="className" placeholder="દા.ત. 9A, 10B, 11" onkeydown="if(event.key==='Enter') addClass()">
+</div>
+</div>
+<button class="btn btn-primary" onclick="addClass()">🏫 ઉમેરો</button>
+<p style="font-size:12px;color:var(--text-muted);margin-top:8px">
+💡 એક ધોરણના બધા સેક્શન (દા.ત. 9A, 9B, 9C) ઉમેરો.<br>
+પછી 📚 વિષયો પેજમાં ધોરણ મુજબ વિષયો સેટ કરો.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="toast"></div>
+<script src="/js/api.js"></script>
+<script src="/js/chat.js?v=1"></script>
+<script>
+let classes = [];
+async function init() {
+await loadClasses();
+}
+async function loadClasses() {
+const el = document.getElementById('classList');
+try {
+const res = await API.getClasses();
+classes = res.classes || [];
+if (classes.length === 0) {
+el.innerHTML = '<div class="empty-state"><div class="icon">🏫</div><h2>કોઈ ક્લાસ નથી</h2><p>જમણી બાજુ ફોર્મમાં ક્લાસ ઉમેરો</p></div>';
+return;
+}
+el.innerHTML = classes.map((c, i) => `
+<div class="teacher-card" style="justify-content:space-between">
+<span style="font-size:16px;font-weight:600">📚 ધોરણ ${c}</span>
+<div style="display:flex;gap:4px">
+<button class="btn btn-outline btn-sm" onclick="window.open('/subjects','_self')">📚 વિષયો</button>
+<button class="btn btn-outline btn-sm" style="color:#ef4444" onclick="delClass('${c}')">✕ દૂર કરો</button>
+</div>
+</div>
+`).join('');
+} catch(e) {
+el.innerHTML = '<p style="color:var(--danger)">⚠️ લોડ કરવામાં એરર</p>';
+}
+}
+async function addClass() {
+const inp = document.getElementById('className');
+const name = inp.value.trim().toUpperCase();
+if (!name) { showToast('⚠️ ક્લાસનું નામ લખો', 'error'); return; }
+try {
+const res = await API.addClass(name);
+if (res.success) {
+inp.value = '';
+await loadClasses();
+showToast(`✅ ધોરણ ${name} ઉમેરાયો`, 'success');
+}
+} catch(e) {
+showToast('⚠️ આ ક્લાસ પહેલેથી છે', 'error');
+}
+}
+async function delClass(name) {
+if (!confirm(`શું ધોરણ ${name} ને દૂર કરવો? આનાથી તેના બધા વિષયો અને ટાઇમટેબલ પણ ડિલીટ થશે.`)) return;
+try {
+await API.deleteClass(name);
+await loadClasses();
+showToast(`🗑️ ધોરણ ${name} દૂર કર્યો`, 'info');
+} catch(e) { showToast('⚠️ એરર', 'error'); }
+}
+init();
+</script>
+
+<script>
+// Mobile navbar toggle — reliable for all browsers
+document.addEventListener('DOMContentLoaded', function() {
+  var toggle = document.getElementById('navToggle');
+  var label = document.querySelector('.nav-hamburger');
+  var menu = document.querySelector('.nav-menu');
+  if (toggle && label && menu) {
+    label.addEventListener('click', function(e) {
+      e.preventDefault();
+      toggle.checked = !toggle.checked;
+      // Also toggle a class for browsers where :checked ~ selector is flaky
+      if (toggle.checked) {
+        menu.style.display = 'flex';
+      } else {
+        menu.style.display = '';
+      }
+    });
+    // Also close menu when a link is clicked
+    menu.querySelectorAll('.nav-link').forEach(function(link) {
+      link.addEventListener('click', function() {
+        toggle.checked = false;
+        menu.style.display = '';
+      });
+    });
+  }
+});
+</script>
+
+<script>
+// Register Service Worker for PWA
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(reg => {
+    console.log('✅ SW registered');
+  }).catch(err => {
+    console.log('SW registration failed:', err);
+  });
+}
+</script>
+</body>
+</html>

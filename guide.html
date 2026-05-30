@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📖 QAI IDE — Guide</title>
+    <style>
+        :root { --primary: #0ff; --text-muted: #6a8aaa; --border: #2a4f6e; --text: #cfddee; }
+        * { box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #0a0f1a, #0a1a2a);
+            font-family: 'Segoe UI', 'Fira Code', monospace;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: #cfddee;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(10,20,35,0.6);
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+        }
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #0ff, #a0f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 0 0 0.5rem;
+        }
+        .header p { color: var(--text-muted); font-size: 0.9rem; }
+        .section {
+            background: rgba(10,20,35,0.4);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .section h2 { color: var(--primary); font-size: 1.3rem; margin-top: 0; }
+        .section h3 { color: var(--text); font-size: 1.1rem; margin: 1rem 0 0.5rem; }
+        .section p { color: var(--text-muted); margin: 0.5rem 0; }
+        .section ul, .section ol { color: var(--text-muted); padding-left: 1.5rem; }
+        .section code {
+            background: #0a1520;
+            color: var(--primary);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .section pre {
+            background: #080d16;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--primary);
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .card {
+            background: rgba(10,20,35,0.6);
+            border: 1px solid var(--border);
+            border-radius: 0.8rem;
+            padding: 1rem;
+        }
+        .card h4 { margin-top: 0; color: var(--primary); font-size: 1rem; }
+        .tag {
+            display: inline-block;
+            background: #1a2a3f;
+            color: #8cf;
+            font-size: 0.75rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 1rem;
+            margin-right: 0.3rem;
+        }
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .btn {
+            background: #0a1520;
+            color: var(--primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin: 0.3rem;
+            display: inline-block;
+        }
+        .btn:hover {
+            background: var(--primary);
+            color: #000;
+        }
+        @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📖 Quantum AI IDE — Guide</h1>
+            <p>Complete documentation for developers and quantum computing practitioners</p>
+        </div>
+
+        <div class="section">
+            <h2>🚀 Getting Started</h2>
+            <h3>Quick Installation</h3>
+            <p>Open the IDE directly in your browser — no installation required! Just visit:</p>
+            <pre>https://victus.nilgiri-wyvern.ts.net/quantum-ai-ide</pre>
+            
+            <h3>Your First Quantum Program</h3>
+            <p>NovaLang syntax is beginner-friendly. Try this Bell state:</p>
+            <pre>q0 = qubit()
+q1 = qubit()
+h(q0)
+cx(q0, q1)
+measure(q0)
+measure(q1)
+print("Bell state created!")</pre>
+            <p>Click <strong>▶ Run Code</strong> to execute.</p>
+        </div>
+
+        <div class="section">
+            <h2>⚛️ Quantum Gates Reference</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h4>🎯 Single-Qubit Gates</h4>
+                    <ul>
+                        <li><code>h(q)</code> — Hadamard (creates superposition)</li>
+                        <li><code>x(q)</code> — Pauli-X (NOT gate)</li>
+                        <li><code>y(q)</code> — Pauli-Y (phase + NOT)</li>
+                        <li><code>z(q)</code> — Pauli-Z (phase flip)</li>
+                        <li><code>rx(q, θ)</code> — Rotation around X axis</li>
+                        <li><code>ry(q, θ)</code> — Rotation around Y axis</li>
+                        <li><code>rz(q, θ)</code> — Rotation around Z axis</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>🔗 Two-Qubit Gates</h4>
+                    <ul>
+                        <li><code>cx(q1, q2)</code> — CNOT (controlled-X)</li>
+                        <li><code>cz(q1, q2)</code> — Controlled-Z</li>
+                        <li><code>swap(q1, q2)</code> — Swap qubits</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔬 Built-in Algorithms</h2>
+            <p>Click algorithm buttons in the IDE to load pre-built quantum circuits:</p>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin:1rem 0">
+                <span class="tag">🌀 Bell State</span>
+                <span class="tag">🌀 Grover Search</span>
+                <span class="tag">🔢 Shor</span>
+                <span class="tag">📐 QFT</span>
+                <span class="tag">⚡ QAOA</span>
+                <span class="tag">🧪 VQE</span>
+                <span class="tag">🔍 Deutsch-Jozsa</span>
+                <span class="tag">⚙️ Bernstein-Vazirani</span>
+                <span class="tag">📡 Simon</span>
+                <span class="tag">📏 QPE</span>
+                <span class="tag">📊 HHL</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📤 Export Options</h2>
+            <p>Convert NovaLang code to major quantum frameworks:</p>
+            <ul>
+                <li><strong>⚛️ Qiskit (IBM)</strong> — Export to Python Qiskit code</li>
+                <li><strong>🔵 Cirq (Google)</strong> — Export to Python Cirq code</li>
+                <li><strong>🔶 Q# (Microsoft)</strong> — Export to Q# code</li>
+                <li><strong>🖼 PNG</strong> — Download circuit as image</li>
+                <li><strong>✒️ SVG</strong> — Download circuit as SVG</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>🔌 IBM Quantum Hardware</h2>
+            <p>Connect to real quantum computers:</p>
+            <ol>
+                <li>Create an account at <a href="https://quantum.ibm.com" target="_blank" style="color:var(--primary)">quantum.ibm.com</a></li>
+                <li>Get your API token from account settings</li>
+                <li>Use the IDE's built-in connector</li>
+            </ol>
+            <p>Available backends: 127-qubit Eagle, 1,000+ qubit systems</p>
+        </div>
+
+        <div class="section">
+            <h2>🧠 Features Overview</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h4>🏠 Home View</h4>
+                    <p>Feature grid with 12+ interactive learning modules</p>
+                </div>
+                <div class="card">
+                    <h4>📊 Dashboard</h4>
+                    <p>Live visitor analytics, country heatmap, device stats</p>
+                </div>
+                <div class="card">
+                    <h4>📖 Guide</h4>
+                    <p>This documentation page (you are here!)</p>
+                </div>
+                <div class="card">
+                    <h4>🔫 Shots</h4>
+                    <p>Multi-shot analysis for quantum statistics</p>
+                </div>
+                <div class="card">
+                    <h4>🔊 Noise</h4>
+                    <p>Simulate quantum hardware noise models</p>
+                </div>
+                <div class="card">
+                    <h4>QASM</h4>
+                    <p>OpenQASM 2.0 editor and validator</p>
+                </div>
+                <div class="card">
+                    <h4>🔌 Hardware</h4>
+                    <p>IBM Quantum connection guide and specs</p>
+                </div>
+                <div class="card">
+                    <h4>🌐 HTML Tester</h4>
+                    <p>Live HTML/CSS/JS preview sandbox</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔧 Keyboard Shortcuts</h2>
+            <table style="width:100%;border-collapse:collapse">
+                <tr style="border-bottom:1px solid var(--border)">
+                    <th style="text-align:left;color:var(--primary)">Shortcut</th>
+                    <th style="text-align:left;color:var(--primary)">Action</th>
+                </tr>
+                <tr>
+                    <td><code>Ctrl + Enter</code></td>
+                    <td>Run quantum code</td>
+                </tr>
+                <tr>
+                    <td><code>Ctrl + S</code></td>
+                    <td>Save code to localStorage</td>
+                </tr>
+                <tr>
+                    <td><code>Ctrl + /</code></td>
+                    <td>Toggle comment (in Monaco editor)</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>📡 API Endpoints</h2>
+            <p>For programmatic access:</p>
+            <pre>POST /api/run-circuit
+Content-Type: application/json
+{"code": "h(q0)\\nmeasure(q0)", "shots": 1024}
+
+POST /api/export
+{"code": "h(q0)", "target": "qiskit"}</pre>
+            <p>See <a href="/api-docs" style="color:var(--primary)">API Docs</a> for complete specification.</p>
+        </div>
+
+        <div class="footer">
+            <p>Quantum AI IDE — Built for professionals developing quantum applications</p>
+            <a href="/quantum-ai-ide" class="btn">🏠 Back to IDE</a>
+        </div>
+    </div>
+</body>
+</html>

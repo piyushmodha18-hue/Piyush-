@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+<meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>વિષયો — ટાઇમટેબલ</title>
+<style>
+/* --- CRITICAL: navbar + base (inline) --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+--primary: #0ff;
+  --primary-hover: #3cf;
+  --primary-light: rgba(0,255,255,0.1);
+  --bg: #0a0f1a;
+  --card: rgba(10,20,35,0.85);
+  --text: #cfddee;
+  --text-muted: #6a8aaa;
+  --border: #2a4f6e;
+  --shadow: 0 1px 3px rgba(0,0,0,.3);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,.4);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --green: #059669;
+  --green-bg: rgba(5,150,105,0.15);
+  --yellow: #d97706;
+  --yellow-bg: rgba(217,119,6,0.15);
+  --red: #dc2626;
+  --red-bg: rgba(220,38,38,0.15);
+}
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text);
+  min-height: 100vh;
+  padding-top: 56px;
+}
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: flex; align-items: center;
+  padding: 0 12px;
+  height: 56px;
+  gap: 4px;
+}
+.nav-toggle { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
+.nav-hamburger {
+  display: none;
+  font-size: 24px; cursor: pointer; padding: 4px 8px;
+  border-radius: 8px; user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-hamburger:hover { background: var(--bg-gradient); }
+.nav-hamburger::before { content: '\2630'; }
+.nav-toggle:checked ~ .nav-hamburger {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+.nav-toggle:checked ~ .nav-hamburger::before { content: '\2715'; }
+.navbar .brand {
+  font-size: 15px; font-weight: 700;
+  white-space: nowrap; margin-right: auto;
+  color: var(--text);
+  text-decoration: none;
+}
+.navbar .brand span { color: var(--primary); }
+.nav-menu {
+  display: flex; align-items: center; gap: 4px;
+}
+.nav-link {
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px; font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.nav-link:hover { background: var(--primary-light); color: var(--primary); }
+.nav-link.active { background: var(--primary); color: #000; font-weight: 700; }
+@media (max-width: 768px) {
+  .nav-hamburger { display: block; }
+  .nav-menu {
+    display: none;
+    position: fixed; top: 56px; left: 0; right: 0;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    padding: 8px;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 99;
+    animation: slideDown .2s ease;
+  }
+  @keyframes slideDown {
+    from { transform: translateY(-10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .nav-toggle:checked ~ .nav-menu { display: flex; }
+  .nav-menu .nav-link {
+    display: block;
+    width: 100%; padding: 12px 16px;
+    font-size: 15px; border-radius: 8px;
+  }
+  .nav-menu .nav-link.active {
+    background: var(--primary);
+    color: #000;
+  }
+}
+@media (max-width: 480px) {
+  .navbar .brand { font-size: 14px; }
+  .navbar .brand span { display: none; }
+}
+@media (max-width: 360px) {
+  .navbar .brand { font-size: 13px; }
+}
+/* --- end critical --- */
+</style>
+<link rel="stylesheet" href="/css/style.css?v=3">
+<style>
+.cls-block {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.cls-header {
+  display: flex; align-items: center;
+  padding: 10px 14px;
+  color: #000;
+  font-weight: 600;
+  font-size: 15px;
+  gap: 8px;
+}
+.cls-header.grade9-10 { background: rgba(0,255,255,0.15); color: var(--primary); }
+.cls-header.grade11-12 { background: #7c3aed; }
+.cls-body { padding: 12px 14px; }
+.subj-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.subj-item:last-child { border-bottom: none; }
+.subj-name { font-weight: 500; font-size: 14px; min-width: 100px; flex: 1; }
+.subj-periods { display: flex; align-items: center; gap: 4px; }
+.subj-periods input {
+  width: 50px; text-align: center; padding: 5px;
+  border: 1px solid var(--border); border-radius: 4px;
+  font-size: 14px;
+}
+.subj-del {
+  cursor: pointer; color: var(--danger); font-weight: 700;
+  padding: 4px 8px; border-radius: 4px; font-size: 16px;
+}
+.subj-del:hover { background: #fef2f2; }
+.add-subj-row {
+  display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap;
+}
+.add-subj-row input {
+  flex: 1; min-width: 120px;
+  padding: 8px 10px; border: 1px solid var(--border);
+  border-radius: 6px; font-size: 14px;
+}
+.add-subj-row button {
+  padding: 8px 16px; background: var(--primary);
+  color: #000; border: none; border-radius: 6px;
+  font-size: 14px; cursor: pointer; font-weight: 600;
+}
+.section-badge {
+  font-size: 12px; opacity: .8; margin-left: auto;
+}
+.saving-badge {
+  display: inline-block;
+  font-size: 11px; padding: 2px 8px; border-radius: 10px;
+  background: #d1fae5; color: #065f46; margin-left: 8px;
+}
+</style>
+</head>
+<body>
+<nav class="navbar">
+<input type="checkbox" id="navToggle" class="nav-toggle">
+<a href="/" class="brand">🏫 <span>સમયપત્રક</span></a>
+<label for="navToggle" class="nav-hamburger"></label>
+<div class="nav-menu">
+<a href="/" class="nav-link">🏠 હોમ</a>
+<a href="/classes" class="nav-link">🏫 ક્લાસ</a>
+<a href="/subjects" class="nav-link active" aria-current="page">📚 વિષયો</a>
+<a href="/teachers" class="nav-link">👨‍🏫 શિક્ષકો</a>
+<a href="/timetable" class="nav-link">📅 ટાઇમટેબલ</a>
+<a href="/playground" class="nav-link">🧪 પ્લેગ્રાઉન્ડ</a>
+                    <a href="/settings" class="nav-link">⚙️ સેટિંગ</a>
+</div>
+</nav>
+<div class="container">
+<div id="gradeAreas"></div>
+</div>
+<div id="toast"></div>
+<script src="/js/api.js"></script>
+<script src="/js/chat.js?v=1"></script>
+<script>
+// ========== DATA ==========
+var subjectsData = {};  // { gradeNum: { primary: '9A', sections: [...], subjects: {...} } }
+
+// ========== INIT ==========
+async function init() {
+  // Get classes
+  var classes = [];
+  try { var r = await API.getClasses(); classes = r.classes || []; } catch(e) {}
+  
+  // Build grade groups
+  var groups = {};
+  for (var i = 0; i < classes.length; i++) {
+    var m = classes[i].match(/^\d+/);
+    var g = m ? m[0] : classes[i];
+    if (!groups[g]) groups[g] = [];
+    groups[g].push(classes[i]);
+  }
+  for (var g in groups) groups[g].sort();
+  
+  // Load subjects for each grade
+  subjectsData = {};
+  var gradeKeys = Object.keys(groups).sort(function(a,b) { return parseInt(a)-parseInt(b); });
+  
+  for (var gi = 0; gi < gradeKeys.length; gi++) {
+    var grade = gradeKeys[gi];
+    var sections = groups[grade];
+    var primary = sections[0];
+    var subjects = {};
+    try {
+      var r = await API.getSubjects(primary);
+      if (r.subjects) subjects = r.subjects;
+    } catch(e) {}
+    subjectsData[grade] = { primary: primary, sections: sections, subjects: subjects };
+  }
+  
+  render();
+}
+
+// ========== RENDER ==========
+function render() {
+  var el = document.getElementById('gradeAreas');
+  var grades = Object.keys(subjectsData).sort(function(a,b) { return parseInt(a)-parseInt(b); });
+  
+  if (grades.length === 0) {
+    el.innerHTML = '<div class="card"><div class="empty-state"><div class="icon">📚</div><h2>કોઈ ધોરણ નથી</h2><p>પહેલા "🏫 ક્લાસ" પેજમાં ક્લાસ ઉમેરો</p></div></div>';
+    return;
+  }
+  
+  var html = '';
+  for (var gi = 0; gi < grades.length; gi++) {
+    var grade = grades[gi];
+    var d = subjectsData[grade];
+    var isHigh = parseInt(grade) >= 11;
+    var sectionStr = d.sections.join(', ');
+    
+    html += '<div class="cls-block" data-grade="' + grade + '">';
+    html += '<div class="cls-header ' + (isHigh ? 'grade11-12' : 'grade9-10') + '">';
+    html += '📚 ધોરણ ' + grade;
+    html += '<span class="section-badge">' + sectionStr + '</span>';
+    html += '</div>';
+    html += '<div class="cls-body">';
+    html += '<div class="subj-list" data-grade="' + grade + '">';
+    
+    var subs = d.subjects;
+    var subjKeys = Object.keys(subs);
+    if (subjKeys.length === 0) {
+      html += '<p class="empty-subj-msg" style="color:var(--text-muted);font-size:13px">કોઈ વિષય નથી — નીચે ઉમેરો</p>';
+    } else {
+      for (var si = 0; si < subjKeys.length; si++) {
+        var s = subjKeys[si];
+        var p = subs[s];
+        html += '<div class="subj-item">';
+        html += '  <span class="subj-name">' + esc(s) + '</span>';
+        html += '  <span class="subj-periods">';
+        html += '    <input type="number" class="period-input" min="1" max="10" value="' + p + '" data-grade="' + grade + '" data-subj="' + escAttr(s) + '">';
+        html += '    <span style="font-size:12px;color:var(--text-muted)">/અઠ</span>';
+        html += '  </span>';
+        html += '  <span class="subj-del" data-grade="' + grade + '" data-subj="' + escAttr(s) + '">✕</span>';
+        html += '</div>';
+      }
+    }
+    
+    html += '</div>'; // subj-list
+    
+    // Add subject row
+    html += '<div class="add-subj-row">';
+    html += '  <input type="text" class="new-subj-input" placeholder="નવો વિષય (દા.ત. Economics)" data-grade="' + grade + '">';
+    html += '  <button class="add-subj-btn" data-grade="' + grade + '">➕ ઉમેરો</button>';
+    html += '</div>';
+    
+    html += '</div>'; // cls-body
+    html += '</div>'; // cls-block
+  }
+  
+  el.innerHTML = html;
+}
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function escAttr(s) { return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+// ========== EVENT DELEGATION ==========
+document.getElementById('gradeAreas').addEventListener('click', function(e) {
+  var t = e.target;
+  
+  // Add subject button
+  if (t.classList.contains('add-subj-btn')) {
+    var grade = t.getAttribute('data-grade');
+    var row = t.parentElement;
+    var input = row.querySelector('.new-subj-input');
+    if (grade && input) addSubject(grade, input);
+    return;
+  }
+  
+  // Delete subject
+  if (t.classList.contains('subj-del')) {
+    var grade = t.getAttribute('data-grade');
+    var subj = t.getAttribute('data-subj');
+    if (grade && subj) removeSubject(grade, subj);
+    return;
+  }
+});
+
+// Change period (auto-save on period change)
+document.getElementById('gradeAreas').addEventListener('change', async function(e) {
+  if (e.target.classList.contains('period-input')) {
+    var grade = e.target.getAttribute('data-grade');
+    var subj = e.target.getAttribute('data-subj');
+    var val = parseInt(e.target.value);
+    if (grade && subj && val > 0 && subjectsData[grade]) {
+      subjectsData[grade].subjects[subj] = val;
+      var saved = await saveGrade(grade);
+      if (saved) showToast('✅ ' + subj + ' — સેવ થયો', 'success');
+      else showToast('⚠️ ' + subj + ' — સેવ ન થયો', 'error');
+    }
+  }
+});
+
+// Enter key for adding subjects
+document.getElementById('gradeAreas').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && e.target.classList.contains('new-subj-input')) {
+    var grade = e.target.getAttribute('data-grade');
+    addSubject(grade, e.target);
+  }
+});
+
+// ========== ADD SUBJECT ==========
+async function addSubject(grade, input) {
+  var name = input.value.trim();
+  if (!name) { showToast('⚠️ વિષયનું નામ લખો', 'error'); return; }
+  
+  var d = subjectsData[grade];
+  if (!d) { showToast('⚠️ ધોરણ મળ્યું નહીં', 'error'); return; }
+  
+  if (d.subjects[name]) {
+    showToast('⚠️ આ વિષય પહેલેથી છે', 'error');
+    return;
+  }
+  
+  d.subjects[name] = 4;
+  input.value = '';
+  
+  // Auto-save immediately — check if save succeeded
+  var saved = await saveGrade(grade);
+  render();
+  if (saved) {
+    showToast('✅ ' + name + ' ઉમેરાયો — સેવ થયો', 'success');
+  } else {
+    // Revert local state if save failed
+    delete d.subjects[name];
+    render();
+    showToast('⚠️ ' + name + ' સેવ ન થયો — ફરી પ્રયાસ કરો', 'error');
+  }
+}
+
+// ========== REMOVE SUBJECT ==========
+async function removeSubject(grade, subj) {
+  if (!confirm('શું "' + subj + '" ને ધોરણ ' + grade + ' માંથી દૂર કરવો?')) return;
+  
+  var d = subjectsData[grade];
+  if (!d) return;
+  
+  delete d.subjects[subj];
+  
+  // Auto-save immediately
+  var saved = await saveGrade(grade);
+  render();
+  if (saved) {
+    showToast('🗑️ ' + subj + ' દૂર કર્યો — સેવ થયો', 'info');
+  } else {
+    // Revert: add subject back
+    d.subjects[subj] = 4;
+    render();
+    showToast('⚠️ ' + subj + ' દૂર ન થયો — ફરી પ્રયાસ કરો', 'error');
+  }
+}
+
+// ========== SAVE ONE GRADE ==========
+async function saveGrade(grade) {
+  var d = subjectsData[grade];
+  if (!d) return false;
+  try {
+    var resp = await fetch('/api/classes/' + encodeURIComponent(d.primary) + '/subjects', {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({subjects: d.subjects})
+    });
+    var data = await resp.json();
+    if (data.success) {
+      return true;
+    }
+    showToast('⚠️ ધોરણ ' + grade + ' — સર્વર એરર', 'error');
+    return false;
+  } catch(e) {
+    showToast('⚠️ ધોરણ ' + grade + ' — કનેક્શન એરર', 'error');
+    return false;
+  }
+}
+
+// ========== START ==========
+init();
+</script>
+
+<script>
+// Mobile navbar toggle
+document.addEventListener('DOMContentLoaded', function() {
+  var toggle = document.getElementById('navToggle');
+  var label = document.querySelector('.nav-hamburger');
+  var menu = document.querySelector('.nav-menu');
+  if (toggle && label && menu) {
+    label.addEventListener('click', function(e) {
+      e.preventDefault();
+      toggle.checked = !toggle.checked;
+      if (toggle.checked) {
+        menu.style.display = 'flex';
+      } else {
+        menu.style.display = '';
+      }
+    });
+    menu.querySelectorAll('.nav-link').forEach(function(link) {
+      link.addEventListener('click', function() {
+        toggle.checked = false;
+        menu.style.display = '';
+      });
+    });
+  }
+});
+</script>
+
+<script>
+// Register Service Worker for PWA
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(reg => {
+    console.log('✅ SW registered');
+  }).catch(err => {
+    console.log('SW registration failed:', err);
+  });
+}
+</script>
+</body>
+</html>

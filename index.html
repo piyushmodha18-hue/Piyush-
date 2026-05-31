@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quantum AI IDE — Home</title>
+
     <style>
         :root {
             --primary: #0ff;
@@ -16,9 +17,15 @@
             --border: #2a4f6e;
             --radius: 12px;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             background: linear-gradient(135deg, #0a0f1a, #0a1a2a);
             color: var(--text);
             min-height: 100vh;
@@ -27,22 +34,25 @@
             flex-direction: column;
             align-items: center;
         }
+
         .container {
             max-width: 900px;
             width: 100%;
             text-align: center;
         }
+
         .hero {
             margin-bottom: 40px;
         }
+
         .hero h1 {
             font-size: 2.5rem;
             background: linear-gradient(135deg, #0ff, #a0f);
             -webkit-background-clip: text;
-            background-clip: text;
             color: transparent;
             margin-bottom: 10px;
         }
+
         .hero p {
             color: var(--text-muted);
             font-size: 1.1rem;
@@ -50,12 +60,14 @@
             max-width: 600px;
             margin: 0 auto 30px;
         }
+
         .btn-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
             margin-top: 20px;
         }
+
         .btn-primary {
             background: var(--card);
             border: 1px solid var(--border);
@@ -64,39 +76,31 @@
             border-radius: var(--radius);
             font-size: 16px;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
             text-decoration: none;
             display: block;
         }
+
         .btn-primary:hover {
             background: var(--primary-light);
-            color: var(--primary);
             box-shadow: 0 0 15px rgba(0,255,255,0.3);
             transform: translateY(-2px);
         }
-        
-        /* Footer */
+
         .footer {
             margin-top: 60px;
             padding: 20px;
             text-align: center;
             border-top: 1px solid var(--border);
             color: var(--text-muted);
-            font-size: 14px;
             width: 100%;
         }
+
         .footer a {
             color: var(--primary);
             text-decoration: none;
             margin: 0 12px;
-            transition: color 0.2s;
         }
-        .footer a:hover {
-            color: var(--primary-hover);
-        }
-        
-        /* Navbar */
+
         .navbar {
             position: fixed;
             top: 0;
@@ -109,54 +113,50 @@
             height: 56px;
             display: flex;
             align-items: center;
-            gap: 8px;
         }
+
         .brand {
             font-size: 18px;
             font-weight: 700;
             color: var(--primary);
             text-decoration: none;
         }
+
         .nav-menu {
             display: flex;
-            gap: 4px;
+            gap: 8px;
             margin-left: auto;
         }
+
         .nav-link {
             padding: 8px 16px;
             border-radius: 8px;
-            font-size: 14px;
             color: var(--text-muted);
             text-decoration: none;
-            transition: all 0.2s;
         }
-        .nav-link:hover {
-            background: var(--primary-light);
-            color: var(--primary);
-        }
+
         .nav-link.active {
             background: var(--primary);
             color: #000;
-            font-weight: 700;
+            font-weight: bold;
         }
-        
-        /* Mobile menu */
+
         .nav-toggle {
-            position: absolute;
-            opacity: 0;
-            width: 0;
-            height: 0;
+            display: none;
         }
+
         .nav-hamburger {
             display: none;
+            margin-left: auto;
             font-size: 24px;
             cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 8px;
         }
-        .nav-hamburger::before { content: '☰'; }
+
         @media (max-width: 768px) {
-            .nav-hamburger { display: block; }
+            .nav-hamburger {
+                display: block;
+            }
+
             .nav-menu {
                 display: none;
                 position: fixed;
@@ -164,79 +164,75 @@
                 left: 0;
                 right: 0;
                 background: var(--card);
-                border-bottom: 1px solid var(--border);
-                padding: 12px;
                 flex-direction: column;
-                z-index: 99;
+                padding: 12px;
             }
-            .nav-toggle:checked ~ .nav-menu { display: flex; }
-            .nav-menu .nav-link {
-                width: 100%;
-                text-align: center;
+
+            .nav-toggle:checked ~ .nav-menu {
+                display: flex;
             }
         }
     </style>
 </head>
+
 <body>
-    <nav class="navbar">
-        <a href="./index.html" class="brand">⚛️ Quantum AI IDE</a>
-        <input type="checkbox" id="navToggle" class="nav-toggle">
-        <label for="navToggle" class="nav-hamburger"></label>
-        <div class="nav-menu">
-            <a href="./index.html" class="nav-link active">🏠 Home</a>
-            <a href="./playground.html" class="nav-link">🧪 Playground</a>
-            <a href="./quantum-ai-ide.html" class="nav-link">🤖 AI Assistant</a>
-            <a href="./quantum-ai-ide.html" class="nav-link">🔲 Circuits</a>
-            <a href="./quantum-ai-ide.html" class="nav-link">💻 Code Editor</a>
-            <a href="./settings.html" class="nav-link">⚙️ Settings</a>
-        </div>
-    </nav>
-    
-    <div class="container">
-        <div class="hero">
-            <h1>Quantum AI IDE</h1>
-            <p>A futuristic quantum computing development environment with AI-powered assistance. Write, simulate, and visualize quantum algorithms with NovaLang.</p>
-        </div>
-        
-        <div class="btn-grid">
-            <a href="./playground.html" class="btn-primary">🧪 Open Playground</a>
-            <a href="./quantum-ai-ide.html" class="btn-primary">🤖 AI Assistant</a>
-            <a href="./quantum-ai-ide.html" class="btn-primary">🔲 Quantum Circuits</a>
-        </div>
+
+<nav class="navbar">
+    <a href="./index.html" class="brand">⚛️ Quantum AI IDE</a>
+
+    <input type="checkbox" id="navToggle" class="nav-toggle">
+    <label for="navToggle" class="nav-hamburger">☰</label>
+
+    <div class="nav-menu">
+        <a href="./index.html" class="nav-link active">🏠 Home</a>
+        <a href="./playground.html" class="nav-link">🧪 Playground</a>
+        <a href="./quantum-ai-ide.html" class="nav-link">🤖 AI Assistant</a>
+        <a href="./settings.html" class="nav-link">⚙️ Settings</a>
     </div>
-    
-    <div class="footer">
-        <a href="./index.html">🏠 Home</a>
-        <a href="./about/index.html">ℹ️ About</a>
-        <a href="./blog/index.html">📝 Blog</a>
-        <a href="./research.html">🔬 Research</a>
-        <a href="javascript:openFeatureView('dashboard')">📊 Dashboard</a>
+</nav>
+
+<div class="container">
+    <div class="hero">
+        <h1>Quantum AI IDE</h1>
+        <p>
+            A futuristic quantum computing development environment with AI-powered assistance.
+            Write, simulate, and visualize quantum algorithms with NovaLang.
+        </p>
     </div>
-    
-    <script>
-    function openFeatureView(feature) {
-        // Dashboard functionality - can be extended
-       window.location.href = './dashboard/index.html'; 
-    
-    // Mobile navbar toggle
-    document.addEventListener('DOMContentLoaded', function() {
-        var toggle = document.getElementById('navToggle');
-        var menu = document.querySelector('.nav-menu');
-        var hamburger = document.querySelector('.nav-hamburger');
-        if (toggle && menu && hamburger) {
-            hamburger.addEventListener('click', function(e) {
-                e.preventDefault();
-                toggle.checked = !toggle.checked;
-                menu.style.display = toggle.checked ? 'flex' : '';
+
+    <div class="btn-grid">
+        <a href="./playground.html" class="btn-primary">🧪 Open Playground</a>
+        <a href="./quantum-ai-ide.html" class="btn-primary">🤖 AI Assistant</a>
+        <a href="./quantum-ai-ide.html" class="btn-primary">🔲 Quantum Circuits</a>
+    </div>
+</div>
+
+<div class="footer">
+    <a href="./index.html">🏠 Home</a>
+    <a href="./about/index.html">ℹ️ About</a>
+    <a href="./blog/index.html">📝 Blog</a>
+    <a href="./research.html">🔬 Research</a>
+    <a href="./dashboard/index.html">📊 Dashboard</a>
+</div>
+
+<script>
+function openFeatureView(feature) {
+    window.location.href = './dashboard/index.html';
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    var toggle = document.getElementById('navToggle');
+    var menu = document.querySelector('.nav-menu');
+
+    if (toggle && menu) {
+        menu.querySelectorAll('.nav-link').forEach(function(link) {
+            link.addEventListener('click', function() {
+                toggle.checked = false;
             });
-            menu.querySelectorAll('.nav-link').forEach(function(link) {
-                link.addEventListener('click', function() {
-                    toggle.checked = false;
-                    menu.style.display = '';
-                });
-            });
-        }
-    });
-    </script>
+        });
+    }
+});
+</script>
+
 </body>
 </html>

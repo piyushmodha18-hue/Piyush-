@@ -7,31 +7,36 @@
 
 <style>
 body{
-    background:#0a0f1a;
-    color:#cfddee;
-    font-family:Arial,sans-serif;
-    padding:20px;
-    margin:0;
+background:#0a0f1a;
+color:#cfddee;
+font-family:Arial,sans-serif;
+padding:20px;
 }
-h1{
-    color:#0ff;
+.tabs{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-bottom:20px;
+}
+.tab{
+padding:10px 16px;
+border:1px solid #2a4f6e;
+border-radius:10px;
+background:#111827;
+color:#0ff;
+cursor:pointer;
+}
+.tab.active{
+background:#0ff;
+color:#000;
+font-weight:bold;
 }
 .card{
-    border:1px solid #2a4f6e;
-    border-radius:12px;
-    padding:16px;
-    margin-bottom:16px;
-    background:rgba(10,20,35,.85);
-}
-.btn{
-    display:inline-block;
-    margin-top:12px;
-    padding:10px 16px;
-    background:#0ff;
-    color:#000;
-    text-decoration:none;
-    border-radius:8px;
-    font-weight:bold;
+border:1px solid #2a4f6e;
+border-radius:12px;
+padding:16px;
+margin-top:16px;
+background:#111827;
 }
 </style>
 </head>
@@ -40,22 +45,56 @@ h1{
 
 <h1>📊 Smart Dashboard – Live Analytics</h1>
 
-<div class="card">
-    <h2>🧠 Quantum Circuits</h2>
-    <p>12 circuits simulated</p>
+<div class="tabs">
+<button class="tab active" onclick="showTab('overview')">Overview</button>
+<button class="tab" onclick="showTab('analytics')">Analytics</button>
+<button class="tab" onclick="showTab('stats')">Stats</button>
 </div>
 
-<div class="card">
-    <h2>⚛️ Qubits Active</h2>
-    <p>24 active qubits</p>
-</div>
+<div id="content"></div>
 
-<div class="card">
-    <h2>🤖 AI Suggestions</h2>
-    <p>7 recommendations generated</p>
-</div>
+<script>
+function showTab(tab){
 
-<a href="../index.html" class="btn">⬅ Back to Home</a>
+document.querySelectorAll('.tab').forEach(btn=>{
+btn.classList.remove('active');
+});
+
+event.target.classList.add('active');
+
+const content=document.getElementById("content");
+
+if(tab==="overview"){
+content.innerHTML=`
+<div class="card">
+<h2>📘 Overview</h2>
+<p>Quantum AI IDE dashboard overview loaded successfully.</p>
+</div>`;
+}
+
+if(tab==="analytics"){
+content.innerHTML=`
+<div class="card">
+<h2>📈 Live Analytics Dashboard</h2>
+<p>Total visits tracked</p>
+<p>Countries worldwide</p>
+<p>Device breakdown</p>
+</div>`;
+}
+
+if(tab==="stats"){
+content.innerHTML=`
+<div class="card">
+<h2>📊 Stats</h2>
+<p>12 circuits simulated</p>
+<p>24 active qubits</p>
+<p>7 AI suggestions</p>
+</div>`;
+}
+}
+
+showTab("overview");
+</script>
 
 </body>
 </html>
